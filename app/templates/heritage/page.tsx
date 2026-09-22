@@ -9,31 +9,67 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <div className="relative min-h-screen bg-[#260A10]">
-      {/* Clickable Luxury Top Bar */}
+    <div className="relative min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-white">
+      {/* 1. Global Scrollbar Remover */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+            .font-serif-luxury { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+            ::-webkit-scrollbar {
+              display: none !important;
+              width: 0px !important;
+              height: 0px !important;
+            }
+            * {
+              scrollbar-width: none !important;
+              -ms-overflow-style: none !important;
+            }
+          `
+        }}
+      />
+
+      {/* 2. Top Bar */}
       <header 
         style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
-        className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
+        className="flex items-center justify-between px-6 sm:px-12 py-3 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8DFD5] text-[#2D141E] text-xs shadow-sm"
       >
         <a 
           href="/" 
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E8DFD5] hover:bg-[#F3EDE2] text-[#2D141E] font-medium transition-all shadow-xs cursor-pointer"
         >
           <ArrowLeft size={14} /> Back to Wedlink
         </a>
-        <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
+
+        <span className="hidden sm:inline font-serif-luxury tracking-[0.2em] text-[#2D141E] text-sm uppercase font-semibold">
           Heritage Rajputana · Sample Invitation
         </span>
+
         <a 
           href="/create?template=heritage"
-          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity cursor-pointer"
+          style={{ 
+            backgroundColor: '#341822', 
+            color: '#ffffff', 
+            padding: '7px 16px', 
+            borderRadius: '6px', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            fontSize: '12px', 
+            fontWeight: 600, 
+            textDecoration: 'none',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}
+          className="cursor-pointer transition-all hover:opacity-90"
         >
-          Personalize <ArrowUpRight size={14} />
+          <span style={{ color: '#ffffff' }}>Personalize</span>
+          <ArrowUpRight size={14} color="#ffffff" style={{ color: '#ffffff' }} />
         </a>
       </header>
 
       {/* Main Template */}
-      <div className="pt-12">
+      <div className="pt-14 overflow-hidden">
         <HeritageInvitation
           data={{
             ...example,
@@ -43,8 +79,8 @@ export default function Page() {
             paid: true,
             isDraft: false,
             published: true,
-            firstFamily: 'Blessings of the Sharma Family',
-            secondFamily: 'Blessings of the Kapoor Family',
+            firstFamily: 'Blessings of Sharma Family',
+            secondFamily: 'Blessings of Kapoor Family',
             timezone: 'Asia/Kolkata',
             dressCode: 'Royal Rajputana Traditional Indian Elegance',
             accommodation: 'The Oberoi Udaivilas, Udaipur. Special Code: WEDLINK2026',
