@@ -14,7 +14,9 @@ import {
   Calendar,
   MapPin,
   Sparkles,
-  Link2,
+  ArrowUpRight,
+  X,
+  Share2,
 } from 'lucide-react';
 import { example, type Invite } from '@/app/shared';
 
@@ -64,6 +66,7 @@ const PRESET_EVENTS = [
 export default function CreatePage() {
   const [activeTab, setActiveTab] = useState<Tab>('essentials');
   const [template, setTemplate] = useState<TemplateKey>('editorial');
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
 
   // Basic Info State
   const [brideName, setBrideName] = useState('Priya');
@@ -220,22 +223,39 @@ export default function CreatePage() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D141E]">
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#E8DFD5] bg-[#FAF7F2]/90 px-6 py-3.5 backdrop-blur-md">
+      {/* Top Navbar - 100% Clickable & High Z-Index */}
+      <header
+        style={{ position: 'sticky', top: 0, zIndex: 9999, pointerEvents: 'auto' }}
+        className="flex items-center justify-between border-b border-[#E8DFD5] bg-[#FAF7F2]/95 px-6 py-3.5 backdrop-blur-md shadow-xs"
+      >
+        {/* Clickable Back Link */}
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-xs font-medium text-[#2D141E] hover:opacity-80"
+          style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+          className="flex items-center gap-1.5 rounded-full border border-[#E8DFD5] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#2D141E] shadow-2xs transition-all hover:bg-[#F3EDE2] hover:scale-105 active:scale-95 cursor-pointer"
         >
-          <ArrowLeft size={15} /> Back to Wedlink
+          <ArrowLeft size={14} /> Back to Wedlink
         </Link>
+
+        {/* Title */}
         <span className="font-serif text-sm font-semibold tracking-wider uppercase text-[#2D141E]">
           Wedlink · Invitation Builder
         </span>
+
+        {/* Clickable Publish Button */}
         <button
-          onClick={() => setActiveTab('review')}
-          className="rounded-full bg-[#341822] px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:opacity-90"
+          type="button"
+          onClick={() => setIsPublishOpen(true)}
+          style={{
+            cursor: 'pointer',
+            pointerEvents: 'auto',
+            backgroundColor: '#341822',
+            color: '#ffffff',
+          }}
+          className="flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90 hover:scale-105 active:scale-95 cursor-pointer"
         >
-          Publish (₹1,499)
+          <span>Publish (₹1,499)</span>
+          <ArrowUpRight size={14} />
         </button>
       </header>
 
@@ -257,8 +277,9 @@ export default function CreatePage() {
             {tabs.map((t) => (
               <button
                 key={t.key}
+                type="button"
                 onClick={() => setActiveTab(t.key)}
-                className={`whitespace-nowrap px-4 py-2.5 text-xs font-semibold transition-all ${
+                className={`whitespace-nowrap px-4 py-2.5 text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === t.key
                     ? 'border-b-2 border-[#341822] text-[#341822]'
                     : 'text-[#8A7B75] hover:text-[#2D141E]'
@@ -286,8 +307,9 @@ export default function CreatePage() {
                   ].map((tpl) => (
                     <button
                       key={tpl.id}
+                      type="button"
                       onClick={() => setTemplate(tpl.id as TemplateKey)}
-                      className={`flex items-center justify-between rounded-xl border p-3.5 text-left text-sm font-medium transition-all ${
+                      className={`flex items-center justify-between rounded-xl border p-3.5 text-left text-sm font-medium transition-all cursor-pointer ${
                         template === tpl.id
                           ? 'border-[#341822] bg-[#F7F2EB] text-[#341822] font-semibold'
                           : 'border-[#E8DFD5] hover:border-[#C4B5A5]'
@@ -331,8 +353,9 @@ export default function CreatePage() {
                   <label className="text-xs font-semibold text-[#5A4B45]">Name Display Order</label>
                   <div className="mt-2 flex gap-3">
                     <button
+                      type="button"
                       onClick={() => setNameOrder('brideFirst')}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium cursor-pointer ${
                         nameOrder === 'brideFirst'
                           ? 'border-[#341822] bg-[#341822] text-white'
                           : 'border-[#E8DFD5]'
@@ -341,8 +364,9 @@ export default function CreatePage() {
                       Bride & Groom ({brideName} & {groomName})
                     </button>
                     <button
+                      type="button"
                       onClick={() => setNameOrder('groomFirst')}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium cursor-pointer ${
                         nameOrder === 'groomFirst'
                           ? 'border-[#341822] bg-[#341822] text-white'
                           : 'border-[#E8DFD5]'
@@ -389,7 +413,7 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* TAB 3: EVENTS (WITH PRESET CEREMONIES + GOOGLE MAPS LINK) */}
+          {/* TAB 3: EVENTS */}
           {activeTab === 'events' && (
             <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
               {/* TOP: QUICK PRESET CEREMONY BUTTONS */}
@@ -410,7 +434,7 @@ export default function CreatePage() {
                       key={preset.name}
                       type="button"
                       onClick={() => addPresetEvent(preset)}
-                      className="flex items-center gap-1.5 rounded-full border border-[#D9CFC4] bg-white px-3.5 py-1.5 text-xs font-medium text-[#341822] shadow-2xs transition-all hover:border-[#341822] hover:bg-[#F3EDE2] active:scale-95"
+                      className="flex items-center gap-1.5 rounded-full border border-[#D9CFC4] bg-white px-3.5 py-1.5 text-xs font-medium text-[#341822] shadow-2xs transition-all hover:border-[#341822] hover:bg-[#F3EDE2] active:scale-95 cursor-pointer"
                     >
                       <span>{preset.emoji}</span>
                       <span>{preset.name}</span>
@@ -426,6 +450,7 @@ export default function CreatePage() {
                   Celebration Schedule ({events.length} Events)
                 </h2>
                 <button
+                  type="button"
                   onClick={() =>
                     setEvents([
                       ...events,
@@ -439,7 +464,7 @@ export default function CreatePage() {
                       },
                     ])
                   }
-                  className="flex items-center gap-1 text-xs font-semibold text-[#341822] hover:underline"
+                  className="flex items-center gap-1 text-xs font-semibold text-[#341822] hover:underline cursor-pointer"
                 >
                   <Plus size={14} /> Custom Event
                 </button>
@@ -457,8 +482,9 @@ export default function CreatePage() {
                     </span>
                     {events.length > 1 && (
                       <button
+                        type="button"
                         onClick={() => setEvents(events.filter((_, idx) => idx !== i))}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        className="text-red-500 hover:text-red-700 transition-colors cursor-pointer"
                         title="Delete Event"
                       >
                         <Trash2 size={15} />
@@ -640,8 +666,9 @@ export default function CreatePage() {
                 ].map((l) => (
                   <button
                     key={l.id}
+                    type="button"
                     onClick={() => setPhotoLayout(l.id as any)}
-                    className={`rounded-xl border px-4 py-2 text-xs font-semibold transition-all ${
+                    className={`rounded-xl border px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
                       photoLayout === l.id
                         ? 'border-[#341822] bg-[#341822] text-white shadow-xs'
                         : 'border-[#E8DFD5] bg-white text-[#5A4B45] hover:border-[#C4B5A5]'
@@ -680,8 +707,9 @@ export default function CreatePage() {
                             <div className="mt-2 flex w-full justify-between items-center text-xs">
                               <span className="font-semibold text-[#5A4B45]">Photo {idx + 1}</span>
                               <button
+                                type="button"
                                 onClick={() => removePhoto(idx)}
-                                className="text-red-500 hover:text-red-700"
+                                className="text-red-500 hover:text-red-700 cursor-pointer"
                               >
                                 Remove
                               </button>
@@ -754,7 +782,11 @@ export default function CreatePage() {
                 to share on WhatsApp and Instagram.
               </p>
               <div className="pt-4">
-                <button className="rounded-full bg-[#341822] px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:opacity-90">
+                <button
+                  type="button"
+                  onClick={() => setIsPublishOpen(true)}
+                  className="rounded-full bg-[#341822] px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:opacity-90 cursor-pointer"
+                >
                   🚀 Publish Your WedLink (₹1,499 / $39)
                 </button>
               </div>
@@ -764,22 +796,24 @@ export default function CreatePage() {
           {/* Navigation Buttons */}
           <div className="mt-8 flex justify-between">
             <button
+              type="button"
               onClick={() => {
                 const idx = tabs.findIndex((t) => t.key === activeTab);
                 if (idx > 0) setActiveTab(tabs[idx - 1].key);
               }}
               disabled={activeTab === 'essentials'}
-              className="flex items-center gap-1.5 text-xs font-semibold text-[#8A7B75] hover:text-[#2D141E] disabled:opacity-40"
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#8A7B75] hover:text-[#2D141E] disabled:opacity-40 cursor-pointer"
             >
               <ArrowLeft size={14} /> Previous
             </button>
             <button
+              type="button"
               onClick={() => {
                 const idx = tabs.findIndex((t) => t.key === activeTab);
                 if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].key);
               }}
               disabled={activeTab === 'review'}
-              className="flex items-center gap-1.5 rounded-xl bg-[#341822] px-5 py-2 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-xl bg-[#341822] px-5 py-2 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40 cursor-pointer"
             >
               Next <ArrowRight size={14} />
             </button>
@@ -806,6 +840,92 @@ export default function CreatePage() {
           </div>
         </div>
       </main>
+
+      {/* 🚀 PUBLISH & PAYMENT MODAL POPUP */}
+      {isPublishOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+          <div className="relative w-full max-w-lg rounded-3xl border border-[#E8DFD5] bg-[#FAF7F2] p-6 sm:p-8 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={() => setIsPublishOpen(false)}
+              className="absolute right-4 top-4 rounded-full bg-white p-2 text-[#8A7B75] shadow-xs hover:bg-[#F3EDE2] hover:text-[#2D141E] cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            <Sparkles size={40} className="mx-auto text-[#C9A24F]" />
+            <h2 className="mt-3 font-serif text-2xl font-bold tracking-tight text-[#2D141E]">
+              Publish Your WedLink
+            </h2>
+            <p className="mt-1 text-xs text-[#7A6B65]">
+              {firstName} & {secondName}'s Wedding Invitation
+            </p>
+
+            {/* Pricing Card */}
+            <div className="mt-6 rounded-2xl border border-[#E8DFD5] bg-white p-5 text-left shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#F0EAE1] pb-3">
+                <span className="font-semibold text-sm text-[#2D141E]">
+                  Selected: {template.replace('-', ' ').toUpperCase()}
+                </span>
+                <span className="rounded-full bg-[#EBF7EE] px-2.5 py-0.5 text-xs font-bold text-[#1E7E34]">
+                  Lifetime Active
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-2 text-xs text-[#5A4B45]">
+                <div className="flex items-center gap-2">
+                  <Check size={14} className="text-[#C9A24F]" />
+                  <span>3D Interactive Mobile Unboxing</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check size={14} className="text-[#C9A24F]" />
+                  <span>Google Maps GPS Navigation for all events</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check size={14} className="text-[#C9A24F]" />
+                  <span>Custom Shortlink for WhatsApp & Instagram Bio</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check size={14} className="text-[#C9A24F]" />
+                  <span>High-speed Global Edge CDN Hosting</span>
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-baseline justify-between border-t border-[#F0EAE1] pt-3">
+                <span className="text-xs font-semibold text-[#8A7B75]">Total One-Time Fee:</span>
+                <div>
+                  <span className="font-serif text-2xl font-bold text-[#341822]">₹1,499</span>
+                  <span className="ml-1 text-xs text-[#8A7B75]">($39)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action CTA */}
+            <div className="mt-6 space-y-3">
+              <button
+                type="button"
+                onClick={() => {
+                  alert(
+                    `Congratulations! ${firstName} & ${secondName}'s wedding invitation is ready to be deployed. Razorpay checkout will be initiated.`
+                  );
+                  setIsPublishOpen(false);
+                }}
+                className="w-full rounded-2xl bg-[#341822] py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+              >
+                Pay ₹1,499 & Get Live Link 🚀
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPublishOpen(false)}
+                className="w-full text-xs font-semibold text-[#8A7B75] hover:text-[#2D141E] cursor-pointer"
+              >
+                Continue Editing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
