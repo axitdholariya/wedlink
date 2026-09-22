@@ -9,31 +9,51 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <div className="relative min-h-screen bg-[#FAF6EE]">
-      {/* Clickable Luxury Top Bar with Native <a> tags */}
+    <div className="relative min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-white">
+      {/* 1. Global Scrollbar Remover (Lal Mark Wala Scrollbar Gayab) */}
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        .font-serif-luxury { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+        /* Hide Scrollbar on All Browsers */
+        ::-webkit-scrollbar {
+          display: none !important;
+          width: 0px !important;
+          height: 0px !important;
+        }
+        * {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+      `}</style>
+
+      {/* 2. Top Bar Matched With Wedlink Signature Ivory & Wine Theme */}
       <header 
         style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
-        className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
+        className="flex items-center justify-between px-6 sm:px-12 py-3 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8DFD5] text-[#2D141E] text-xs shadow-sm"
       >
         <a 
           href="/" 
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E8DFD5] hover:bg-[#F3EDE2] text-[#2D141E] font-medium transition-all shadow-xs cursor-pointer"
         >
           <ArrowLeft size={14} /> Back to Wedlink
         </a>
-        <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
+
+        <span className="hidden sm:inline font-serif-luxury tracking-[0.2em] text-[#2D141E] text-sm uppercase font-semibold">
           The Rose Letter · Sample Invitation
         </span>
+
         <a 
           href="/create?template=rose-letter"
-          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity cursor-pointer"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-[#341822] hover:bg-[#230f16] text-white font-semibold text-xs tracking-wide transition-all shadow-sm cursor-pointer"
         >
           Personalize <ArrowUpRight size={14} />
         </a>
       </header>
 
-      {/* Main Template with padding for top bar */}
-      <div className="pt-12">
+      {/* Main Template (No Scrollbar, Clean Display) */}
+      <div className="pt-14 overflow-hidden">
         <RoseLetter
           data={{
             ...example,
