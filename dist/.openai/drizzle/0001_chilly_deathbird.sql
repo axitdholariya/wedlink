@@ -1,0 +1,1 @@
+CREATE INDEX `idx_invitations_owner_created` ON `invitations` (`owner_hash`,`created_at`);
