@@ -19,12 +19,11 @@ export interface EventItem {
   time: string;
   venue: string;
   address?: string;
-  oneLiner?: string;      // ShaadiPath poetic note
-  mapsUrl?: string;       // ShaadiPath Google Maps link
+  oneLiner?: string;
+  mapsUrl?: string;
 }
 
 export interface Invite {
-  // Core Fields
   template: string;
   first: string;
   second: string;
@@ -40,14 +39,12 @@ export interface Invite {
   gifts?: string;
   events: EventItem[];
 
-  // ShaadiPath Essentials
   orderBrideFirst?: boolean;
   whatsapp?: string;
   hashtag?: string;
   mainVenue?: string;
   showCountdown?: boolean;
 
-  // ShaadiPath Invitation Card & Lineage
   showInvitation?: boolean;
   openingBlessing?: string;
   brideFather?: string;
@@ -57,7 +54,6 @@ export interface Invite {
   parentsBrideFirst?: boolean;
   includeGrandparents?: boolean;
 
-  // ShaadiPath Story & Personality Tags
   showStory?: boolean;
   storyMode?: 'tags' | 'written';
   meetWay?: string;
@@ -67,12 +63,10 @@ export interface Invite {
   customHashtag?: string;
   extraTags?: string;
 
-  // ShaadiPath Gallery
   showGallery?: boolean;
   galleryLayout?: 'skip' | '1' | '2' | '4';
   galleryPhotos?: string[];
 
-  // ShaadiPath Things to Know (Info)
   showInfo?: boolean;
   activeInfoCards?: string[];
   infoCards?: Record<string, { value: string; mapsUrl?: string }>;
@@ -98,6 +92,8 @@ export const example: Invite = {
   groomFather: 'Mr. Vikram Mehta',
   groomMother: 'Mrs. Meenakshi Mehta',
   parentsBrideFirst: true,
+  galleryLayout: '2',
+  galleryPhotos: ['/wedding.png', '/wedding.png'],
   events: [
     {
       name: 'The wedding',
@@ -138,6 +134,90 @@ export function formatDate(date: string) {
   });
 }
 
+// ----------------------------------------------------------------------
+// ANIMATED PHOTO GALLERY (1, 2 WITH POLAROID STACK, OR 4 IN 2X2 COLLAGE)
+// ----------------------------------------------------------------------
+export function AnimatedPhotoGallery({ data }: { data: Invite }) {
+  if (data.showGallery === false || data.galleryLayout === 'skip') return null;
+
+  const rawList = (data.galleryPhotos && data.galleryPhotos.filter(Boolean).length > 0)
+    ? data.galleryPhotos.filter(Boolean)
+    : (data.photo ? [data.photo] : ['/wedding.png']);
+
+  const layout = data.galleryLayout || '2';
+
+  // 1 PHOTO
+  if (layout === '1' || rawList.length === 1) {
+    const img = rawList[0];
+    return (
+      <div className="flex justify-center my-6 px-4">
+        <div className="bg-white p-3 pb-6 shadow-2xl rounded-sm transform hover:scale-105 transition-all duration-300 border border-neutral-100 max-w-[260px] text-center">
+          <div className="w-full aspect-[4/5] overflow-hidden rounded-sm bg-neutral-100">
+            <img src={img} alt="Couple" className="w-full h-full object-cover" />
+          </div>
+          <p className="font-serif text-xs mt-3 text-neutral-800">{data.first || 'Your name'} ♡ {data.second || 'Your partner'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2 PHOTOS — LAYERED TILTED POLAROID STACK WITH HOVER ANIMATION
+  if (layout === '2' || rawList.length === 2) {
+    const p1 = rawList[0];
+    const p2 = rawList || rawList[0];
+    return (
+      <div className="my-6 px-2">
+        <div className="relative flex justify-center items-center py-4 min-h-[300px]">
+          {/* Card 1: -6deg tilt */}
+          <div className="absolute left-3 sm:left-8 bg-white p-2.5 pb-5 shadow-xl rounded-sm transform -rotate-6 hover:rotate-0 hover:scale-110 hover:z-30 transition-all duration-500 border border-neutral-100 w-[170px] text-center cursor-pointer">
+            <div className="w-full aspect-[4/5] overflow-hidden rounded-sm bg-neutral-100">
+              <img src={p1} alt="Moment 1" className="w-full h-full object-cover" />
+            </div>
+            <p className="font-serif text-[11px] mt-2 text-neutral-800">{data.first || 'Bride'} ♡ {data.second || 'Groom'}</p>
+          </div>
+
+          {/* Card 2: +6deg tilt overlapping */}
+          <div className="absolute right-3 sm:right-8 bg-white p-2.5 pb-5 shadow-2xl rounded-sm transform rotate-6 hover:rotate-0 hover:scale-110 hover:z-30 transition-all duration-500 border border-neutral-100 w-[170px] text-center cursor-pointer z-10">
+            <div className="w-full aspect-[4/5] overflow-hidden rounded-sm bg-neutral-100">
+              <img src={p2} alt="Moment 2" className="w-full h-full object-cover" />
+            </div>
+            <p className="font-serif text-[11px] mt-2 text-neutral-800">Together Forever</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 4 PHOTOS — 2X2 ANIMATED COLLAGE GRID
+  if (layout === '4' || rawList.length >= 3) {
+    const list = [...rawList];
+    while (list.length < 4) list.push(list[0]);
+    const tilts = ['-rotate-2 hover:rotate-0', 'rotate-2 hover:rotate-0', 'rotate-1 hover:rotate-0', '-rotate-3 hover:rotate-0'];
+
+    return (
+      <div className="my-6 px-2">
+        <div className="grid grid-cols-2 gap-2.5 max-w-[320px] mx-auto">
+          {list.slice(0, 4).map((img, idx) => (
+            <div
+              key={idx}
+              className={`bg-white p-2 pb-3.5 shadow-lg rounded-sm transform ${tilts[idx]} hover:scale-105 hover:z-20 transition-all duration-300 border border-neutral-100 text-center cursor-pointer`}
+            >
+              <div className="w-full aspect-square overflow-hidden rounded-sm bg-neutral-100">
+                <img src={img} alt={`Memory ${idx + 1}`} className="w-full h-full object-cover hover:scale-110 transition duration-500" />
+              </div>
+              <p className="font-serif text-[10px] mt-1.5 text-neutral-700 truncate">
+                {idx === 0 ? (data.first || 'Bride') : idx === 1 ? (data.second || 'Groom') : idx === 2 ? 'The Promise' : 'Forever'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 export function Invitation({ data, invitationId }: { data: Invite; invitationId?: string }) {
   if (data.template === 'heritage') return <HeritageInvitation data={data} />;
   if (data.template === 'romance') return <GardenRomance data={data} />;
@@ -162,13 +242,16 @@ export function Invitation({ data, invitationId }: { data: Invite; invitationId?
         </h1>
         <p className="spaced">ARE GETTING MARRIED</p>
         {data.hashtag && <p className="hashtag font-medium text-xs tracking-widest text-amber-700 mt-1">{data.hashtag}</p>}
-        {data.photo && <img className="couple-photo" src={data.photo} alt={coupleNames} />}
+        
+        {/* ANIMATED DYNAMIC PHOTO GALLERY */}
+        <AnimatedPhotoGallery data={data} />
+
         <p className="invitation-date">{formatDate(data.date)}</p>
         <div className="tiny-rule" />
         <p className="welcome">{data.message || data.openingBlessing}</p>
       </div>
 
-      {/* PARENTS & LINEAGE SECTION */}
+      {/* LINEAGE */}
       {data.showInvitation !== false && (data.brideFather || data.groomFather) && (
         <section className="invitation-lineage text-center my-6">
           <span className="eyebrow">FAMILY BLESSINGS</span>
@@ -200,7 +283,7 @@ export function Invitation({ data, invitationId }: { data: Invite; invitationId?
         </section>
       )}
 
-      {/* STORY OR PERSONALITY SECTION */}
+      {/* STORY / TAGS */}
       {data.showStory !== false && (data.story || data.coupleVibe || data.meetWay) && (
         <section>
           <span className="eyebrow">A LITTLE ABOUT US</span>
@@ -218,7 +301,7 @@ export function Invitation({ data, invitationId }: { data: Invite; invitationId?
         </section>
       )}
 
-      {/* CELEBRATION EVENTS */}
+      {/* EVENTS */}
       <section>
         <span className="eyebrow">LET’S CELEBRATE TOGETHER</span>
         <h2>The <em>celebration.</em></h2>
@@ -245,7 +328,7 @@ export function Invitation({ data, invitationId }: { data: Invite; invitationId?
         </div>
       </section>
 
-      {/* THINGS TO KNOW SECTION */}
+      {/* INFO CARDS */}
       {data.showInfo !== false && data.activeInfoCards && data.activeInfoCards.length > 0 && (
         <section className="things-to-know my-6">
           <span className="eyebrow">THINGS TO KNOW</span>
