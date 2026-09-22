@@ -1,0 +1,226 @@
+/* Responsive layout rules shared by the storefront, editor and invitations. */
+body{overflow-wrap:break-word}
+button,a,input,textarea{touch-action:manipulation}
+button svg,a svg{flex-shrink:0}
+.nav{position:relative;z-index:30}
+.menu{min-width:44px;min-height:44px;padding:10px}
+.nav-links a{padding:12px 0}
+.hero>*,.section-top>*,.template-card,.card-caption>div,.how>*,.questions>*,.builder>*{min-width:0}
+.hero h1,.section h2,.closing h2{text-wrap:balance}
+.card-caption{gap:16px;align-items:flex-start}
+.card-caption>a{flex:0 0 44px;min-height:44px;display:grid;place-items:center}
+.card-caption h3{line-height:1.15}
+.card-caption p{line-height:1.6}
+.filters{display:flex!important;width:100%!important;justify-content:flex-start!important}
+.filters button{min-height:44px}
+.template-preview{container-type:inline-size}
+.template-paper{min-width:0}
+.template-preview.editorial .template-paper h3{color:#f3efdc}
+.preview-dialog{width:calc(100% - 24px)!important;display:flex!important;flex-direction:column}
+.preview-dialog>h2{padding-right:28px;line-height:1.2;font-size:26px}
+.preview-scroll{min-height:0;flex:1}
+.preview-dialog>.button{flex-shrink:0;gap:12px;white-space:normal;text-align:center}
+.builder{grid-template-columns:minmax(340px,440px) minmax(0,1fr)}
+.builder-nav .text-button{min-height:44px}
+.editor{container-type:inline-size}
+.editor h1{font-size:clamp(40px,11cqw,51px)}
+.editor-intro,.field-help,.review-card p,.checkout-box p{font-size:14px;line-height:1.7}
+.editor-tabs{height:auto!important;min-height:48px}
+.editor-tabs button{white-space:normal;line-height:1.4!important;min-height:40px;flex:1;padding:8px 5px!important;font-size:14px!important}
+.editor .design-options{display:grid!important;grid-template-columns:1fr;gap:4px!important}
+.editor .design-options label{min-height:44px;padding:8px 10px;border:1px solid #dfcfd4;background:#fffcf6;cursor:pointer;font-size:14px!important;line-height:1.5}
+.editor .design-options label:has([data-state=checked]){background:#f3e7eb;border-color:#825169}
+.editor .design-options button{flex-shrink:0}
+.editor label,.review-card h2,.status-page h1{overflow-wrap:anywhere}
+.editor input:not([type=file]),.editor textarea{min-height:48px;max-width:100%;font-size:16px}
+.editor input[type=date],.editor input[type=time]{appearance:none;min-width:0;display:block}
+.editor .field-help{margin:0;font-weight:400}
+.editor .event-form{padding:24px 16px 4px}
+.event-form .remove{min-width:44px;min-height:44px;top:-26px;right:8px;display:grid;place-items:center}
+.editor .button{white-space:normal;text-align:center;line-height:1.5;gap:12px}
+.preview-toolbar{flex-wrap:wrap;letter-spacing:.06em;line-height:1.5}
+.preview-toolbar>span{font-size:12px}
+.preview-toolbar button{min-width:44px;min-height:44px;display:grid;place-items:center}
+.preview-device{width:100%;max-height:calc(100svh - 160px);scrollbar-gutter:stable;overscroll-behavior:auto}
+.mobile-preview-link,.mobile-edit-link{display:none}
+.status-page{width:100%;overflow-wrap:anywhere}
+.status-page input{font-size:16px}
+.status-page .text-button{margin:8px 10px;min-height:44px}
+.royal-demo-bar,.rose-demo-bar,.ed-demo-bar,.garden-demo-bar{flex-wrap:wrap;gap:4px 18px;min-height:64px;padding-block:10px;font-size:14px;line-height:1.5}
+.royal-demo-bar a,.rose-demo-bar a,.ed-demo-bar a,.garden-demo-bar a{min-height:44px;font-size:14px;display:inline-flex;align-items:center;gap:7px}
+.royal-demo-bar>span,.rose-demo-bar>span,.ed-demo-bar>span,.garden-demo-bar>span{font-size:12px;letter-spacing:.06em}
+.royal-template,.rose-invitation,.editorial-invite,.garden-invitation,.invitation{overflow-wrap:anywhere}
+.royal-template :is(p,h1,h2,h3,strong,figcaption),.rose-invitation :is(p,h1,h2,h3,h4,figcaption),.editorial-invite :is(p,h1,h2,h3,h4,figcaption),.garden-invitation :is(p,h1,h2,h3,h4,figcaption){min-width:0;max-width:100%}
+.royal-countdown{grid-template-columns:repeat(4,minmax(0,1fr))}
+.royal-countdown span,.garden-clock .royal-countdown span,.ed-countdown .royal-countdown span{font-size:12px;letter-spacing:0;line-height:1.5}
+.royal-countdown-section>p,.garden-clock .royal-countdown-section>p,.ed-countdown .royal-countdown-section>p{font-size:14px}
+.royal-controls button,.rose-v2 .rose-floating button,.ed-controls button,.garden-controls button{min-width:44px;min-height:44px}
+.royal-footer button,.ed-footer button,.garden-footer button,.garden-gallery-pause{min-height:44px;font-size:14px}
+.royal-event a,.ed-map,.garden-map,.rose-v2 .rose-button{min-height:44px;font-size:14px;white-space:normal}
+.royal-scene{display:grid;height:auto;min-height:820px;max-height:none}
+.royal-revealed,.royal-gates{grid-area:1/1}
+.royal-revealed{height:auto;min-height:820px}
+.royal-gates{position:relative;min-height:820px}
+.royal-entry{position:relative;min-height:100%;padding:100px 24px 65px}
+.royal-template:not(.is-open) .royal-revealed{visibility:hidden;max-height:0;min-height:0;overflow:hidden;padding:0}
+.is-open .royal-gates{position:absolute}
+.royal-venue,.royal-welcome,.royal-event p,.royal-event .royal-kicker{font-size:14px;letter-spacing:.03em}
+.royal-event{min-width:0}
+.royal-vellum h1{line-height:1.08}
+.rose-v2 .rose-hero{height:auto;min-height:850px}
+.rose-v2 .rose-hero-copy{height:auto;min-height:850px;padding-bottom:65px}
+.rose-v2 .rose-envelope-names{max-height:25%;overflow-y:auto;overflow-wrap:anywhere;line-height:1.2;padding:0 4px}
+.rose-v2 .rose-tap{min-height:48px;font-size:14px;white-space:normal;text-align:center}
+.rose-v2 .rose-envelope-content>.rose-overline,.rose-v2 .rose-envelope-bottom small{font-size:12px;line-height:1.6}
+.rose-v2 .rose-clock-unit>span,.rose-v2 .rose-clock-compact .rose-clock-unit>span{font-size:12px;letter-spacing:0}
+.rose-photo-main{position:relative;min-height:100%}
+.rose-photo-stack{aspect-ratio:auto}
+.rose-photo-window{height:auto;aspect-ratio:3/4}
+.rose-photo-main figcaption{height:auto;min-height:60px;padding:12px 6px}
+.rose-photo-main figcaption span{font-size:clamp(22px,5.6cqw,34px);line-height:1.25}
+.rose-event-date,.rose-v2 .rose-reveal-button{font-size:14px}
+.rose-date-under{gap:8px}
+.rose-date-under>span{font-size:12px;letter-spacing:.04em}
+.rose-date-under>small{font-size:14px}
+.rose-story,.rose-intro{padding-inline:9%}
+.ed-hero{display:grid;height:auto;min-height:850px}
+.ed-hero-copy,.ed-cover{grid-area:1/1}
+.ed-hero-copy{height:auto;min-height:850px;gap:150px;padding-top:30px}
+.ed-cover{position:relative;min-height:850px;display:flex;padding:75px 8%}
+.ed-cover-copy{position:relative;inset:auto;width:100%;min-width:0}
+.ed-closed .ed-hero-copy,.ed-opening .ed-hero-copy{visibility:hidden;max-height:0;min-height:0;padding:0;overflow:hidden}
+.ed-opening .ed-hero-copy{visibility:visible}
+.ed-cover-names{width:100%}
+.ed-running-head{gap:15px;font-size:12px;letter-spacing:.04em}
+.ed-running-head>span:first-child{max-width:78%}
+.ed-running-head>span:last-child{flex-shrink:0}
+.ed-controls{top:86px}
+.ed-hero-meta>span{flex:1;min-width:0}
+.ed-cover-date,.ed-cover-foot,.ed-eyebrow{font-size:12px;line-height:1.6}
+.ed-portrait figcaption{flex-wrap:wrap;font-size:12px;letter-spacing:.02em}
+.ed-portrait figcaption span:first-child{flex:1;min-width:0}
+.ed-event-copy>.ed-eyebrow{font-size:14px;letter-spacing:0}
+.ed-details p,.garden-details p,.garden-event>p:not(.garden-event-date){font-size:16px}
+.garden-hero{height:auto;min-height:850px;padding:90px 0 100px}
+.garden-book{display:grid;min-height:620px}
+.garden-letter,.garden-cover{grid-area:1/1;min-width:0}
+.garden-cover{position:relative;inset:auto;display:flex}
+.garden-cover-border{position:relative;inset:auto;flex:1;min-width:0;margin:16px;padding:26px 24px}
+.garden-cover-dateline .garden-cover-date{white-space:normal;font-size:14px;line-height:1.5}
+.garden-cover-topline .garden-eyebrow{font-size:12px;letter-spacing:.06em}
+.garden-cover .garden-open-button{font-size:14px;line-height:1.5;gap:8px;padding:13px 10px}
+.garden-cover-invite-line{margin-bottom:20px}
+.garden-letter .garden-eyebrow,.garden-eyebrow{font-size:12px;letter-spacing:.06em}
+.garden-letter-venue,.garden-event-date{font-size:14px}
+.garden-scenery{object-fit:cover}
+.garden-photo-stage .garden-photo figcaption{padding:16px 4px;line-height:1.3}
+.garden-photo-stage .garden-photo figcaption span{font-size:clamp(20px,4.6cqw,29px)}
+.garden-photo-stage .garden-photo-note{right:-17%;bottom:-10px}
+.garden-story-signature,.royal-signature{overflow-wrap:anywhere}
+.invitation{container-type:inline-size}
+.invitation .welcome,.invitation section>p,.invitation .event p{font-size:16px}
+.invitation .event-list{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.invitation.heritage .invitation-top{margin:clamp(12px,4cqw,22px)}
+.invitation .couple-photo{height:auto;aspect-ratio:4/5}
+@media(min-width:701px) and (max-width:1100px){
+ .template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .template-preview{height:430px;padding:30px clamp(25px,5vw,65px)}
+ .nav{padding-inline:4%;gap:18px}.nav-links{gap:18px}.nav>.button{display:none}
+ .hero{grid-template-columns:1fr 1fr;gap:35px}.hero h1{font-size:clamp(46px,6vw,60px)}
+ .hero-art{padding:30px}.floating-note{right:-5px;padding:12px}
+ .feature-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;padding-inline:7%;font-size:14px}
+}
+@media(max-width:900px){
+ .builder{grid-template-columns:1fr}.editor{max-width:680px;width:100%;margin:auto;padding:32px 6% 40px}
+ .live-preview{padding:28px 5% 36px}.preview-device{max-height:720px;max-height:85svh}
+ .mobile-preview-link{display:flex;width:fit-content;margin:-15px 0 20px;min-height:44px}
+ .mobile-edit-link{display:inline-flex;align-items:center;min-height:44px;font-size:14px;letter-spacing:0;text-decoration:underline}
+ .preview-toolbar{max-width:900px;margin:0 auto 18px}.preview-toolbar>span{flex-basis:100%}
+ .private-label{display:none}
+}
+@media(max-width:700px){
+ .nav{height:76px;padding-inline:6%}.nav-links.open{top:100%;padding:15px 6% 22px;gap:4px;box-shadow:0 12px 20px #541d3612}
+ .announcement{font-size:12px;letter-spacing:.04em;padding:10px 16px}
+ .hero{padding:36px 6% 52px;gap:36px;min-height:0}
+ .hero h1{font-size:clamp(42px,12.5vw,68px);letter-spacing:-1.5px;line-height:1.07;margin:20px 0}
+ .hero-copy>p{font-size:16px}.hero .eyebrow{font-size:12px;letter-spacing:.08em;line-height:1.6}
+ .hero .button{width:100%;justify-content:space-between;padding:16px 20px}
+ .hero .text-button{justify-content:center;width:100%;margin:4px 0 0;min-height:48px}
+ .hero-notes{margin-top:18px;gap:10px}.hero-notes span{font-size:12px}
+ .hero-art{width:94%;padding:26px clamp(25px,9vw,44px);transform:rotate(1deg)}
+ .hero-invite{padding:22px 14px}.hero-invite h2{font-size:clamp(25px,8vw,36px)}
+ .floating-note{right:-2%;max-width:85%;padding:12px;font-size:12px;gap:10px}
+ .feature-strip{font-size:13px;gap:22px 18px;padding:24px 6%}.feature-strip span{align-items:flex-start;line-height:1.6}.feature-strip svg{flex-shrink:0;margin-top:2px}
+ .section{padding:52px 6%}.section h2{font-size:clamp(34px,10vw,44px);line-height:1.12}
+ .filters{gap:8px!important}.filters button{padding:9px 12px!important;font-size:14px!important}
+ .template-grid{gap:30px}.template-preview{height:430px;padding:28px clamp(24px,10vw,60px)}
+ .template-paper{padding:24px 14px}.template-paper h3{font-size:36px}.romance .template-paper h3{font-size:26px;flex-wrap:wrap}
+ .template-preview.editorial .template-paper img,.template-preview.romance .template-paper img{height:145px}
+ .card-caption h3{font-size:27px}.card-caption p{font-size:14px}.card-caption{padding:17px 0 0}
+ .step{gap:18px}.step>span{font-size:23px;flex-shrink:0}.step p,.questions details{font-size:16px}
+ .questions summary{min-height:44px;align-items:center}.questions details p{padding-right:0}
+ .closing h2{font-size:clamp(36px,10vw,52px)}.closing .eyebrow{letter-spacing:.08em}
+ footer{padding:28px 6%;font-size:12px;gap:18px}
+ .royal-demo-bar>span,.rose-demo-bar>span,.ed-demo-bar>span,.garden-demo-bar>span{display:none}
+ .royal-demo-bar,.rose-demo-bar,.ed-demo-bar,.garden-demo-bar{padding:6px 4%;min-height:56px;gap:8px}
+ .builder-nav{height:auto;min-height:76px;padding:12px 5%;flex-wrap:wrap;gap:5px 14px}
+ .builder-nav .text-button{font-size:14px;gap:6px}.builder-nav .brand{font-size:29px}
+ .status-page{padding:24px 6%;margin:30px auto}.status-page h1{font-size:clamp(36px,11vw,48px)}
+}
+/* Container queries also apply inside the live editor and preview dialogs. */
+@container(max-width:480px){
+ [data-long-names=true] .garden-cover .garden-cover-names{font-size:clamp(23px,7cqw,32px);line-height:1.2}
+ [data-long-names=true] .garden-letter h1,[data-long-names=true] .royal-vellum h1,[data-long-names=true] .royal-entry-names{font-size:clamp(28px,9cqw,42px)}
+ [data-long-names=true] .ed-title-group h1{font-size:clamp(34px,10cqw,48px)}
+ [data-long-names=true] .rose-envelope-names,[data-long-names=true] .rose-hero-copy h1,[data-long-names=true] .rose-hero-copy h2{font-size:clamp(30px,10cqw,48px)}
+ .invitation[data-long-names=true] h1{font-size:clamp(28px,9cqw,40px)}
+ .form-row{grid-template-columns:minmax(0,1fr)}
+ .royal-scene,.royal-revealed,.royal-gates{min-height:720px}
+ .royal-entry{padding:95px 6% 55px}.royal-entry-seal{margin:28px 0;width:90px;height:90px;flex-shrink:0}
+ .royal-entry-names{font-size:clamp(38px,12cqw,56px);line-height:1.12;max-width:100%}
+ .royal-entry-date{font-size:14px;letter-spacing:.04em}.royal-open-button{max-width:100%;gap:10px;padding:16px;margin-top:32px;line-height:1.5}
+ .royal-revealed{padding:90px 5% 40px;gap:24px}.royal-vellum{width:100%;padding:30px 24px}
+ .royal-vellum h1{font-size:clamp(40px,13cqw,62px)}.royal-vellum>.royal-kicker,.royal-revealed>.royal-kicker{font-size:12px;letter-spacing:.06em}
+ .royal-date{font-size:18px;letter-spacing:.02em}.royal-welcome{font-size:16px;line-height:1.8}
+ .royal-template h2{font-size:clamp(34px,10cqw,45px);letter-spacing:-.5px}.royal-story{padding:55px 7%;gap:35px}
+ .royal-story-copy>p{font-size:16px}.royal-portrait{width:80%}.royal-portrait img{height:auto;aspect-ratio:4/5}
+ .royal-celebrations{padding:50px 6%}.royal-events{grid-template-columns:minmax(0,1fr)}.royal-event{padding:35px 24px}.royal-event h3{font-size:34px}
+ .royal-finale{height:auto;min-height:480px}.royal-finale h2{font-size:clamp(36px,11cqw,50px)}
+ .royal-countdown-section{padding:42px 5%}.royal-countdown{gap:6px}.royal-countdown>div{padding:20px 2px 16px}
+ .royal-template .royal-countdown strong,.editorial-invite .royal-countdown strong,.garden-clock .royal-countdown strong{font-size:clamp(21px,6.6cqw,32px)}
+ .royal-countdown span,.garden-clock .royal-countdown span,.ed-countdown .royal-countdown span{font-size:12px;margin-top:10px;letter-spacing:0}
+ .rose-v2 .rose-hero,.rose-v2 .rose-hero-copy{min-height:760px}.rose-v2 .rose-hero-copy{padding:100px 9% 45px}
+ .rose-v2 .rose-hero-copy h1,.rose-v2 .rose-hero-copy h2{font-size:clamp(42px,13cqw,64px);line-height:1.22}
+ .rose-v2 .rose-envelope-names{font-size:clamp(36px,10.8cqw,52px)}
+ .rose-v2 .rose-envelope-content>.rose-overline{left:9%;right:9%;font-size:12px;letter-spacing:.06em}
+ .rose-v2 .rose-count-section{padding:45px 6%}.rose-v2 .rose-countdown{gap:7px}.rose-v2 .rose-clock-unit>span{font-size:12px}
+ .rose-invitation h2.rose-script{font-size:clamp(34px,10cqw,46px);line-height:1.3}
+ .rose-photo-stage{padding:35px 9%}.rose-photo-stack{width:86%}.rose-photo-token{right:-10%;width:60px;height:60px;bottom:16%}
+ .rose-photo-main figcaption{gap:6px}.rose-photo-main figcaption svg{width:12px}.rose-photo-main figcaption span{font-size:24px}
+ .rose-date-section{padding-inline:5%}.rose-date-under{inset:16% 13% 30%}.rose-date-under>svg{width:17px;height:17px}
+ .rose-date-under>small{max-height:48px;overflow-y:auto;line-height:1.4}.rose-events-section,.rose-wishes{padding-inline:7%}
+ .ed-hero,.ed-hero-copy,.ed-cover{min-height:720px}.ed-cover{padding:80px 6% 40px}.ed-cover-copy{padding:30px 7%}
+ .ed-cover-monogram{font-size:clamp(72px,25cqw,110px);letter-spacing:-4px;margin:25px 0}
+ .ed-cover-names{font-size:clamp(26px,8cqw,36px);line-height:1.25}.ed-open-button{font-size:14px;max-width:100%;gap:12px;margin:28px 0;line-height:1.5;padding:15px}
+ .ed-hero-copy{padding:24px 7% 32px}.ed-title-group h1{font-size:clamp(43px,14cqw,68px);line-height:1.08;margin:24px 0}
+ .ed-hero-meta{flex-direction:column;font-size:14px;gap:8px}.ed-hero-meta>span:last-child{text-align:left}
+ .ed-pages h2{font-size:clamp(34px,9.5cqw,46px);line-height:1.12}.ed-intro,.ed-story,.ed-events,.ed-details{padding-inline:7%}
+ .ed-event{gap:14px}.ed-event-number{font-size:24px;min-width:30px}.ed-event h3{font-size:31px}
+ .ed-portrait-note{font-size:36px;right:-1%;bottom:15%}.ed-portrait figcaption{gap:6px}.ed-portrait figcaption span:first-child{flex-basis:100%;font-size:23px}
+ .ed-finale{height:auto;min-height:480px}.ed-finale-copy{min-height:480px;padding:45px 8%}.ed-finale-copy h2{font-size:clamp(48px,14cqw,68px)}
+ .garden-hero{min-height:760px;padding:80px 0 95px}.garden-book{width:86%;min-height:560px}.garden-letter{min-height:560px;padding:35px 9%}
+ .garden-cover-border{margin:12px;padding:20px 16px}.garden-cover-topline{gap:8px}.garden-cover-topline .garden-eyebrow{font-size:12px;letter-spacing:.02em}
+ .garden-cover-portrait{height:150px;width:62%;margin:20px auto 18px}.garden-cover .garden-cover-names{font-size:clamp(30px,9cqw,42px);line-height:1.12}
+ .garden-cover-dateline{gap:7px}.garden-cover-dateline .garden-cover-date{font-size:14px}.garden-cover-dateline>span:first-child,.garden-cover-dateline>span:last-child{max-width:18px}
+ .garden-cover .garden-open-button{font-size:14px}.garden-letter h1{font-size:clamp(36px,11cqw,50px)}
+ .garden-welcome,.garden-events{padding-inline:7%}.garden-story{margin-inline:7%;padding-inline:0}.garden-details{padding-inline:8%}
+ .garden-pages h2,.garden-gallery-heading h2{font-size:clamp(32px,9cqw,43px);line-height:1.15}
+ .garden-clock .royal-countdown-section{padding:42px 5%}.garden-clock .royal-countdown{gap:6px}
+ .garden-photo-stage{padding:35px 17% 98px}.garden-photo-stage .garden-photo-note{font-size:19px;padding:10px;right:-10%;bottom:-65px}
+ .garden-echo-left{transform:translateX(-12%) rotate(-9deg) translateZ(-65px)}.garden-echo-right{transform:translateX(12%) rotate(9deg) translateZ(-40px)}
+ .invitation h1{font-size:clamp(35px,11cqw,49px)}.invitation h2{font-size:clamp(32px,10cqw,40px)}
+ .invitation section{padding:38px 6%}.invitation .event-list{grid-template-columns:minmax(0,1fr)}
+}
+.preview-device .royal-scene,.preview-scroll .royal-scene,.preview-device .rose-v2 .rose-hero,.preview-device .editorial-invite .ed-hero,.preview-device .garden-hero{height:auto;min-height:760px;max-height:none}
+.preview-device:not(.wide) .invitation[data-long-names=true] h1{font-size:clamp(24px,8cqw,36px);line-height:1.2}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

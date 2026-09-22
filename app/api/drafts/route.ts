@@ -1,0 +1,11 @@
+import {cookie,database,fail,hash,inviteSchema,runtime,sameOrigin} from '@/lib/invites';
+export async function POST(req:Request){let photoKey:string|undefined;try{
+if(!sameOrigin(req))return fail('Please save from Wedlink.',403);
+if(Number(req.headers.get('content-length')||0)>6*1024*1024)return fail('Choose a photo smaller than 5 MB.',413);
+const form=await req.formData();const parsed=inviteSchema.safeParse(JSON.parse(String(form.get('data')||'{}')));if(!parsed.success)return fail('Please check your names, dates and event details.');
+const id=crypto.randomUUID();const token=cookie(req)||crypto.randomUUID()+crypto.randomUUID();const owner=await hash(token);
+const count=await database().prepare('SELECT COUNT(*) AS n FROM invitations WHERE owner_hash = ? AND created_at > ?').bind(owner,new Date(Date.now()-3600000).toISOString()).first<{n:number}>();if((count?.n||0)>=10)return fail('You have saved several drafts recently. Please try again in an hour.',429);
+const file=form.get('photo');if(file instanceof File&&file.size){if(file.size>5*1024*1024)return fail('Choose a photo smaller than 5 MB.',413);const b=new Uint8Array(await file.arrayBuffer());const jpeg=b[0]===255&&b[1]===216&&b[2]===255;const png=b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71;const webp=new TextDecoder().decode(b.slice(0,4))==='RIFF'&&new TextDecoder().decode(b.slice(8,12))==='WEBP';if(!jpeg&&!png&&!webp)return fail('Please upload a JPG, PNG or WebP photo.');photoKey='photos/'+id;await runtime().BUCKET.put(photoKey,b,{httpMetadata:{contentType:jpeg?'image/jpeg':png?'image/png':'image/webp'}})}
+await database().prepare('INSERT INTO invitations (id, owner_hash, data, photo_key, status, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(id,owner,JSON.stringify(parsed.data),photoKey||null,'draft',new Date().toISOString()).run();
+return Response.json({id,status:'draft'},{headers:{'Set-Cookie':`wedlink_owner=${token}; HttpOnly; ${new URL(req.url).protocol==='https:'?'Secure; ':''}SameSite=Lax; Path=/; Max-Age=31536000`,'Cache-Control':'no-store'}});
+}catch(e){if(photoKey)await runtime().BUCKET.delete(photoKey).catch(()=>{});console.error('Save failed',e);return fail('We couldn’t save your invitation. Your details are still here; please try again.',503)}}

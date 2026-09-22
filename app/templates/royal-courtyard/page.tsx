@@ -1,0 +1,6 @@
+import Link from 'next/link';
+import {ArrowLeft,ArrowUpRight} from 'lucide-react';
+import {example} from '@/app/shared';
+import RoyalCourtyard from '@/app/royal-courtyard';
+export const metadata={title:'The Royal Courtyard — 3D Wedding Invitation | Wedlink',description:'Step through golden palace doors into your wedding celebration. An interactive invitation by Wedlink.'};
+export default function Page(){return <><header className="royal-demo-bar"><Link href="/#collection"><ArrowLeft size={15}/><span>Wedlink collection</span></Link><span>TEMPLATE 01 · SAMPLE INVITATION</span><Link href="/create?template=royal">Make it yours <ArrowUpRight size={15}/></Link></header><RoyalCourtyard data={{...example,template:'royal',timezone:'Asia/Kolkata',story:'We met over a shared love of travel, long conversations and finding magic in the ordinary. From our first coffee to our favourite sunset in Udaipur, every little adventure brought us here. Now, with our families beside us, we are ready for our greatest adventure yet.',events:[{name:'The Wedding',date:'2027-12-12',time:'16:00',venue:'The Garden Palace',address:'Udaipur, Rajasthan, India'},{name:'An Evening of Celebration',date:'2027-12-12',time:'19:00',venue:'The Palace Courtyard',address:'Udaipur, Rajasthan, India'}]}}/></>}

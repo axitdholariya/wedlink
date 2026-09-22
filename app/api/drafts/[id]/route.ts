@@ -1,0 +1,2 @@
+import {fail,owned,publicData,rowById} from '@/lib/invites';
+export async function GET(req:Request,{params}:{params:Promise<{id:string}>}){try{const {id}=await params;const row=await rowById(id);if(!row||!await owned(req,row))return fail('This private draft is only available in the browser where it was saved.',404);return Response.json({id:row.id,status:row.status,data:publicData(row)},{headers:{'Cache-Control':'no-store'}})}catch{return fail('Your saved invitation is temporarily unavailable. Please try again.',503)}}

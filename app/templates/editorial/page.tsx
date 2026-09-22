@@ -1,0 +1,6 @@
+import Link from 'next/link';
+import {ArrowLeft,ArrowUpRight} from 'lucide-react';
+import EditorialInvitation from '@/app/editorial-invitation';
+import {example} from '@/app/shared';
+export const metadata={title:'The Editorial — Template 03 | Wedlink',description:'A cinematic, photo-led wedding invitation with a live countdown. Explore the complete sample and make it yours.'};
+export default function Page(){return <><header className="ed-demo-bar"><Link href="/#collection"><ArrowLeft size={15}/> Wedlink</Link><span>TEMPLATE 03 · THE EDITORIAL · SAMPLE</span><Link href="/create?template=editorial">Make it yours <ArrowUpRight size={15}/></Link></header><EditorialInvitation data={{...example,template:'editorial',timezone:'Asia/Kolkata',story:'It started with a conversation neither of us wanted to end. A few coffees became long walks. Long walks became little adventures. And somewhere between the everyday moments, we found our favourite place: together. Now we are choosing each other, for all the chapters still to come.',dressCode:'Evening elegance. Wear something that makes you feel wonderful.',accommodation:'Our families will be happy to help with nearby hotel recommendations.',gifts:'Your company is our favourite gift. Come with your love and your dancing shoes.'}}/></>}
