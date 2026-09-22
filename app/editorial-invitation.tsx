@@ -9,7 +9,6 @@ import {
   RotateCcw,
   MapPin,
   Heart,
-  Camera,
 } from 'lucide-react';
 import type { Invite } from './shared';
 import WeddingCountdown from './wedding-countdown';
@@ -34,8 +33,8 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
   const second = data.second || 'Your partner';
   const open = stage === 'open';
 
-  // Extract all available photos into a clean array
-  const rawPhotos: string[] = Array.isArray((data as any).photos)
+  // 1. Saari uploaded photos nikalna (array ya single keys)
+  const rawPhotos: string[] = Array.isArray((data as any).photos) && (data as any).photos.length > 0
     ? (data as any).photos.filter(Boolean)
     : [
         data.photo,
@@ -43,15 +42,19 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
         (data as any).photo2,
         (data as any).photo3,
         (data as any).photo4,
-      ].filter((p): p is string => Boolean(p));
+      ]
+        .flat()
+        .filter((p): p is string => typeof p === 'string' && Boolean(p.trim()));
 
-  // Remove duplicates if same photo string is passed
-  const photos = Array.from(new Set(rawPhotos));
+  const photos = rawPhotos.length > 0 ? rawPhotos : (data.photo ? [data.photo] : []);
 
-  // Assign distinct photos to different sections
-  const heroPhoto = photos[0] || data.photo;
-  const storyPhoto = photos || photos[0] || data.photo;
-  const finalePhoto = photos[photos.length - 1] || photos[0] || data.photo;
+  // 2. Destructuring so markdown never strips indices
+  const [photo1, photo2, photo3, photo4] = photos;
+
+  // Har section ko alag photo assign karna
+  const heroPhoto = photo1 || data.photo;
+  const storyPhoto = photo2 || photo1 || data.photo;
+  const finalePhoto = photo4 || photo3 || photo2 || photo1 || data.photo;
 
   // Respect user preference for reduced motion
   useEffect(() => {
@@ -137,7 +140,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
       ref={root}
       className={'editorial-invite ed-' + stage + (motion ? '' : ' ed-paused')}
     >
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (Photo 1) */}
       <section className="ed-hero" onPointerMove={tilt} onPointerLeave={reset}>
         {heroPhoto && (
           <img
@@ -254,7 +257,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             <WeddingCountdown data={data} />
           </div>
 
-          {/* 4. STORY SECTION */}
+          {/* 4. STORY SECTION (Photo 2) */}
           <section className="ed-story ed-reveal">
             <div className="ed-story-heading">
               <span className="ed-eyebrow">01 / OUR STORY</span>
@@ -306,7 +309,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             </div>
           </section>
 
-          {/* 5. DEDICATED GALLERY SECTION (Shows all uploaded photos) */}
+          {/* 5. DEDICATED GALLERY SECTION (Saari Uploaded Photos) */}
           {photos.length > 0 && (
             <section className="ed-gallery ed-reveal">
               <div className="ed-section-heading">
@@ -442,7 +445,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             </section>
           )}
 
-          {/* 8. FINALE */}
+          {/* 8. FINALE (Photo 4 ya 3 ya 1) */}
           <section className="ed-finale ed-reveal">
             {finalePhoto && <img src={finalePhoto} alt="" loading="lazy" />}
             <div className="ed-finale-shade" />
