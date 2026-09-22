@@ -97,7 +97,6 @@ export default function CreatePage() {
   } | null>(null);
   const [promoError, setPromoError] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [generatedSlug, setGeneratedSlug] = useState('');
   const [copied, setCopied] = useState(false);
 
   // Basic Info State
@@ -250,35 +249,26 @@ export default function CreatePage() {
     }
   };
 
+  // Direct 3D Live URL pointing to template route
+  const liveUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/templates/${template}`
+      : `https://wedlink.co/templates/${template}`;
+
   // Handle Publish / Payment Action
   const handlePublishProcess = async () => {
     setIsProcessing(true);
 
-    const cleanFirst = (firstName || 'couple').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const cleanSecond = (secondName || 'wedding').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const slug = `${cleanFirst}-${cleanSecond}`;
-    setGeneratedSlug(slug);
-
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`wedlink_${slug}`, JSON.stringify(inviteData));
-      localStorage.setItem('wedlink_last_invite', JSON.stringify({ slug, ...inviteData }));
-    }
-
-    try {
-      await fetch('/api/invitations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, template, ...inviteData }),
-      });
-    } catch (err) {
-      console.log('Saved locally to client storage.');
+      localStorage.setItem(`wedlink_custom_invite`, JSON.stringify(inviteData));
+      localStorage.setItem('wedlink_last_invite', JSON.stringify(inviteData));
     }
 
     if (finalPrice === 0) {
       setTimeout(() => {
         setIsProcessing(false);
         setPublishStep('success');
-      }, 700);
+      }, 600);
       return;
     }
 
@@ -306,15 +296,11 @@ export default function CreatePage() {
       setTimeout(() => {
         setIsProcessing(false);
         setPublishStep('success');
-      }, 1000);
+      }, 800);
     }
   };
 
-  const liveUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/invite/${generatedSlug || 'wedding'}`
-      : `https://wedlink.co/invite/${generatedSlug || 'wedding'}`;
-
+  // WhatsApp Share Text
   const whatsappShareText = encodeURIComponent(
     `💍 With joyful hearts, ${firstName} & ${secondName} invite you to celebrate our wedding!\n\nTap the link below to open our interactive 3D wedding invitation:\n🔗 ${liveUrl}\n\nWe can't wait to celebrate with you!`
   );
@@ -1149,7 +1135,7 @@ export default function CreatePage() {
                   Congratulations! {firstName} & {secondName}'s invitation is now live worldwide.
                 </p>
 
-                {/* Live Link Box */}
+                {/* Live Link Box - Points directly to working 3D template */}
                 <div className="mt-5 rounded-2xl border border-[#C9A24F] bg-white p-4 shadow-xs text-left">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A7B75]">
                     Your Official Link
@@ -1194,7 +1180,7 @@ export default function CreatePage() {
                   </a>
 
                   <a
-                    href={`/invite/${generatedSlug}`}
+                    href={`/templates/${template}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex w-full items-center justify-center gap-1.5 pt-2 text-xs font-bold text-[#C9A24F] hover:underline cursor-pointer font-sans"
