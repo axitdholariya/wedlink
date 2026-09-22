@@ -1,285 +1,323 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, Check, Heart, Sparkles, MapPin, Music } from 'lucide-react';
 
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState<boolean>(false);
-
   return (
-    <div className="min-h-screen bg-[#FAF6EE] text-[#1A1E26] font-sans flex flex-col relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#FFF9F2] text-[#241C24] font-['Manrope',sans-serif] selection:bg-[#541D36] selection:text-[#FFF9F2] flex flex-col">
       
-      {/* 1. TOP HEADER */}
-      <header className="h-16 px-6 sm:px-12 flex items-center justify-between border-b border-neutral-200 bg-[#FAF6EE]/90 backdrop-blur-md sticky top-0 z-30">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-wider text-[#1A1E26]">WEDLINK</span>
+      {/* Brand Typography */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap');
+        .font-brand-heading { font-family: 'Cormorant Garamond', Georgia, serif; }
+        .font-brand-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+
+      {/* 1. TOP ANNOUNCEMENT BAR */}
+      <div className="bg-[#541D36] text-[#FFF9F2] text-[11px] py-2 px-4 text-center font-medium tracking-wider">
+        A little link. A lifetime of memories.
+      </div>
+
+      {/* 2. MAIN NAVBAR */}
+      <header className="h-20 px-6 sm:px-12 lg:px-16 flex items-center justify-between border-b border-[#B68A50]/20 bg-[#FFF9F2]/90 backdrop-blur-md sticky top-0 z-40">
+        
+        {/* Official Ribbon 'W' Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-xl bg-[#541D36] flex items-center justify-center p-1.5 shadow-sm group-hover:scale-105 transition-transform">
+            <svg viewBox="0 0 100 85" fill="none" className="w-full h-full text-[#FFF9F2]">
+              <path 
+                d="M12 25 C18 10, 32 10, 38 30 L45 55 C48 65, 52 65, 55 55 L62 30 C68 10, 82 10, 88 25 C94 40, 85 62, 70 75 C60 84, 52 84, 48 78 C44 72, 45 62, 48 50 C42 62, 35 75, 26 75 C14 75, 6 50, 12 25 Z" 
+                fill="currentColor" 
+                opacity="0.95"
+              />
+            </svg>
+          </div>
+          <span className="font-brand-heading text-2xl font-bold tracking-wide text-[#541D36]">
+            Wedlink
+          </span>
         </Link>
 
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => setIsCollectionModalOpen(true)}
-            className="text-xs font-semibold uppercase tracking-wider text-neutral-600 hover:text-neutral-900"
-          >
-            Templates
-          </button>
+        {/* Center Nav Links */}
+        <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-[#7A6B72]">
+          <a href="#collection" className="hover:text-[#541D36] transition-colors">The collection</a>
+          <a href="#how-it-works" className="hover:text-[#541D36] transition-colors">How it works</a>
+          <a href="#questions" className="hover:text-[#541D36] transition-colors">Questions</a>
+        </nav>
+
+        {/* Right CTA */}
+        <div>
           <Link
             href="/create"
-            className="px-4 py-2 rounded-full bg-[#1A1E26] text-white text-xs font-semibold uppercase tracking-wider hover:bg-neutral-800 transition-all"
+            className="px-5 py-2.5 rounded-lg bg-[#541D36] hover:bg-[#43162B] text-[#FFF9F2] font-semibold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center gap-1.5"
           >
-            Create
+            Create your invitation <ArrowUpRight size={14} />
           </Link>
         </div>
       </header>
 
-      {/* 2. MAIN STOREFRONT */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col items-center">
+      {/* 3. HERO SECTION (SCREENSHOT 1 EXACT DESIGN) */}
+      <section className="flex-1 max-w-7xl mx-auto w-full px-6 sm:px-12 lg:px-16 py-12 lg:py-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
         
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="font-serif italic text-4xl sm:text-6xl text-[#3b1219]">
-            ... your kind of love.
+        {/* Left Column: Story Headline & CTAs */}
+        <div className="w-full lg:w-1/2 space-y-6 text-left">
+          
+          <div className="text-[11px] uppercase tracking-[0.25em] font-bold text-[#7A6B72] flex items-center gap-2">
+            <span className="w-6 h-px bg-[#B68A50]" /> FOR THE BEGINNING OF FOREVER
+          </div>
+
+          <h1 className="font-brand-heading italic text-5xl sm:text-6xl lg:text-7xl font-bold text-[#541D36] leading-[1.08] tracking-tight">
+            Your love story.<br />
+            <span className="not-italic font-brand-heading">Beautifully linked.</span>
           </h1>
 
-          {/* Filter Pills */}
-          <div className="flex justify-center gap-2 mt-5">
-            <button
-              type="button"
-              onClick={() => setSelectedCategory('Romantic')}
-              className={`px-5 py-1.5 rounded-full border text-xs font-medium transition-all ${
-                selectedCategory === 'Romantic'
-                  ? 'bg-white border-neutral-900 text-neutral-900 shadow-sm'
-                  : 'border-neutral-300 text-neutral-500 hover:border-neutral-400'
-              }`}
+          <p className="text-sm sm:text-base text-[#7A6B72] leading-relaxed max-w-lg font-brand-body">
+            A wedding website that feels like you. Thoughtfully designed, effortlessly personalized, and ready to share with everyone you love.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <a
+              href="#collection"
+              className="px-7 py-3.5 rounded-lg bg-[#541D36] hover:bg-[#43162B] text-[#FFF9F2] font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center gap-2 hover:scale-[1.02]"
             >
-              Romantic
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedCategory('Indian')}
-              className={`px-5 py-1.5 rounded-full border text-xs font-medium transition-all ${
-                selectedCategory === 'Indian'
-                  ? 'bg-white border-neutral-900 text-neutral-900 shadow-sm'
-                  : 'border-neutral-300 text-neutral-500 hover:border-neutral-400'
-              }`}
+              Find your invitation <ArrowUpRight size={15} />
+            </a>
+
+            <a
+              href="#how-it-works"
+              className="px-5 py-3.5 text-xs font-bold text-[#241C24] hover:text-[#541D36] transition-colors flex items-center gap-1.5"
             >
-              Indian
-            </button>
+              Take a little peek <ArrowRight size={14} />
+            </a>
           </div>
+
+          {/* Checklist Trust Badges */}
+          <div className="flex items-center gap-6 pt-4 text-xs text-[#7A6B72]">
+            <span className="flex items-center gap-1.5">
+              <Check size={14} className="text-[#B68A50] stroke-" /> Make it yours in minutes
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Check size={14} className="text-[#B68A50] stroke-" /> One link for every guest
+            </span>
+          </div>
+
         </div>
 
-        {/* 3-PHONE CAROUSEL */}
-        <div className="w-full flex justify-center items-center py-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-center max-w-5xl w-full">
+        {/* Right Column: Signature Invitation Showcase Card */}
+        <div className="w-full lg:w-1/2 flex justify-center relative">
+          
+          {/* Subtle Arch Shadow Backdrop */}
+          <div className="relative w-full max-w-md">
             
-            {/* 1. LEFT PHONE: THE ROSE LETTER */}
-            <div className="flex flex-col items-center opacity-85 hover:opacity-100 transition-opacity">
-              <div 
-                onClick={() => setIsCollectionModalOpen(true)}
-                className="w-[260px] h-[480px] bg-[#1A1E26] rounded-[36px] p-2.5 shadow-xl border-4 border-[#1A1E26] cursor-pointer flex flex-col relative overflow-hidden"
-              >
-                <div className="w-20 h-3.5 bg-[#1A1E26] rounded-b-xl mx-auto mb-2" />
-                <div className="flex-1 bg-[#E8C2C8] rounded-[24px] p-4 flex flex-col justify-between border border-pink-300 text-center relative overflow-hidden">
-                  <div className="pt-4">
-                    <span className="text-[8px] uppercase tracking-widest text-[#541D36] font-bold block">
-                      3D WAX SEAL
-                    </span>
-                    <h3 className="font-serif text-xl font-bold text-[#541D36] mt-1">Veer & Zara</h3>
+            {/* The Outer Arch Container */}
+            <div className="bg-[#EADBCC]/50 rounded-t-[180px] rounded-b-3xl p-6 sm:p-8 pt-10 shadow-lg border border-[#B68A50]/20 relative">
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[#7A6B72] font-bold block text-center mb-4">
+                YOUR NEXT CHAPTER STARTS HERE
+              </span>
+
+              {/* The Inner Pure White Invitation Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-2xl border border-neutral-100 text-center relative space-y-4">
+                
+                <div>
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-[#7A6B72] font-semibold block">
+                    TOGETHER WITH OUR FAMILIES
+                  </span>
+                  <h3 className="font-brand-heading text-3xl font-bold text-[#241C24] mt-1">
+                    Aarav & Meera
+                  </h3>
+                  <span className="text-[8px] uppercase tracking-widest text-[#B68A50] font-bold block mt-0.5">
+                    ARE GETTING MARRIED
+                  </span>
+                </div>
+
+                {/* Arched Couple Photo Frame */}
+                <div className="w-full h-56 sm:h-64 rounded-t-full rounded-b-xl overflow-hidden relative border-2 border-[#B68A50]/30 shadow-inner">
+                  <img
+                    src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800"
+                    alt="Aarav & Meera"
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+
+                {/* Date Block */}
+                <div className="pt-2 border-t border-[#B68A50]/15 space-y-0.5">
+                  <span className="text-[9px] uppercase tracking-widest text-[#7A6B72] font-bold block">
+                    DECEMBER
+                  </span>
+                  <div className="font-brand-heading text-3xl font-bold text-[#541D36] leading-none">
+                    12
                   </div>
-                  <div className="w-20 h-20 mx-auto rounded-full bg-white/40 border border-white/60 flex items-center justify-center text-3xl shadow">
-                    💌
-                  </div>
-                  <div className="py-2 bg-white/80 rounded-lg text-[10px] font-bold text-[#541D36]">
-                    Explore design ↗
-                  </div>
+                  <span className="text-[9px] uppercase tracking-widest text-[#7A6B72] font-semibold block pt-1">
+                    UDAIPUR, INDIA
+                  </span>
+                  <p className="text-[10px] text-neutral-400 italic pt-1">
+                    We saved you a place in our hearts
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Floating Badge (Bottom Right) */}
+              <div className="absolute -bottom-4 right-2 sm:-right-4 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-[#B68A50]/20 flex items-center gap-2 text-left">
+                <div className="w-7 h-7 rounded-full bg-[#541D36]/10 flex items-center justify-center text-[#541D36]">
+                  <Heart size={14} className="fill-[#541D36]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-[#241C24] block leading-tight">A little more you.</span>
+                  <span className="text-[9px] text-[#7A6B72] block">A lot more meaningful.</span>
                 </div>
               </div>
-              <div className="mt-3 text-center">
-                <h4 className="font-serif text-lg font-bold text-neutral-800">The Rose Letter</h4>
-                <p className="text-[11px] text-neutral-500">Wax seal unboxing</p>
-              </div>
+
             </div>
 
-            {/* 2. CENTER PHONE: THE ROYAL COURTYARD (EMMA & NOAH) */}
-            <div className="flex flex-col items-center">
-              <div className="w-[300px] sm:w-[320px] h-[550px] sm:h-[580px] bg-[#1A1E26] rounded-[42px] p-3 shadow-2xl border-4 border-amber-600/60 flex flex-col relative overflow-hidden ring-4 ring-amber-500/10">
-                <div className="w-28 h-4 bg-[#1A1E26] rounded-b-xl mx-auto mb-2 z-20" />
+            <div className="text-center mt-6">
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[#7A6B72] font-bold">
+                DESIGNED FOR LOVE • MADE FOR SHARING
+              </span>
+            </div>
 
-                {/* Inner Screen: Royal Carved Sandstone Entrance */}
-                <div className="flex-1 bg-[#9A7B4F] rounded-[28px] p-3 flex flex-col justify-between text-center relative overflow-hidden border border-amber-300/40">
-                  
-                  {/* Inner Ivory Card with Gold Border */}
-                  <div className="flex-1 bg-[#FFF9F2] rounded-[20px] p-5 flex flex-col justify-between text-center relative z-10 border border-amber-500/30 shadow-xl">
-                    <div className="space-y-1 pt-2">
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-amber-700 font-bold block">
-                        INTERACTIVE 3D ENTRANCE
-                      </span>
-                      <span className="text-[9px] text-neutral-500 uppercase tracking-widest block pt-2">
-                        THE WEDDING OF
-                      </span>
-                      <h2 className="font-serif text-3xl font-bold text-neutral-900 leading-tight pt-1">
-                        Emma
-                      </h2>
-                      <span className="font-serif italic text-2xl text-amber-700 block leading-none">&</span>
-                      <h2 className="font-serif text-3xl font-bold text-neutral-900 leading-tight">
-                        Noah
-                      </h2>
-                      <p className="text-[11px] font-mono font-bold text-neutral-600 tracking-widest pt-2">
-                        12 · 12 · 2027
-                      </p>
-                    </div>
+          </div>
 
-                    <p className="text-[9px] tracking-wider text-neutral-500 uppercase font-semibold px-2 leading-relaxed">
-                      TOGETHER IS A BEAUTIFUL PLACE TO BE
-                    </p>
+        </div>
 
-                    <Link
-                      href="/templates/royal-courtyard"
-                      className="w-full py-2.5 px-4 bg-white border border-neutral-300 text-neutral-900 hover:bg-neutral-900 hover:text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      Explore design ↗
-                    </Link>
-                  </div>
+      </section>
+
+      {/* 4. SIGNATURE TEMPLATES COLLECTION SECTION */}
+      <section id="collection" className="py-20 px-6 sm:px-12 bg-white border-t border-[#B68A50]/20">
+        <div className="max-w-7xl mx-auto text-center">
+          
+          <div className="max-w-2xl mx-auto mb-12">
+            <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#B68A50] block mb-2">
+              The Design Catalog
+            </span>
+            <h2 className="font-brand-heading text-4xl sm:text-5xl font-bold text-[#541D36]">
+              Signature Interactive Templates
+            </h2>
+            <p className="text-xs sm:text-sm text-[#7A6B72] mt-2">
+              Tap any design below to experience live 3D unboxing, royal doors, and music.
+            </p>
+          </div>
+
+          {/* Templates Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* 1. THE ROYAL COURTYARD (Yellow / Gold Royal Fold) */}
+            <div className="p-6 rounded-3xl bg-[#FFF9F2] border-2 border-[#B68A50] text-left space-y-4 shadow-lg hover:shadow-xl transition-shadow flex flex-col justify-between">
+              <div>
+                <div className="h-44 rounded-2xl bg-[#541D36] text-[#FFF9F2] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden border border-[#B68A50]/40">
+                  <span className="text-3xl mb-2">🏰</span>
+                  <h4 className="font-brand-heading text-2xl font-bold text-[#FFF9F2]">The Royal Courtyard</h4>
+                  <p className="text-[10px] text-[#E8C9CD] uppercase tracking-widest mt-1">Carved Palace Doors & Shehnai</p>
                 </div>
+                <h3 className="font-brand-heading text-2xl font-bold text-[#541D36] mt-4">The Royal Courtyard</h3>
+                <p className="text-xs text-[#7A6B72] leading-relaxed mt-1">
+                  Sliding palace gates with lion handles, sacred Ganesha shloka, shehnai symphony, and live 4-box countdown.
+                </p>
               </div>
 
-              {/* Bottom Caption with Circle Arrow */}
-              <div className="mt-4 flex items-center gap-3">
+              <div className="pt-4 border-t border-[#B68A50]/20 flex items-center justify-between">
+                <span className="text-xs font-bold text-[#541D36]">₹1,499</span>
                 <Link
                   href="/templates/royal-courtyard"
-                  className="w-8 h-8 rounded-full border border-neutral-400 flex items-center justify-center text-neutral-700 hover:bg-neutral-900 hover:text-white transition-colors"
+                  className="px-4 py-2 rounded-lg bg-[#541D36] hover:bg-[#43162B] text-amber-200 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow"
                 >
-                  <ArrowUpRight size={14} />
+                  Live Preview <ArrowUpRight size={13} />
                 </Link>
-                <div className="text-left">
-                  <Link
-                    href="/templates/royal-courtyard"
-                    className="font-serif text-xl font-bold text-neutral-900 hover:underline block leading-tight"
-                  >
-                    The Royal Courtyard
-                  </Link>
-                  <span className="text-xs text-neutral-500">3D palace entrance • Cinematic</span>
-                </div>
               </div>
             </div>
 
-            {/* 3. RIGHT PHONE: THE EDITORIAL */}
-            <div className="flex flex-col items-center opacity-85 hover:opacity-100 transition-opacity">
-              <div 
-                onClick={() => setIsCollectionModalOpen(true)}
-                className="w-[260px] h-[480px] bg-[#1A1E26] rounded-[36px] p-2.5 shadow-xl border-4 border-[#1A1E26] cursor-pointer flex flex-col relative overflow-hidden"
-              >
-                <div className="w-20 h-3.5 bg-[#1A1E26] rounded-b-xl mx-auto mb-2" />
-                <div className="flex-1 bg-[#2C3830] rounded-[24px] p-4 flex flex-col justify-between border border-emerald-800 text-center relative overflow-hidden text-white">
-                  <div className="pt-4">
-                    <span className="text-[8px] uppercase tracking-widest text-amber-300 font-bold block">
-                      MODERN EDITORIAL
-                    </span>
-                    <h3 className="font-serif text-xl font-bold text-white mt-1">Maya & Liam</h3>
-                  </div>
-                  <div className="w-20 h-20 mx-auto rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-3xl shadow">
-                    ✨
-                  </div>
-                  <div className="py-2 bg-white/20 rounded-lg text-[10px] font-bold text-white">
-                    Explore design ↗
-                  </div>
+            {/* 2. THE ROSE LETTER (Blush Pink Envelope) */}
+            <div className="p-6 rounded-3xl bg-[#FFF9F2] border border-[#B68A50]/30 text-left space-y-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div>
+                <div className="h-44 rounded-2xl bg-[#E8C2C8] text-[#541D36] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden border border-pink-300">
+                  <span className="text-3xl mb-2">💌</span>
+                  <h4 className="font-brand-heading text-2xl font-bold text-[#541D36]">The Rose Letter</h4>
+                  <p className="text-[10px] text-[#541D36] uppercase tracking-widest mt-1">Wax Seal & Scratch Card</p>
                 </div>
+                <h3 className="font-brand-heading text-2xl font-bold text-[#541D36] mt-4">The Rose Letter</h3>
+                <p className="text-xs text-[#7A6B72] leading-relaxed mt-1">
+                  Blush pink envelope unboxing, interactive gold foil scratch-to-reveal heart card, and timeline itinerary.
+                </p>
               </div>
-              <div className="mt-3 text-center">
-                <h4 className="font-serif text-lg font-bold text-neutral-800">The Editorial</h4>
-                <p className="text-[11px] text-neutral-500">Cinematic opening</p>
+
+              <div className="pt-4 border-t border-[#B68A50]/20 flex items-center justify-between">
+                <span className="text-xs font-bold text-[#541D36]">₹1,499</span>
+                <Link
+                  href="/templates/rose-letter"
+                  className="px-4 py-2 rounded-lg bg-[#541D36] hover:bg-[#43162B] text-amber-200 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow"
+                >
+                  Live Preview <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+
+            {/* 3. HERITAGE RAJPUTANA */}
+            <div className="p-6 rounded-3xl bg-[#FFF9F2] border border-[#B68A50]/30 text-left space-y-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div>
+                <div className="h-44 rounded-2xl bg-[#43162B] text-[#FFF9F2] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden border border-[#B68A50]/40">
+                  <span className="text-3xl mb-2">🪔</span>
+                  <h4 className="font-brand-heading text-2xl font-bold text-[#FFF9F2]">Heritage Rajputana</h4>
+                  <p className="text-[10px] text-[#E8C9CD] uppercase tracking-widest mt-1">Vedic Shlokas & Regal Borders</p>
+                </div>
+                <h3 className="font-brand-heading text-2xl font-bold text-[#541D36] mt-4">Heritage Rajputana</h3>
+                <p className="text-xs text-[#7A6B72] leading-relaxed mt-1">
+                  Sacred Sanskrit invocations, multi-event ceremony pills, family lineage cards, and Google Maps GPS.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-[#B68A50]/20 flex items-center justify-between">
+                <span className="text-xs font-bold text-[#541D36]">₹1,499</span>
+                <Link
+                  href="/templates/heritage"
+                  className="px-4 py-2 rounded-lg bg-[#541D36] hover:bg-[#43162B] text-amber-200 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow"
+                >
+                  Live Preview <ArrowUpRight size={13} />
+                </Link>
               </div>
             </div>
 
           </div>
+
         </div>
+      </section>
 
-      </main>
+      {/* 5. HOW IT WORKS */}
+      <section id="how-it-works" className="py-20 px-6 sm:px-12 bg-[#FAF4ED] border-t border-[#B68A50]/20 text-center">
+        <div className="max-w-4xl mx-auto space-y-12">
+          <div>
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#B68A50] block mb-2">Simple Workflow</span>
+            <h2 className="font-brand-heading text-4xl sm:text-5xl font-bold text-[#541D36]">Ready in 3 Simple Steps</h2>
+          </div>
 
-      {/* 3. WEDLINK COLLECTION MODAL */}
-      {isCollectionModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#0B0E14]/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#141824] border border-white/10 rounded-[28px] max-w-lg w-full p-8 text-center text-white shadow-2xl relative">
-            
-            <button 
-              type="button" 
-              onClick={() => setIsCollectionModalOpen(false)}
-              className="absolute top-5 right-5 text-neutral-400 hover:text-white text-lg"
-            >
-              ✕
-            </button>
-
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
-              WEDLINK COLLECTION
-            </span>
-            <h2 className="font-serif text-3xl font-bold text-white mb-2">
-              Explore Wedding Invitations
-            </h2>
-            <p className="text-xs text-neutral-400 mb-6 max-w-sm mx-auto leading-relaxed">
-              Select any interactive luxury wedding invitation template below to experience live 3D unboxing, music and animations.
-            </p>
-
-            {/* 4 Template Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left mb-6">
-              
-              <Link
-                href="/templates/royal-courtyard"
-                onClick={() => setIsCollectionModalOpen(false)}
-                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
-              >
-                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">The Royal Courtyard</h3>
-                <p className="text-[11px] text-neutral-400 mt-0.5">3D Palace Gates & Music</p>
-              </Link>
-
-              <Link
-                href="/templates/rose-letter"
-                onClick={() => setIsCollectionModalOpen(false)}
-                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
-              >
-                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">The Rose Letter</h3>
-                <p className="text-[11px] text-neutral-400 mt-0.5">Wax Seal & Scratch Card</p>
-              </Link>
-
-              <Link
-                href="/templates/heritage"
-                onClick={() => setIsCollectionModalOpen(false)}
-                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
-              >
-                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">Heritage Rajputana</h3>
-                <p className="text-[11px] text-neutral-400 mt-0.5">Traditional Royal Elegance</p>
-              </Link>
-
-              <Link
-                href="/templates/garden-romance"
-                onClick={() => setIsCollectionModalOpen(false)}
-                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
-              >
-                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">Garden Romance</h3>
-                <p className="text-[11px] text-neutral-400 mt-0.5">Floral Botanical Aesthetics</p>
-              </Link>
-
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div className="p-6 bg-white rounded-2xl border border-[#B68A50]/20 shadow-sm space-y-2">
+              <span className="w-8 h-8 rounded-full bg-[#541D36] text-white flex items-center justify-center font-bold text-xs">1</span>
+              <h3 className="font-brand-heading text-xl font-bold text-[#541D36]">Choose a Template</h3>
+              <p className="text-xs text-[#7A6B72]">Select from our royal palace, romantic wax seal, or modern editorial suites.</p>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsCollectionModalOpen(false)}
-              className="text-xs text-neutral-400 hover:text-white transition-colors"
-            >
-              ← Back to Homepage
-            </button>
-
-            <div className="mt-6 pt-4 border-t border-white/5 text-[10px] text-neutral-500">
-              WedLink • One Link • Endless Celebrations
+            <div className="p-6 bg-white rounded-2xl border border-[#B68A50]/20 shadow-sm space-y-2">
+              <span className="w-8 h-8 rounded-full bg-[#541D36] text-white flex items-center justify-center font-bold text-xs">2</span>
+              <h3 className="font-brand-heading text-xl font-bold text-[#541D36]">Personalize & Preview</h3>
+              <p className="text-xs text-[#7A6B72]">Add your names, date, venue, dress codes, and events with instant free 3D preview.</p>
+            </div>
+            <div className="p-6 bg-white rounded-2xl border border-[#B68A50]/20 shadow-sm space-y-2">
+              <span className="w-8 h-8 rounded-full bg-[#541D36] text-white flex items-center justify-center font-bold text-xs">3</span>
+              <h3 className="font-brand-heading text-xl font-bold text-[#541D36]">Share Your Link</h3>
+              <p className="text-xs text-[#7A6B72]">Deliver via WhatsApp. Guests tap once for maps, schedule, music, and instant RSVP.</p>
             </div>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* 4. FOOTER */}
-      <footer className="py-8 border-t border-neutral-200 text-center text-xs text-neutral-400">
-        <p>WedLink • One Link • Endless Celebrations</p>
+      {/* 6. FOOTER */}
+      <footer className="py-12 px-6 bg-[#541D36] text-[#FFF9F2] text-center text-xs border-t border-[#B68A50]/30 space-y-3">
+        <div className="flex items-center justify-center gap-2">
+          <span className="font-brand-heading text-2xl font-bold">Wedlink</span>
+        </div>
+        <p className="text-[11px] text-[#E8C9CD] tracking-widest uppercase">One Link • Endless Celebrations</p>
+        <p className="text-[10px] text-neutral-400 pt-2">© {new Date().getFullYear()} Wedlink. All rights reserved.</p>
       </footer>
 
     </div>
