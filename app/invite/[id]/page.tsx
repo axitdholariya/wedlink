@@ -5,7 +5,6 @@ export const dynamic='force-dynamic';
 export const metadata={title:'A wedding invitation | Wedlink',robots:{index:false,follow:false}};
 export async function generateStaticParams() {
   return [
-    { id: 'demo' },
-    { id: 'preview' }
+    { id: 'demo' }
   ];
 }
