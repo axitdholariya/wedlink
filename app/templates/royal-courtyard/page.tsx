@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { example } from '@/app/shared';
 import RoyalCourtyard from '@/app/royal-courtyard';
@@ -16,24 +15,24 @@ export default function Page() {
         style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
         className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
       >
-        <Link 
+        <a 
           href="/" 
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all cursor-pointer"
         >
           <ArrowLeft size={14} /> Back to Wedlink
-        </Link>
+        </a>
         <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
           The Royal Courtyard · Sample Invitation
         </span>
-        <Link 
-          href="/create?template=royal"
-          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity"
+        <a 
+          href="/create?template=royal-courtyard"
+          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity cursor-pointer"
         >
           Personalize <ArrowUpRight size={14} />
-        </Link>
+        </a>
       </header>
 
-      {/* Main Template with padding for top bar */}
+      {/* Main Template */}
       <div className="pt-12">
         <RoyalCourtyard
           data={{
