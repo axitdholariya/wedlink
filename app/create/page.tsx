@@ -56,7 +56,6 @@ export default function CreatePage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Main Portrait File Upload Handler
   const handlePortraitUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -68,7 +67,6 @@ export default function CreatePage() {
     }
   };
 
-  // Gallery Photos File Upload Handler
   const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -102,67 +100,66 @@ export default function CreatePage() {
 
   return (
     <div 
-      className="min-h-screen bg-[#0A0D14] text-white selection:bg-[#D4AF37] selection:text-black pb-24 relative overflow-x-hidden"
+      className="min-h-screen bg-[#FAF6EE] text-[#260A10] selection:bg-[#D4AF37] selection:text-black pb-24 relative overflow-x-hidden"
       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
     >
-      {/* Import Official Google Fonts */}
+      {/* Google Fonts */}
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         .font-cinzel { font-family: 'Cinzel', serif; }
         .font-great-vibes { font-family: 'Great Vibes', cursive; }
       `}</style>
 
-      {/* Ambient Luxury Background Gradients */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.08)_0%,transparent_70%)] blur-3xl" />
-        <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] bg- blur-3xl" />
-        <div className="absolute bottom-20 -right-40 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.06)_0%,transparent_70%)] blur-3xl" />
+      {/* Subtle Warm Luxury Background Pattern */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-40">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.15)_0%,transparent_70%)] blur-3xl" />
+        <div className="absolute bottom-10 right-0 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.12)_0%,transparent_70%)] blur-3xl" />
       </div>
 
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3.5 bg-[#0A0D14]/90 backdrop-blur-xl border-b border-[#D4AF37]/20 shadow-xl">
+      {/* Top Navbar in Warm Pearl Ivory Style */}
+      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3.5 bg-[#FAF6EE]/90 backdrop-blur-xl border-b border-[#D4AF37]/30 shadow-md">
         <a 
           href="/" 
-          className="flex items-center gap-2 text-xs font-medium text-[#94A3B8] hover:text-[#D4AF37] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-xs font-semibold text-[#4A3B32] hover:text-[#9B7A2F] transition-colors cursor-pointer"
         >
-          <ArrowLeft size={15} /> Back to WedLink
+          <ArrowLeft size={16} /> Back to WedLink
         </a>
         <div className="flex items-center gap-2">
-          <span className="font-cinzel tracking-[0.25em] text-[#D4AF37] text-xs uppercase font-bold">
+          <span className="font-cinzel tracking-[0.25em] text-[#9B7A2F] text-xs uppercase font-bold">
             WEDLINK · INVITATION BUILDER
           </span>
         </div>
         <button
           type="button"
           onClick={handlePreview}
-          className="flex items-center gap-2 px-5 py-2 rounded-full font-cinzel text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 hover:opacity-90 transition-all cursor-pointer"
-          style={{ background: 'linear-gradient(135deg, #E5C378 0%, #C9A24F 50%, #A87A24 100%)' }}
+          className="flex items-center gap-2 px-5 py-2 rounded-full font-cinzel text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/30 hover:opacity-90 transition-all cursor-pointer"
+          style={{ background: 'linear-gradient(135deg, #E5C378 0%, #D4AF37 50%, #A87A24 100%)' }}
         >
           <Eye size={14} /> Preview Live
         </button>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 pt-12 relative z-10">
-        {/* Header Title */}
+        {/* Header Title with Royal Velvet Wine */}
         <div className="text-center mb-12">
-          <span className="font-cinzel text-xs uppercase tracking-[0.3em] text-[#D4AF37] font-semibold block mb-2">
+          <span className="font-cinzel text-xs uppercase tracking-[0.3em] text-[#9B7A2F] font-bold block mb-2">
             One Link • Endless Celebrations
           </span>
-          <h1 className="font-cinzel text-3xl sm:text-4xl text-white font-bold tracking-wide">
+          <h1 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-[#260A10] font-bold tracking-wide">
             Personalize Your Invitation
           </h1>
-          <p className="font-great-vibes text-2xl text-[#FBF0B9] mt-2 mb-3">
+          <p className="font-great-vibes text-2xl sm:text-3xl text-[#9B7A2F] mt-2 mb-3">
             Your love story, crafted in digital luxury
           </p>
-          <p className="text-[#94A3B8] text-xs max-w-md mx-auto leading-relaxed">
-            Fill in your wedding itinerary, romantic photos & family details below. Experience your 3D microsite in real-time.
+          <p className="text-[#6B5E55] text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+            Fill in your wedding itinerary, romantic photos & family details below. Experience your interactive 3D microsite in real-time.
           </p>
         </div>
 
-        {/* Section 1: Choose Theme */}
-        <section className="bg-[#260A10]/50 border border-[#D4AF37]/25 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/15">
+        {/* Section 1: Choose Theme (Royal Velvet Wine Cards) */}
+        <section className="bg-[#260A10] border-2 border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl text-white">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/20">
             <Sparkles size={18} className="text-[#D4AF37]" />
             <h2 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wider uppercase">
               1. Select Luxury Theme
@@ -176,8 +173,8 @@ export default function CreatePage() {
                 onClick={() => setTheme(t.id)}
                 className={`p-5 rounded-2xl text-left border transition-all cursor-pointer relative overflow-hidden ${
                   theme === t.id
-                    ? 'border-[#D4AF37] bg-[#260A10] shadow-[0_0_25px_rgba(212,175,55,0.2)]'
-                    : 'border-white/10 bg-black/40 hover:border-[#D4AF37]/40 hover:bg-white/5'
+                    ? 'border-[#D4AF37] bg-[#381017] shadow-[0_0_25px_rgba(212,175,55,0.25)] ring-1 ring-[#D4AF37]'
+                    : 'border-white/10 bg-black/30 hover:border-[#D4AF37]/40 hover:bg-black/50'
                 }`}
               >
                 {theme === t.id && (
@@ -197,8 +194,8 @@ export default function CreatePage() {
         </section>
 
         {/* Section 2: Couple Details */}
-        <section className="bg-[#260A10]/50 border border-[#D4AF37]/25 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/15">
+        <section className="bg-[#260A10] border-2 border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl text-white">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/20">
             <Heart size={18} className="text-[#D4AF37]" />
             <h2 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wider uppercase">
               2. Couple Details
@@ -215,7 +212,7 @@ export default function CreatePage() {
                 value={formData.groomName}
                 onChange={handleChange}
                 placeholder="e.g. Aarav Sharma"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
             <div>
@@ -228,7 +225,7 @@ export default function CreatePage() {
                 value={formData.brideName}
                 onChange={handleChange}
                 placeholder="e.g. Meera Kapoor"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
           </div>
@@ -241,14 +238,14 @@ export default function CreatePage() {
               value={formData.tagline}
               onChange={handleChange}
               rows={2}
-              className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+              className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
             />
           </div>
         </section>
 
-        {/* Section 3: Couple Portrait & Photo Gallery (NEW FEATURE) */}
-        <section className="bg-[#260A10]/50 border border-[#D4AF37]/25 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/15">
+        {/* Section 3: Couple Portrait & Photo Gallery */}
+        <section className="bg-[#260A10] border-2 border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl text-white">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/20">
             <Camera size={18} className="text-[#D4AF37]" />
             <h2 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wider uppercase">
               3. Couple Portrait & Moments Gallery
@@ -260,16 +257,16 @@ export default function CreatePage() {
             <label className="font-cinzel block text-[11px] uppercase tracking-[0.15em] text-[#D4AF37] font-semibold mb-2">
               Main Couple Hero Portrait (Cover Photo)
             </label>
-            <div className="flex flex-col sm:flex-row gap-5 items-center bg-[#0A0D14]/80 border border-[#D4AF37]/20 p-4 rounded-2xl">
+            <div className="flex flex-col sm:flex-row gap-5 items-center bg-[#0A0D14]/90 border border-[#D4AF37]/30 p-4 rounded-2xl">
               {formData.couplePhoto && (
-                <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-[#D4AF37] shrink-0 shadow-lg shadow-[#D4AF37]/15">
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-[#D4AF37] shrink-0 shadow-lg shadow-[#D4AF37]/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={formData.couplePhoto} alt="Couple Portrait" className="w-full h-full object-cover" />
                 </div>
               )}
               <div className="flex-1 w-full space-y-3">
                 <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 text-xs font-semibold text-[#D4AF37] cursor-pointer transition-all">
+                  <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-xs font-semibold text-[#D4AF37] cursor-pointer transition-all">
                     <Upload size={14} /> Upload from Phone / PC
                     <input type="file" accept="image/*" onChange={handlePortraitUpload} className="hidden" />
                   </label>
@@ -281,7 +278,7 @@ export default function CreatePage() {
                   value={formData.couplePhoto}
                   onChange={handleChange}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#0A0D14] border border-[#D4AF37]/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-[#0A0D14] border border-[#D4AF37]/40 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
             </div>
@@ -294,8 +291,8 @@ export default function CreatePage() {
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {formData.galleryPhotos.map((photoUrl, idx) => (
-                <div key={idx} className="bg-[#0A0D14]/80 border border-[#D4AF37]/20 p-3 rounded-2xl flex flex-col items-center">
-                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#D4AF37]/30 mb-3 shadow-md">
+                <div key={idx} className="bg-[#0A0D14]/90 border border-[#D4AF37]/30 p-3 rounded-2xl flex flex-col items-center">
+                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#D4AF37]/40 mb-3 shadow-md">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={photoUrl} alt={`Moment ${idx + 1}`} className="w-full h-full object-cover" />
                     <button
@@ -307,7 +304,7 @@ export default function CreatePage() {
                       <Trash2 size={13} />
                     </button>
                   </div>
-                  <label className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/15 border border-[#D4AF37]/25 text-[10px] uppercase font-semibold text-[#D4AF37] cursor-pointer transition-all">
+                  <label className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 text-[10px] uppercase font-semibold text-[#D4AF37] cursor-pointer transition-all">
                     <Upload size={12} /> Replace Photo
                     <input type="file" accept="image/*" onChange={(e) => handleGalleryUpload(e, idx)} className="hidden" />
                   </label>
@@ -318,8 +315,8 @@ export default function CreatePage() {
         </section>
 
         {/* Section 4: Date & Venue */}
-        <section className="bg-[#260A10]/50 border border-[#D4AF37]/25 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/15">
+        <section className="bg-[#260A10] border-2 border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8 shadow-2xl text-white">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/20">
             <Calendar size={18} className="text-[#D4AF37]" />
             <h2 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wider uppercase">
               4. Sacred Date & Location
@@ -335,7 +332,7 @@ export default function CreatePage() {
                 name="weddingDate"
                 value={formData.weddingDate}
                 onChange={handleChange}
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
             <div>
@@ -348,7 +345,7 @@ export default function CreatePage() {
                 value={formData.weddingTime}
                 onChange={handleChange}
                 placeholder="e.g. 06:00 PM Onwards"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
           </div>
@@ -363,7 +360,7 @@ export default function CreatePage() {
                 value={formData.venueName}
                 onChange={handleChange}
                 placeholder="e.g. The Oberoi Udaivilas"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
             <div>
@@ -376,7 +373,7 @@ export default function CreatePage() {
                 value={formData.venueCity}
                 onChange={handleChange}
                 placeholder="e.g. Udaipur, Rajasthan"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
           </div>
@@ -390,14 +387,14 @@ export default function CreatePage() {
               value={formData.mapsUrl}
               onChange={handleChange}
               placeholder="https://maps.google.com/..."
-              className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+              className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
             />
           </div>
         </section>
 
         {/* Section 5: Family & Logistics */}
-        <section className="bg-[#260A10]/50 border border-[#D4AF37]/25 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-10 shadow-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/15">
+        <section className="bg-[#260A10] border-2 border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-10 shadow-2xl text-white">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-[#D4AF37]/20">
             <Users size={18} className="text-[#D4AF37]" />
             <h2 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wider uppercase">
               5. Family Lineage & Guest Logistics
@@ -414,7 +411,7 @@ export default function CreatePage() {
                 value={formData.firstFamily}
                 onChange={handleChange}
                 placeholder="Blessings of Sharma Family"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
             <div>
@@ -427,7 +424,7 @@ export default function CreatePage() {
                 value={formData.secondFamily}
                 onChange={handleChange}
                 placeholder="Blessings of Kapoor Family"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
           </div>
@@ -442,7 +439,7 @@ export default function CreatePage() {
                 value={formData.dressCode}
                 onChange={handleChange}
                 placeholder="Royal Traditional Indian Elegance"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
             <div>
@@ -455,7 +452,7 @@ export default function CreatePage() {
                 value={formData.hotelInfo}
                 onChange={handleChange}
                 placeholder="Promo Code: WEDLINK2026"
-                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                className="w-full bg-[#0A0D14]/90 border border-[#D4AF37]/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
               />
             </div>
           </div>
@@ -471,7 +468,7 @@ export default function CreatePage() {
           >
             ✨ Save Details & Preview My Live Invitation
           </button>
-          <p className="text-[#94A3B8] text-xs mt-4">
+          <p className="text-[#6B5E55] font-medium text-xs mt-4">
             WedLink • One Link • Endless Celebrations
           </p>
         </div>
