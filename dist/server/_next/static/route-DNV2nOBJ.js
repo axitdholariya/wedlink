@@ -1,0 +1,1 @@
+import{c as e,u as t}from"./invites-B7AlpqcB.js";async function n(){return Response.json({checkoutReady:e(),price:e()?t().PUBLIC_PRICE_LABEL:null},{headers:{"Cache-Control":`no-store`}})}export{n as GET};
