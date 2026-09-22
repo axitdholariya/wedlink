@@ -542,7 +542,7 @@ export default function CreatePage() {
               {/* Upload Slots */}
               {photoLayout !== 'skip' && (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 pt-2">
-                  {.map((idx) => {
+                  {Array.from({ length: 4 }).map((_, idx) => {
                     const isAllowed = idx < Number(photoLayout);
                     const photoUrl = photos[idx];
 
