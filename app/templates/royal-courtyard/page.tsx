@@ -1,34 +1,6 @@
-// app/templates/royal-courtyard/page.tsx
-
-interface PageProps {
-  searchParams: Promise<{ preview?: string; id?: string }>;
-}
-
-export default async function RoyalCourtyardPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const isPreviewMode = params.preview === 'true';
-
-  // अगर प्रीव्यू मोड है, तो बिना पेमेंट चेक किए सीधा टेम्पलेट दिखाएं!
-  if (isPreviewMode) {
-    return (
-      <div className="relative min-h-screen">
-        {/* ऊपर एक छोटा सा प्रीव्यू बार */}
-        <div className="bg-amber-900 text-amber-200 text-xs py-2 px-4 text-center font-medium flex justify-between items-center z-50 relative">
-          <span>✨ Preview Mode (Not Published Yet)</span>
-          <a
-            href="/create"
-            className="bg-amber-500 text-neutral-950 px-3 py-1 rounded-full font-bold hover:bg-amber-400"
-          >
-            Edit / Publish Link ↗
-          </a>
-        </div>
-
-        {/* आपका पूरा असली 3D रॉयल टेम्पलेट कंपोनेंट */}
-        <RoyalCourtyardTemplate />
-      </div>
-    );
-  }
-
-  // अगर लाइव लिंक है और पेड नहीं है, सिर्फ तब पेमेंट पेंडिंग दिखाएं
-  // return <PaymentPendingView />;
-}
+import Link from 'next/link';
+import {ArrowLeft,ArrowUpRight} from 'lucide-react';
+import {example} from '@/app/shared';
+import RoyalCourtyard from '@/app/royal-courtyard';
+export const metadata={title:'The Royal Courtyard — 3D Wedding Invitation | Wedlink',description:'Step through golden palace doors into your wedding celebration. An interactive invitation by Wedlink.'};
+export default function Page(){return <><header className="royal-demo-bar"><Link href="/#collection"><ArrowLeft size={15}/><span>Wedlink collection</span></Link><span>TEMPLATE 01 · SAMPLE INVITATION</span><Link href="/create?template=royal">Make it yours <ArrowUpRight size={15}/></Link></header><RoyalCourtyard data={{...example,template:'royal',timezone:'Asia/Kolkata',story:'We met over a shared love of travel, long conversations and finding magic in the ordinary. From our first coffee to our favourite sunset in Udaipur, every little adventure brought us here. Now, with our families beside us, we are ready for our greatest adventure yet.',events:[{name:'The Wedding',date:'2027-12-12',time:'16:00',venue:'The Garden Palace',address:'Udaipur, Rajasthan, India'},{name:'An Evening of Celebration',date:'2027-12-12',time:'19:00',venue:'The Palace Courtyard',address:'Udaipur, Rajasthan, India'}]}}/></>}
