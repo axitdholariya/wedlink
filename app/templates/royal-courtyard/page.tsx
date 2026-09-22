@@ -1,6 +1,58 @@
 import Link from 'next/link';
-import {ArrowLeft,ArrowUpRight} from 'lucide-react';
-import {example} from '@/app/shared';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { example } from '@/app/shared';
 import RoyalCourtyard from '@/app/royal-courtyard';
-export const metadata={title:'The Royal Courtyard — 3D Wedding Invitation | Wedlink',description:'Step through golden palace doors into your wedding celebration. An interactive invitation by Wedlink.'};
-export default function Page(){return <><header className="royal-demo-bar"><Link href="/#collection"><ArrowLeft size={15}/><span>Wedlink collection</span></Link><span>TEMPLATE 01 · SAMPLE INVITATION</span><Link href="/create?template=royal">Make it yours <ArrowUpRight size={15}/></Link></header><RoyalCourtyard data={{...example,template:'royal',timezone:'Asia/Kolkata',story:'We met over a shared love of travel, long conversations and finding magic in the ordinary. From our first coffee to our favourite sunset in Udaipur, every little adventure brought us here. Now, with our families beside us, we are ready for our greatest adventure yet.',events:[{name:'The Wedding',date:'2027-12-12',time:'16:00',venue:'The Garden Palace',address:'Udaipur, Rajasthan, India'},{name:'An Evening of Celebration',date:'2027-12-12',time:'19:00',venue:'The Palace Courtyard',address:'Udaipur, Rajasthan, India'}]}}/></>}
+
+export const metadata = {
+  title: 'The Royal Courtyard — 3D Palace Gate Wedding Invitation | Wedlink',
+  description: 'Experience 3D carved sandstone gates sliding open with authentic shehnai background music, Ganesha invocation and real-time countdown.'
+};
+
+export default function Page() {
+  return (
+    <div className="relative min-h-screen bg-[#0A0D14]">
+      {/* Clickable Luxury Top Bar */}
+      <header 
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
+        className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
+      >
+        <Link 
+          href="/" 
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all"
+        >
+          <ArrowLeft size={14} /> Back to Wedlink
+        </Link>
+        <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
+          The Royal Courtyard · Sample Invitation
+        </span>
+        <Link 
+          href="/create?template=royal"
+          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity"
+        >
+          Personalize <ArrowUpRight size={14} />
+        </Link>
+      </header>
+
+      {/* Main Template with padding for top bar */}
+      <div className="pt-12">
+        <RoyalCourtyard
+          data={{
+            ...example,
+            template: 'royal',
+            status: 'active',
+            isPaid: true,
+            paid: true,
+            isDraft: false,
+            published: true,
+            firstFamily: 'Together with the Sharma family',
+            secondFamily: 'Together with the Kapoor family',
+            timezone: 'Asia/Kolkata',
+            dressCode: 'Royal Traditional Indian Elegance',
+            accommodation: 'Special room blocks negotiated at The Oberoi Udaivilas. Booking code: WEDLINK2026',
+            gifts: 'Your presence and blessings are our greatest gift.'
+          }}
+        />
+      </div>
+    </div>
+  );
+}
