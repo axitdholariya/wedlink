@@ -1,0 +1,6 @@
+export async function validSignature(raw:string,header:string,secret:string,now=Date.now()){
+const parts=header.split(',').map(p=>p.split('='));const timestamp=parts.find(([k])=>k==='t')?.[1];const signatures=parts.filter(([k])=>k==='v1').map(([,v])=>v);
+if(!timestamp||!/^\d+$/.test(timestamp)||Math.abs(now/1000-Number(timestamp))>300)return false;
+const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['verify']);
+for(const s of signatures){if(!/^[a-f0-9]{64}$/.test(s))continue;const bytes=Uint8Array.from(s.match(/../g)!,x=>parseInt(x,16));if(await crypto.subtle.verify('HMAC',key,bytes,new TextEncoder().encode(timestamp+'.'+raw)))return true}return false;
+}
