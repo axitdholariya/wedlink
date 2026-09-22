@@ -87,7 +87,7 @@ export default function CreatePage() {
   const [firstFamily, setFirstFamily] = useState('Together with the Sharma family');
   const [secondFamily, setSecondFamily] = useState('Together with the Kapoor family');
 
-  // Events State (with Google Maps link support)
+  // Events State
   const [events, setEvents] = useState<WeddingEvent[]>([
     {
       name: 'Sangeet & Cocktail Night',
@@ -162,14 +162,12 @@ export default function CreatePage() {
     ]);
   };
 
-  // Prepare active photos array according to layout
   const validUploadedPhotos = photos.filter(Boolean);
   const activePhotos =
     includeGallery && photoLayout !== 'skip'
       ? validUploadedPhotos.slice(0, Number(photoLayout))
       : [];
 
-  // Active names based on display order
   const firstName = nameOrder === 'brideFirst' ? brideName : groomName;
   const secondName = nameOrder === 'brideFirst' ? groomName : brideName;
 
@@ -188,12 +186,10 @@ export default function CreatePage() {
     accommodation: accommodation,
     gifts: gifts,
     events: events,
-    // Pass single photo and full array for templates
     photo: activePhotos[0] || example.photo,
     photos: activePhotos.length > 0 ? activePhotos : [example.photo],
   };
 
-  // Switch Template Component
   const renderTemplate = () => {
     switch (template) {
       case 'rose-letter':
@@ -222,40 +218,48 @@ export default function CreatePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#2D141E]">
-      {/* Top Navbar - 100% Clickable & High Z-Index */}
+    <div className="min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-[#FAF7F2]">
+      {/* 👑 ULTRA-LUXURY TOP HEADER (Matches First Page Theme) */}
       <header
         style={{ position: 'sticky', top: 0, zIndex: 9999, pointerEvents: 'auto' }}
-        className="flex items-center justify-between border-b border-[#E8DFD5] bg-[#FAF7F2]/95 px-6 py-3.5 backdrop-blur-md shadow-xs"
+        className="flex items-center justify-between border-b border-[#E8DFD5]/90 bg-[#FAF7F2]/95 px-6 sm:px-10 py-3 backdrop-blur-md shadow-xs transition-all"
       >
-        {/* Clickable Back Link */}
+        {/* Left: Luxury Back Button */}
         <Link
           href="/"
           style={{ cursor: 'pointer', pointerEvents: 'auto' }}
-          className="flex items-center gap-1.5 rounded-full border border-[#E8DFD5] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#2D141E] shadow-2xs transition-all hover:bg-[#F3EDE2] hover:scale-105 active:scale-95 cursor-pointer"
+          className="group flex items-center gap-2 rounded-full border border-[#D9CFC4] bg-white/90 px-4 py-1.5 text-xs font-semibold text-[#2D141E] shadow-2xs transition-all hover:border-[#C9A24F] hover:bg-[#F3EDE2] hover:shadow-xs active:scale-95 cursor-pointer"
         >
-          <ArrowLeft size={14} /> Back to Wedlink
+          <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5 text-[#C9A24F]" />
+          <span>Back to Wedlink</span>
         </Link>
 
-        {/* Title */}
-        <span className="font-serif text-sm font-semibold tracking-wider uppercase text-[#2D141E]">
-          Wedlink · Invitation Builder
-        </span>
+        {/* Center: Official Wedlink Crest Brandmark */}
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex items-center gap-1.5">
+            <span className="font-serif tracking-[0.25em] text-sm sm:text-base font-bold text-[#2D141E] uppercase">
+              WED<span className="text-[#C9A24F]">LINK</span>
+            </span>
+          </div>
+          <span className="text-[9px] tracking-[0.22em] font-medium text-[#8A7B75] uppercase hidden sm:block">
+            Bespoke 3D Invitation Studio
+          </span>
+        </div>
 
-        {/* Clickable Publish Button */}
+        {/* Right: Signature Champagne-Gold Gradient CTA Button */}
         <button
           type="button"
           onClick={() => setIsPublishOpen(true)}
           style={{
             cursor: 'pointer',
             pointerEvents: 'auto',
-            backgroundColor: '#341822',
-            color: '#ffffff',
+            background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
+            boxShadow: '0 4px 16px rgba(201, 162, 79, 0.3)',
           }}
-          className="flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90 hover:scale-105 active:scale-95 cursor-pointer"
+          className="group flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all hover:opacity-95 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
         >
           <span>Publish (₹1,499)</span>
-          <ArrowUpRight size={14} />
+          <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </button>
       </header>
 
@@ -264,24 +268,27 @@ export default function CreatePage() {
         {/* LEFT COLUMN: BUILDER TABS & FORM */}
         <div className="lg:col-span-7 xl:col-span-7">
           <div className="mb-6">
-            <h1 className="font-serif text-3xl font-medium tracking-tight">
+            <span className="text-[10px] font-bold tracking-[0.25em] text-[#C9A24F] uppercase block mb-1">
+              Personalize Your Celebration
+            </span>
+            <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#2D141E]">
               Your forever, in the details.
             </h1>
-            <p className="mt-1 text-sm text-[#7A6B65]">
-              A few little details. A beautifully personal invitation.
+            <p className="mt-1.5 text-xs sm:text-sm text-[#7A6B65]">
+              A few thoughtful details. An extraordinary, living mobile invitation.
             </p>
           </div>
 
-          {/* Tab Navigation */}
+          {/* Luxury Tab Navigation */}
           <div className="mb-8 flex overflow-x-auto border-b border-[#E8DFD5] pb-px">
             {tabs.map((t) => (
               <button
                 key={t.key}
                 type="button"
                 onClick={() => setActiveTab(t.key)}
-                className={`whitespace-nowrap px-4 py-2.5 text-xs font-semibold transition-all cursor-pointer ${
+                className={`whitespace-nowrap px-4 py-2.5 text-xs font-semibold tracking-wider transition-all cursor-pointer uppercase ${
                   activeTab === t.key
-                    ? 'border-b-2 border-[#341822] text-[#341822]'
+                    ? 'border-b-2 border-[#C9A24F] text-[#341822]'
                     : 'text-[#8A7B75] hover:text-[#2D141E]'
                 }`}
               >
@@ -292,38 +299,41 @@ export default function CreatePage() {
 
           {/* TAB 1: ESSENTIALS */}
           {activeTab === 'essentials' && (
-            <div className="space-y-8 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-8 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#8A7B75]">
-                  Your Design
+                <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-[#8A7B75]">
+                  Select 3D Template
                 </h2>
-                <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <div className="mt-3.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {[
-                    { id: 'rose-letter', title: 'Rose Letter' },
-                    { id: 'royal-courtyard', title: 'Royal Courtyard' },
-                    { id: 'editorial', title: 'Editorial' },
-                    { id: 'garden-romance', title: 'Garden Romance' },
-                    { id: 'heritage', title: 'Heritage' },
+                    { id: 'rose-letter', title: 'Rose Letter', desc: 'Blush Wax Seal · Scratch Heart' },
+                    { id: 'royal-courtyard', title: 'Royal Courtyard', desc: 'Carved Palace Gates · Shehnai' },
+                    { id: 'editorial', title: 'Editorial', desc: 'Vogue Minimalist · Vertical Scroll' },
+                    { id: 'garden-romance', title: 'Garden Romance', desc: 'Botanical Bloom · 3D Fan Orbit' },
+                    { id: 'heritage', title: 'Heritage', desc: 'Gold Royal Arch · Regal Blessings' },
                   ].map((tpl) => (
                     <button
                       key={tpl.id}
                       type="button"
                       onClick={() => setTemplate(tpl.id as TemplateKey)}
-                      className={`flex items-center justify-between rounded-xl border p-3.5 text-left text-sm font-medium transition-all cursor-pointer ${
+                      className={`flex flex-col justify-between rounded-xl border p-4 text-left transition-all cursor-pointer ${
                         template === tpl.id
-                          ? 'border-[#341822] bg-[#F7F2EB] text-[#341822] font-semibold'
-                          : 'border-[#E8DFD5] hover:border-[#C4B5A5]'
+                          ? 'border-[#C9A24F] bg-[#FAF7F2] shadow-xs'
+                          : 'border-[#E8DFD5] hover:border-[#C4B5A5] bg-white'
                       }`}
                     >
-                      <span>{tpl.title}</span>
-                      {template === tpl.id && <Check size={16} />}
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-serif font-bold text-sm text-[#2D141E]">{tpl.title}</span>
+                        {template === tpl.id && <Check size={16} className="text-[#C9A24F]" />}
+                      </div>
+                      <span className="text-[11px] text-[#8A7B75] mt-1">{tpl.desc}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#8A7B75]">
+              <div className="border-t border-[#F0EAE1] pt-6">
+                <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-[#8A7B75]">
                   The Couple
                 </h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -334,7 +344,7 @@ export default function CreatePage() {
                       value={brideName}
                       onChange={(e) => setBrideName(e.target.value)}
                       placeholder="e.g. Priya"
-                      className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                      className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                     />
                   </div>
                   <div>
@@ -344,21 +354,21 @@ export default function CreatePage() {
                       value={groomName}
                       onChange={(e) => setGroomName(e.target.value)}
                       placeholder="e.g. Arjun"
-                      className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                      className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                     />
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <label className="text-xs font-semibold text-[#5A4B45]">Name Display Order</label>
-                  <div className="mt-2 flex gap-3">
+                  <div className="mt-2 flex flex-wrap gap-2.5">
                     <button
                       type="button"
                       onClick={() => setNameOrder('brideFirst')}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium cursor-pointer ${
+                      className={`rounded-lg border px-3.5 py-1.5 text-xs font-medium cursor-pointer transition-all ${
                         nameOrder === 'brideFirst'
-                          ? 'border-[#341822] bg-[#341822] text-white'
-                          : 'border-[#E8DFD5]'
+                          ? 'border-[#341822] bg-[#341822] text-white shadow-xs'
+                          : 'border-[#E8DFD5] hover:border-[#C4B5A5]'
                       }`}
                     >
                       Bride & Groom ({brideName} & {groomName})
@@ -366,10 +376,10 @@ export default function CreatePage() {
                     <button
                       type="button"
                       onClick={() => setNameOrder('groomFirst')}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium cursor-pointer ${
+                      className={`rounded-lg border px-3.5 py-1.5 text-xs font-medium cursor-pointer transition-all ${
                         nameOrder === 'groomFirst'
-                          ? 'border-[#341822] bg-[#341822] text-white'
-                          : 'border-[#E8DFD5]'
+                          ? 'border-[#341822] bg-[#341822] text-white shadow-xs'
+                          : 'border-[#E8DFD5] hover:border-[#C4B5A5]'
                       }`}
                     >
                       Groom & Bride ({groomName} & {brideName})
@@ -382,14 +392,14 @@ export default function CreatePage() {
 
           {/* TAB 2: INVITATION */}
           {activeTab === 'invitation' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div>
                 <label className="text-xs font-semibold text-[#5A4B45]">Wedding Date</label>
                 <input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
               <div>
@@ -398,7 +408,7 @@ export default function CreatePage() {
                   type="text"
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
               <div>
@@ -407,22 +417,22 @@ export default function CreatePage() {
                   rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
             </div>
           )}
 
-          {/* TAB 3: EVENTS */}
+          {/* TAB 3: EVENTS (WITH QUICK CEREMONY BUTTONS + MAPS LINK) */}
           {activeTab === 'events' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               {/* TOP: QUICK PRESET CEREMONY BUTTONS */}
-              <div className="rounded-xl border border-[#E8DFD5] bg-[#FAF7F2] p-4">
+              <div className="rounded-xl border border-[#E8DFD5] bg-[#FAF7F2] p-4.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#341822]">
+                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#341822]">
                     ⚡ Quick Add Ceremonies
                   </span>
-                  <span className="text-[11px] text-[#7A6B65]">Click to add instantly</span>
+                  <span className="text-[11px] font-medium text-[#C9A24F]">Tap to add instantly</span>
                 </div>
                 <p className="mt-1 text-xs text-[#7A6B65]">
                   Select common functions below to quickly add them to your itinerary:
@@ -434,11 +444,11 @@ export default function CreatePage() {
                       key={preset.name}
                       type="button"
                       onClick={() => addPresetEvent(preset)}
-                      className="flex items-center gap-1.5 rounded-full border border-[#D9CFC4] bg-white px-3.5 py-1.5 text-xs font-medium text-[#341822] shadow-2xs transition-all hover:border-[#341822] hover:bg-[#F3EDE2] active:scale-95 cursor-pointer"
+                      className="flex items-center gap-1.5 rounded-full border border-[#D9CFC4] bg-white px-3.5 py-1.5 text-xs font-medium text-[#341822] shadow-2xs transition-all hover:border-[#C9A24F] hover:bg-[#F3EDE2] active:scale-95 cursor-pointer"
                     >
                       <span>{preset.emoji}</span>
                       <span>{preset.name}</span>
-                      <Plus size={13} className="text-[#8A7B75]" />
+                      <Plus size={13} className="text-[#C9A24F]" />
                     </button>
                   ))}
                 </div>
@@ -446,7 +456,7 @@ export default function CreatePage() {
 
               {/* SECTION HEADER */}
               <div className="flex items-center justify-between pt-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#8A7B75]">
+                <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-[#8A7B75]">
                   Celebration Schedule ({events.length} Events)
                 </h2>
                 <button
@@ -464,7 +474,7 @@ export default function CreatePage() {
                       },
                     ])
                   }
-                  className="flex items-center gap-1 text-xs font-semibold text-[#341822] hover:underline cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-semibold text-[#C9A24F] hover:underline cursor-pointer"
                 >
                   <Plus size={14} /> Custom Event
                 </button>
@@ -503,7 +513,7 @@ export default function CreatePage() {
                         updated[i].name = e.target.value;
                         setEvents(updated);
                       }}
-                      className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none focus:border-[#341822]"
+                      className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none focus:border-[#C9A24F]"
                     />
                   </div>
 
@@ -585,11 +595,11 @@ export default function CreatePage() {
                           updated[i].mapUrl = e.target.value;
                           setEvents(updated);
                         }}
-                        className="w-full rounded-lg border border-[#E8DFD5] pl-8 pr-3 py-2 text-sm outline-none focus:border-[#341822]"
+                        className="w-full rounded-lg border border-[#E8DFD5] pl-8 pr-3 py-2 text-sm outline-none focus:border-[#C9A24F]"
                       />
                       <MapPin
                         size={15}
-                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8A7B75]"
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#C9A24F]"
                       />
                     </div>
                   </div>
@@ -600,14 +610,14 @@ export default function CreatePage() {
 
           {/* TAB 4: STORY */}
           {activeTab === 'story' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div>
                 <label className="text-xs font-semibold text-[#5A4B45]">Our Story</label>
                 <textarea
                   rows={4}
                   value={story}
                   onChange={(e) => setStory(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#341822]"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -635,13 +645,13 @@ export default function CreatePage() {
 
           {/* TAB 5: GALLERY */}
           {activeTab === 'gallery' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-[#8A7B75]">
+                  <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-[#8A7B75]">
                     Photo Layout
                   </h2>
-                  <p className="text-xs text-[#8A7B75]">
+                  <p className="text-xs text-[#8A7B75] mt-0.5">
                     Select how many photos you want to show in your invitation.
                   </p>
                 </div>
@@ -670,7 +680,7 @@ export default function CreatePage() {
                     onClick={() => setPhotoLayout(l.id as any)}
                     className={`rounded-xl border px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
                       photoLayout === l.id
-                        ? 'border-[#341822] bg-[#341822] text-white shadow-xs'
+                        ? 'border-[#C9A24F] bg-[#341822] text-white shadow-xs'
                         : 'border-[#E8DFD5] bg-white text-[#5A4B45] hover:border-[#C4B5A5]'
                     }`}
                   >
@@ -694,7 +704,7 @@ export default function CreatePage() {
                             ? 'opacity-40 border-[#E8DFD5] bg-gray-50 pointer-events-none'
                             : photoUrl
                             ? 'border-solid border-[#C9A24F] bg-[#FAF7F2]'
-                            : 'border-[#D9CFC4] hover:border-[#341822]'
+                            : 'border-[#D9CFC4] hover:border-[#C9A24F]'
                         }`}
                       >
                         {photoUrl ? (
@@ -717,7 +727,7 @@ export default function CreatePage() {
                           </div>
                         ) : (
                           <label className="flex h-32 flex-col items-center justify-center cursor-pointer">
-                            <Camera size={22} className="text-[#8A7B75]" />
+                            <Camera size={22} className="text-[#C9A24F]" />
                             <span className="mt-2 text-[11px] font-semibold text-[#8A7B75] uppercase">
                               Click to upload
                               <br />
@@ -741,14 +751,14 @@ export default function CreatePage() {
 
           {/* TAB 6: INFO */}
           {activeTab === 'info' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div>
                 <label className="text-xs font-semibold text-[#5A4B45]">Dress Code</label>
                 <input
                   type="text"
                   value={dressCode}
                   onChange={(e) => setDressCode(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
               <div>
@@ -757,7 +767,7 @@ export default function CreatePage() {
                   type="text"
                   value={accommodation}
                   onChange={(e) => setAccommodation(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
               <div>
@@ -766,7 +776,7 @@ export default function CreatePage() {
                   type="text"
                   value={gifts}
                   onChange={(e) => setGifts(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-[#E8DFD5] px-3.5 py-2.5 text-sm outline-none focus:border-[#C9A24F]"
                 />
               </div>
             </div>
@@ -774,9 +784,11 @@ export default function CreatePage() {
 
           {/* TAB 7: REVIEW */}
           {activeTab === 'review' && (
-            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs text-center">
-              <Sparkles size={36} className="mx-auto text-[#C9A24F]" />
-              <h2 className="font-serif text-2xl font-semibold">Your Invitation is Ready!</h2>
+            <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-8 shadow-xs text-center">
+              <Sparkles size={40} className="mx-auto text-[#C9A24F]" />
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#2D141E]">
+                Your Invitation is Ready!
+              </h2>
               <p className="text-sm text-[#7A6B65] max-w-md mx-auto">
                 Check the live preview on the right. Once satisfied, publish your invitation link
                 to share on WhatsApp and Instagram.
@@ -785,7 +797,11 @@ export default function CreatePage() {
                 <button
                   type="button"
                   onClick={() => setIsPublishOpen(true)}
-                  className="rounded-full bg-[#341822] px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:opacity-90 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
+                    boxShadow: '0 4px 18px rgba(201, 162, 79, 0.35)',
+                  }}
+                  className="rounded-full px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-md hover:opacity-95 hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   🚀 Publish Your WedLink (₹1,499 / $39)
                 </button>
@@ -813,7 +829,7 @@ export default function CreatePage() {
                 if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].key);
               }}
               disabled={activeTab === 'review'}
-              className="flex items-center gap-1.5 rounded-xl bg-[#341822] px-5 py-2 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40 cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl bg-[#341822] px-6 py-2.5 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40 cursor-pointer"
             >
               Next <ArrowRight size={14} />
             </button>
@@ -911,7 +927,11 @@ export default function CreatePage() {
                   );
                   setIsPublishOpen(false);
                 }}
-                className="w-full rounded-2xl bg-[#341822] py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
+                  boxShadow: '0 4px 18px rgba(201, 162, 79, 0.35)',
+                }}
+                className="w-full rounded-2xl py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
               >
                 Pay ₹1,499 & Get Live Link 🚀
               </button>
