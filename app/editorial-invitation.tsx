@@ -15,7 +15,7 @@ import WeddingCountdown from './wedding-countdown';
 
 const dateText = (date?: string) =>
   date
-    ? new Date(`${date}T12:00:00`).toLocaleDateString('en-GB', {
+    ? new Date(date + 'T12:00:00').toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -96,11 +96,11 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
     const r = e.currentTarget.getBoundingClientRect();
     root.current?.style.setProperty(
       '--ed-x',
-      `${((e.clientX - r.left) / r.width - 0.5) * 6}deg`
+      ((e.clientX - r.left) / r.width - 0.5) * 6 + 'deg'
     );
     root.current?.style.setProperty(
       '--ed-y',
-      `${-((e.clientY - r.top) / r.height - 0.5) * 5}deg`
+      -((e.clientY - r.top) / r.height - 0.5) * 5 + 'deg'
     );
   };
 
@@ -123,14 +123,14 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
     <article
       data-long-names={Math.max(first.length, second.length) > 14}
       ref={root}
-      className={`editorial-invite ed-${stage}${motion ? '' : ' ed-paused'}`}
+      className={'editorial-invite ed-' + stage + (motion ? '' : ' ed-paused')}
     >
       <section className="ed-hero" onPointerMove={tilt} onPointerLeave={reset}>
         {data.photo && (
           <img
             className="ed-hero-photo"
             src={data.photo}
-            alt={`${first} and ${second}`}
+            alt={first + ' and ' + second}
             fetchPriority="high"
           />
         )}
@@ -257,14 +257,14 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
                 <figure className="ed-portrait" key={data.photo}>
                   <img
                     src={data.photo}
-                    alt={`${first} and ${second} together`}
+                    alt={first + ' and ' + second + ' together'}
                     loading="lazy"
                   />
                   <figcaption>
                     <span>
                       {first} & {second}
                     </span>
-                    <span>EST. {data.date?.slice(0, 4) || 'FOREVER'}</span>
+                    <span>EST. {data.date ? data.date.slice(0, 4) : 'FOREVER'}</span>
                   </figcaption>
                 </figure>
                 <span className="ed-portrait-note" aria-hidden="true">
@@ -307,7 +307,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
                 <div className="ed-event-copy">
                   <span className="ed-eyebrow">
                     {dateText(event.date)}
-                    {event.time ? ` · ${event.time}` : ''}
+                    {event.time ? ' · ' + event.time : ''}
                   </span>
                   <h3>{event.name || 'Our celebration'}</h3>
                   <h4>{event.venue || 'Venue to be announced'}</h4>
@@ -315,9 +315,10 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
                   {event.address && (
                     <a
                       className="ed-map"
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${event.venue \vert{}\vert{} ''}${event.address}`.trim()
-                      )}`}
+                      href={
+                        'https://www.google.com/maps/search/?api=1&query=' +
+                        encodeURIComponent([event.venue, event.address].filter(Boolean).join(' '))
+                      }
                       target="_blank"
                       rel="noreferrer"
                     >
