@@ -29,7 +29,6 @@ export default function CreatePage() {
   });
 
   useEffect(() => {
-    // URL query check
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const t = params.get('template');
@@ -53,8 +52,11 @@ export default function CreatePage() {
 
   const handlePreview = () => {
     const payload = { ...formData, theme };
-    localStorage.setItem('wedlink_custom_invite', JSON.stringify(payload));
-    window.location.href = '/invite/demo';
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('wedlink_custom_invite', JSON.stringify(payload));
+      // Seedha user ke chune huye template par live bhejega
+      window.location.href = `/templates/${theme}`;
+    }
   };
 
   return (
@@ -277,7 +279,7 @@ export default function CreatePage() {
           </div>
         </section>
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA Button */}
         <div className="text-center pt-4">
           <button
             type="button"
