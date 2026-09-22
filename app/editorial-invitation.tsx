@@ -9,6 +9,7 @@ import {
   RotateCcw,
   MapPin,
   Heart,
+  Camera,
 } from 'lucide-react';
 import type { Invite } from './shared';
 import WeddingCountdown from './wedding-countdown';
@@ -33,6 +34,25 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
   const second = data.second || 'Your partner';
   const open = stage === 'open';
 
+  // Extract all available photos into a clean array
+  const rawPhotos: string[] = Array.isArray((data as any).photos)
+    ? (data as any).photos.filter(Boolean)
+    : [
+        data.photo,
+        (data as any).photo1,
+        (data as any).photo2,
+        (data as any).photo3,
+        (data as any).photo4,
+      ].filter((p): p is string => Boolean(p));
+
+  // Remove duplicates if same photo string is passed
+  const photos = Array.from(new Set(rawPhotos));
+
+  // Assign distinct photos to different sections
+  const heroPhoto = photos[0] || data.photo;
+  const storyPhoto = photos || photos[0] || data.photo;
+  const finalePhoto = photos[photos.length - 1] || photos[0] || data.photo;
+
   // Respect user preference for reduced motion
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -43,21 +63,21 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
     return () => media.removeEventListener('change', update);
   }, []);
 
-  // Handle stage transition from opening to open
+  // Handle stage transition
   useEffect(() => {
     if (stage !== 'opening') return;
     const timer = setTimeout(() => setStage('open'), motion ? 1350 : 30);
     return () => clearTimeout(timer);
   }, [stage, motion]);
 
-  // Focus title when opened for accessibility
+  // Focus title for accessibility
   useEffect(() => {
     if (!open) return;
     const timeout = setTimeout(() => title.current?.focus({ preventScroll: true }), 100);
     return () => clearTimeout(timeout);
   }, [open]);
 
-  // Reveal sections on scroll
+  // Scroll reveal observer
   useEffect(() => {
     if (!open) return;
     const nodes = root.current?.querySelectorAll('.ed-reveal');
@@ -81,15 +101,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
 
     nodes?.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [
-    open,
-    data.photo,
-    data.story,
-    data.events,
-    data.dressCode,
-    data.accommodation,
-    data.gifts,
-  ]);
+  }, [open, photos, data.story, data.events, data.dressCode]);
 
   const tilt = (e: PointerEvent<HTMLElement>) => {
     if (!motion || e.pointerType !== 'mouse') return;
@@ -125,11 +137,12 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
       ref={root}
       className={'editorial-invite ed-' + stage + (motion ? '' : ' ed-paused')}
     >
+      {/* 1. HERO SECTION */}
       <section className="ed-hero" onPointerMove={tilt} onPointerLeave={reset}>
-        {data.photo && (
+        {heroPhoto && (
           <img
             className="ed-hero-photo"
-            src={data.photo}
+            src={heroPhoto}
             alt={first + ' and ' + second}
             fetchPriority="high"
           />
@@ -221,6 +234,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
 
       {open && (
         <div className="ed-pages">
+          {/* 2. INTRO SECTION */}
           <section className="ed-intro ed-reveal">
             <span className="ed-eyebrow">ONE DAY. ALL OUR FAVOURITE PEOPLE.</span>
             <h2>
@@ -235,10 +249,12 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             <Heart size={19} />
           </section>
 
+          {/* 3. COUNTDOWN */}
           <div id="editorial-countdown" className="ed-countdown ed-reveal">
             <WeddingCountdown data={data} />
           </div>
 
+          {/* 4. STORY SECTION */}
           <section className="ed-story ed-reveal">
             <div className="ed-story-heading">
               <span className="ed-eyebrow">01 / OUR STORY</span>
@@ -248,15 +264,15 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
                 <em>A choice, every day.</em>
               </h2>
             </div>
-            {data.photo && (
+            {storyPhoto && (
               <div
                 className="ed-portrait-stage"
                 onPointerMove={tilt}
                 onPointerLeave={reset}
               >
-                <figure className="ed-portrait" key={data.photo}>
+                <figure className="ed-portrait" key={storyPhoto}>
                   <img
-                    src={data.photo}
+                    src={storyPhoto}
                     alt={first + ' and ' + second + ' together'}
                     loading="lazy"
                   />
@@ -290,6 +306,82 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             </div>
           </section>
 
+          {/* 5. DEDICATED GALLERY SECTION (Shows all uploaded photos) */}
+          {photos.length > 0 && (
+            <section className="ed-gallery ed-reveal">
+              <div className="ed-section-heading">
+                <span className="ed-eyebrow">THE HEART OF OUR STORY</span>
+                <h2>
+                  In every lifetime,
+                  <br />
+                  <em>it would be you.</em>
+                </h2>
+              </div>
+
+              <div
+                className="ed-gallery-grid"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    photos.length === 1
+                      ? '1fr'
+                      : photos.length === 2
+                      ? 'repeat(auto-fit, minmax(260px, 1fr))'
+                      : 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1.5rem',
+                  maxWidth: '900px',
+                  margin: '2rem auto',
+                  padding: '0 1rem',
+                }}
+              >
+                {photos.map((photoUrl, idx) => (
+                  <figure
+                    key={photoUrl + idx}
+                    className="ed-gallery-item"
+                    style={{
+                      background: '#fff',
+                      padding: '12px 12px 24px',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
+                      borderRadius: '4px',
+                      transform: idx % 2 === 0 ? 'rotate(-1.5deg)' : 'rotate(1.5deg)',
+                      transition: 'transform 0.3s ease',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <img
+                      src={photoUrl}
+                      alt={'Memory ' + (idx + 1)}
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: photos.length === 1 ? '380px' : '260px',
+                        objectFit: 'cover',
+                        borderRadius: '2px',
+                      }}
+                    />
+                    <figcaption
+                      style={{
+                        marginTop: '12px',
+                        fontFamily: 'serif',
+                        fontSize: '0.9rem',
+                        color: '#666',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      <span>{first}</span>
+                      <Heart size={12} fill="currentColor" />
+                      <span>{second}</span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* 6. EVENTS CELEBRATION */}
           <section className="ed-events ed-reveal">
             <div className="ed-section-heading">
               <span className="ed-eyebrow">02 / THE CELEBRATION</span>
@@ -330,6 +422,7 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             ))}
           </section>
 
+          {/* 7. DETAILS */}
           {(data.dressCode || data.accommodation || data.gifts) && (
             <section className="ed-details ed-reveal">
               <span className="ed-eyebrow">THE LITTLE DETAILS</span>
@@ -349,8 +442,9 @@ export default function EditorialInvitation({ data }: { data: Invite }) {
             </section>
           )}
 
+          {/* 8. FINALE */}
           <section className="ed-finale ed-reveal">
-            {data.photo && <img src={data.photo} alt="" loading="lazy" />}
+            {finalePhoto && <img src={finalePhoto} alt="" loading="lazy" />}
             <div className="ed-finale-shade" />
             <div className="ed-finale-copy">
               <span className="ed-eyebrow">THE NEXT CHAPTER IS OUR FAVOURITE.</span>
