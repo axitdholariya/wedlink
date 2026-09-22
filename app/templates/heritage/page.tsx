@@ -1,6 +1,58 @@
 import Link from 'next/link';
-import {ArrowLeft,ArrowUpRight} from 'lucide-react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { example } from '@/app/shared';
 import HeritageInvitation from '@/app/heritage-invitation';
-import {example} from '@/app/shared';
-export const metadata={title:'The Heritage — Wedding Invitation | Wedlink',description:'A maroon and gold wedding invitation with a dimensional opening, floating portrait and live countdown.'};
-export default function Page(){return <><header className="ht-demo-bar"><Link href="/#collection"><ArrowLeft size={16}/> Wedlink</Link><span>TEMPLATE 05 · SAMPLE INVITATION</span><Link href="/create?template=heritage">Make it yours <ArrowUpRight size={16}/></Link></header><HeritageInvitation data={{...example,template:'heritage',timezone:'Asia/Kolkata',firstFamily:'With love from the Sharma family',secondFamily:'With love from the Mehta family',story:'It began with a conversation neither of us wanted to end. A few coffees became a thousand memories — shared journeys, familiar songs and the quiet comfort of being understood. With the blessings of our families, we are ready to write the most beautiful chapter of our story.',dressCode:'Festive Indian attire. Bring your favourite colours and your dancing shoes.',accommodation:'We will share stay arrangements with our guests closer to the celebration.',gifts:'Your love and presence are all we wish for.',events:[{name:'Mehendi & Music',date:'2027-12-11',time:'16:00',venue:'The Garden Pavilion',address:'Udaipur, Rajasthan, India'},{name:'The Wedding',date:'2027-12-12',time:'16:00',venue:'The Heritage Courtyard',address:'Udaipur, Rajasthan, India'},{name:'Dinner & Dancing',date:'2027-12-12',time:'19:30',venue:'The Celebration Hall',address:'Udaipur, Rajasthan, India'}]}}/></>}
+
+export const metadata = {
+  title: 'Heritage Rajputana — Traditional Royal Wedding Invitation | Wedlink',
+  description: 'Experience vintage royal Rajputana aesthetics, shlokas, ornate borders and multi-day royal wedding itinerary.'
+};
+
+export default function Page() {
+  return (
+    <div className="relative min-h-screen bg-[#260A10]">
+      {/* Clickable Luxury Top Bar */}
+      <header 
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
+        className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
+      >
+        <Link 
+          href="/" 
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all"
+        >
+          <ArrowLeft size={14} /> Back to Wedlink
+        </Link>
+        <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
+          Heritage Rajputana · Sample Invitation
+        </span>
+        <Link 
+          href="/create?template=heritage"
+          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity"
+        >
+          Personalize <ArrowUpRight size={14} />
+        </Link>
+      </header>
+
+      {/* Main Template with padding for top bar */}
+      <div className="pt-12">
+        <HeritageInvitation
+          data={{
+            ...example,
+            template: 'heritage',
+            status: 'active',
+            isPaid: true,
+            paid: true,
+            isDraft: false,
+            published: true,
+            firstFamily: 'Blessings of the Sharma Family',
+            secondFamily: 'Blessings of the Kapoor Family',
+            timezone: 'Asia/Kolkata',
+            dressCode: 'Royal Rajputana Traditional Indian Elegance',
+            accommodation: 'The Oberoi Udaivilas, Udaipur. Special Code: WEDLINK2026',
+            gifts: 'Your presence and blessings are our greatest gift.'
+          }}
+        />
+      </div>
+    </div>
+  );
+}
