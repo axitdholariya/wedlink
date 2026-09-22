@@ -1,294 +1,375 @@
 'use client';
-import {useState, useEffect} from 'react';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import {ArrowUpRight, ArrowRight, Check, Globe2, Heart, Menu, X, MousePointer2, Smartphone, Link2} from 'lucide-react';
-import {Dialog, DialogContent, DialogTitle, DialogDescription} from '@/components/ui/dialog';
-import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
-import {templates, example, Invitation, Brand} from './shared';
+import { ArrowUpRight, Sparkles, Heart, Crown, Music, Compass, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function Home() {
-  const [active, setActive] = useState('All designs');
-  const [preview, setPreview] = useState<string|null>(null);
-  const [menu, setMenu] = useState(false);
+interface TemplateItem {
+  id: string;
+  name: string;
+  category: string;
+  subtitle: string;
+  href: string;
+  motif: string;
+  coupleNames: string;
+  weddingDate: string;
+  tagline: string;
+  doorBg: string;
+  accentColor: string;
+  pillColor: string;
+}
 
-  useEffect(() => {
-    const context = (document as any).modelContext;
-    if (!context?.registerTool) return;
-    const c = new AbortController();
-    Promise.resolve(context.registerTool({
-      name: 'browse_wedding_templates',
-      description: 'Filter the visible Wedlink template collection by style.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          style: {type: 'string', enum: ['All designs', 'Modern', 'Romantic', 'Indian']}
-        },
-        required: ['style'],
-        additionalProperties: false
-      },
-      annotations: {readOnlyHint: false},
-      execute: ({style}: any) => {
-        if (!['All designs', 'Modern', 'Romantic', 'Indian'].includes(style)) throw Error('Unknown style');
-        setActive(style);
-        document.getElementById('collection')?.scrollIntoView();
-        return {style, templates: templates.filter(t => style === 'All designs' || t.category === style).map(t => t.name)};
-      }
-    }, {signal: c.signal})).catch(() => {});
-    return () => c.abort();
-  }, []);
+const TEMPLATES: TemplateItem[] = [
+  {
+    id: 'rose-letter',
+    name: 'The Rose Letter',
+    category: 'Romantic',
+    subtitle: 'Wax Seal & Scratch Card • Romantic unboxing',
+    href: '/templates/rose-letter',
+    motif: '💌',
+    coupleNames: 'Veer & Zara',
+    weddingDate: '18 · 11 · 2026',
+    tagline: 'TWO SOULS, ONE ETERNAL JOURNEY',
+    doorBg: 'bg-[#F9ECEF]',
+    accentColor: '#D97A8F',
+    pillColor: '#F2D3D9',
+  },
+  {
+    id: 'royal-courtyard',
+    name: 'The Royal Courtyard',
+    category: 'Indian',
+    subtitle: '3D palace entrance • Cinematic',
+    href: '/templates/royal-courtyard',
+    motif: '🏰',
+    coupleNames: 'Emma & Noah',
+    weddingDate: '12 · 12 · 2027',
+    tagline: 'TOGETHER IS A BEAUTIFUL PLACE TO BE',
+    doorBg: 'bg-[#FBF6EE]',
+    accentColor: '#B68A50',
+    pillColor: '#EADBCC',
+  },
+  {
+    id: 'editorial',
+    name: 'The Editorial',
+    category: 'Editorial',
+    subtitle: 'Vogue minimalist • Cinematic opening',
+    href: '/templates/editorial',
+    motif: '✨',
+    coupleNames: 'Maya & Liam',
+    weddingDate: '24 · 01 · 2027',
+    tagline: 'A MODERN LOVE STORY',
+    doorBg: 'bg-[#EBF0EC]',
+    accentColor: '#4A6B53',
+    pillColor: '#D3DFD6',
+  },
+  {
+    id: 'heritage',
+    name: 'Heritage Rajputana',
+    category: 'Indian',
+    subtitle: 'Traditional Shlokas & Regal Borders',
+    href: '/templates/heritage',
+    motif: '🪔',
+    coupleNames: 'Dev & Riya',
+    weddingDate: '05 · 02 · 2027',
+    tagline: 'SACRED VOWS & ROYAL SPLENDOR',
+    doorBg: 'bg-[#FFF7ED]',
+    accentColor: '#C25E2E',
+    pillColor: '#FED7AA',
+  },
+  {
+    id: 'garden-romance',
+    name: 'Garden Romance',
+    category: 'Romantic',
+    subtitle: 'Botanical Florals & Ivory Whispers',
+    href: '/templates/garden-romance',
+    motif: '🌿',
+    coupleNames: 'Chloe & Arthur',
+    weddingDate: '15 · 03 · 2027',
+    tagline: 'BLOOMING UNDER THE STARS',
+    doorBg: 'bg-[#F4F9F4]',
+    accentColor: '#5C8A68',
+    pillColor: '#DBEADB',
+  },
+];
+
+export default function HomePage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [activeSlide, setActiveSlide] = useState<number>(1); // 1 = The Royal Courtyard (Center)
+
+  const categories = ['All', 'Romantic', 'Indian', 'Editorial'];
+
+  const filteredTemplates = selectedCategory === 'All' 
+    ? TEMPLATES 
+    : TEMPLATES.filter(t => t.category === selectedCategory);
 
   return (
-    <>
-      <div className="announcement">A little link. A lifetime of memories.</div>
-      <header className="nav">
-        <Link href="/" aria-label="Wedlink home"><Brand /></Link>
-        <nav id="main-navigation" className={menu ? 'nav-links open' : 'nav-links'}>
-          <a href="#collection" onClick={() => setMenu(false)}>The collection</a>
-          <a href="#how" onClick={() => setMenu(false)}>How it works</a>
-          <a href="#questions" onClick={() => setMenu(false)}>Questions</a>
-        </nav>
-        <a className="button small" href="#collection">Create your invitation <ArrowUpRight size={16} /></a>
-        <button className="menu" onClick={() => setMenu(!menu)} aria-label="Toggle navigation" aria-expanded={menu} aria-controls="main-navigation">
-          {menu ? <X /> : <Menu />}
-        </button>
+    <div className="min-h-screen bg-[#FFF9F2] text-[#241C24] font-['Manrope',sans-serif] selection:bg-[#541D36] selection:text-[#FFF9F2] flex flex-col">
+      
+      {/* Brand Kit Fonts */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap');
+        .font-brand-heading { font-family: 'Cormorant Garamond', Georgia, serif; }
+        .font-brand-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+
+      {/* 1. NAVIGATION HEADER */}
+      <header className="h-20 px-6 sm:px-12 flex items-center justify-between border-b border-[#B68A50]/20 bg-[#FFF9F2]/80 backdrop-blur-md sticky top-0 z-50">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-[#541D36] border border-[#B68A50]/40 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <span className="text-xl">🏰</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-brand-heading text-2xl font-bold tracking-wide leading-none text-[#541D36]">
+              Wedlink
+            </span>
+            <span className="text-[9px] tracking-widest text-[#B68A50] font-bold uppercase mt-0.5">
+              One Link • Endless Celebrations
+            </span>
+          </div>
+        </Link>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/create"
+            className="px-5 py-2.5 rounded-full bg-[#541D36] hover:bg-[#43162B] text-amber-200 font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center gap-1.5"
+          >
+            Create Your Invite <ArrowUpRight size={14} />
+          </Link>
+        </div>
       </header>
 
-      <main>
-        {/* HERO SECTION */}
-        <section className="hero">
-          <div className="hero-copy">
-            <div className="eyebrow"><span /> FOR THE BEGINNING OF FOREVER</div>
-            <h1>Your love story.<br />Beautifully <em>linked.</em></h1>
-            <p>A wedding website that feels like you. Thoughtfully designed, effortlessly personalized, and ready to share with everyone you love.</p>
-            <a className="button" href="#collection">Find your invitation <ArrowUpRight size={18} /></a>
-            <Link className="text-button" href="/templates/editorial">Take a little peek <ArrowRight size={17} /></Link>
-            <div className="hero-notes">
-              <span><Check size={15} /> Make it yours in minutes</span>
-              <span><Check size={15} /> One link for every guest</span>
-            </div>
-          </div>
-          <div className="hero-art">
-            <div className="art-caption">YOUR NEXT CHAPTER STARTS HERE</div>
-            <div className="hero-invite">
-              <div className="invite-label">TOGETHER WITH OUR FAMILIES</div>
-              <h2>Aarav <i>&</i> Meera</h2>
-              <p>ARE GETTING MARRIED</p>
-              <div className="hero-photo"><img src="/wedding.png" alt="A couple celebrating together in a sunlit garden" /></div>
-              <div className="hero-date"><span>DECEMBER</span><strong>12</strong><span>UDAIPUR, INDIA</span></div>
-              <div className="tiny-rule" />
-              <p>We saved you a place in our forever.</p>
-            </div>
-            <div className="floating-note">
-              <Heart size={18} />
-              <span>A little more you.<br /><strong>A lot more meaningful.</strong></span>
-            </div>
-            <span className="art-bottom">DESIGNED FOR LOVE. MADE FOR SHARING.</span>
-          </div>
-        </section>
+      {/* 2. HERO SHOWCASE SECTION */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16 flex flex-col items-center">
+        
+        {/* Title */}
+        <div className="text-center max-w-3xl mb-8 sm:mb-12">
+          <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#B68A50] mb-2 block">
+            Signature Interactive Invitations
+          </span>
+          <h1 className="font-brand-heading italic text-4xl sm:text-6xl lg:text-7xl font-bold text-[#541D36] leading-tight">
+            Designed for your kind of love.
+          </h1>
+          <p className="text-sm sm:text-base text-[#7A6B72] mt-3 max-w-xl mx-auto">
+            Experience 3D unboxing, royal carved doors, sacred music, and instant guest RSVPs in one link.
+          </p>
 
-        {/* FEATURE STRIP */}
-        <div className="feature-strip">
-          <span><Globe2 size={19} /> Love has no borders</span>
-          <span><Smartphone size={19} /> Beautiful on every screen</span>
-          <span><MousePointer2 size={19} /> No design skills needed</span>
-          <span><Link2 size={19} /> All the details. One link.</span>
+          {/* Filter Pills */}
+          <div className="flex justify-center gap-2 mt-6">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedCategory === cat
+                    ? 'bg-[#541D36] text-[#FFF9F2] shadow-sm'
+                    : 'bg-white border border-[#B68A50]/30 text-[#7A6B72] hover:border-[#541D36]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* COLLECTION SECTION (WITH SCREENSHOT 2 MOBILE FORMAT + SCREENSHOT 1 THUMBNAILS) */}
-        <section className="collection section" id="collection">
-          <div className="section-top">
-            <div>
-              <span className="eyebrow">THE WEDLINK COLLECTION</span>
-              <h2>A design for <em>your kind of love.</em></h2>
-            </div>
-            <p>From quiet elegance to a grand celebration.<br />Find the one that feels like you.</p>
-          </div>
+        {/* 3. THREE-PHONE CAROUSEL / TEMPLATE SHOWCASE (Screenshot 1 Exact Layout) */}
+        <div className="w-full relative flex items-center justify-center py-6">
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 w-full max-w-5xl items-center">
+            
+            {/* CARD 1: LEFT CARD (The Rose Letter) */}
+            <div className="flex flex-col items-center group">
+              <Link 
+                href="/templates/rose-letter"
+                className="w-full max-w-[280px] h-[520px] bg-[#241C24] rounded-[36px] p-2.5 shadow-xl border-4 border-[#241C24] relative overflow-hidden transition-all duration-300 hover:-translate-y-2 cursor-pointer flex flex-col"
+              >
+                <div className="w-24 h-4 bg-[#241C24] rounded-b-xl mx-auto mb-2" />
+                
+                {/* Screen Content */}
+                <div className="flex-1 bg-[#F9ECEF] rounded-[24px] p-5 flex flex-col justify-between text-center relative border border-pink-200">
+                  <div className="pt-6">
+                    <span className="text-[9px] uppercase tracking-widest text-[#D97A8F] font-bold block mb-1">
+                      Interactive 3D Wax Seal
+                    </span>
+                    <h3 className="font-brand-heading text-2xl font-bold text-[#541D36]">Veer & Zara</h3>
+                    <p className="text-[10px] text-[#7A6B72] tracking-wider mt-1">18 · 11 · 2026</p>
+                  </div>
 
-          <Tabs value={active} onValueChange={setActive}>
-            <TabsList className="filters">
-              {['All designs', 'Modern', 'Romantic', 'Indian'].map(x => (
-                <TabsTrigger key={x} value={x}>{x}</TabsTrigger>
-              ))}
-            </TabsList>
+                  <div className="w-24 h-24 mx-auto rounded-full bg-white/70 border-2 border-[#D97A8F]/40 flex items-center justify-center text-4xl shadow-md">
+                    💌
+                  </div>
 
-            {['All designs', 'Modern', 'Romantic', 'Indian'].map(x => (
-              <TabsContent key={x} value={x}>
-                <div className="template-grid">
-                  {templates.filter(t => x === 'All designs' || t.category === x).map(t => (
-                    <article className="template-card" key={t.id}>
-                      {/* SCREENSHOT 2: REALISTIC IPHONE / MOBILE FRAME */}
-                      <div 
-                        style={{
-                          position: 'relative',
-                          maxWidth: '290px',
-                          margin: '0 auto',
-                          padding: '10px',
-                          backgroundColor: '#1C1D21',
-                          borderRadius: '46px',
-                          border: '3.5px solid #2E3036',
-                          boxShadow: '0 16px 40px rgba(0,0,0,0.14)',
-                          transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                        }}
-                        className="hover:-translate-y-1.5 hover:shadow-2xl"
-                      >
-                        {/* Dynamic Island Notch */}
-                        <div style={{
-                          position: 'absolute',
-                          top: '16px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: '74px',
-                          height: '16px',
-                          backgroundColor: '#000',
-                          borderRadius: '20px',
-                          zIndex: 20,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'flex-end',
-                          paddingRight: '6px'
-                        }}>
-                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#1A2130', border: '1px solid rgba(255,255,255,0.2)' }} />
-                        </div>
-
-                        {/* Mobile Screen Display Containing Exact Screenshot 1 Thumbnail */}
-                        <div style={{
-                          borderRadius: '36px',
-                          overflow: 'hidden',
-                          aspectRatio: '9 / 16.5',
-                          display: 'flex',
-                          flexDirection: 'column'
-                        }}>
-                          <button
-                            className={'template-preview ' + t.id}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              paddingTop: '24px',
-                              boxSizing: 'border-box',
-                              border: 'none',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => {
-                              if (t.id === 'rose-letter') location.assign('/templates/rose-letter');
-                              else if (t.id === 'royal') location.assign('/templates/royal-courtyard');
-                              else if (t.id === 'editorial') location.assign('/templates/editorial');
-                              else if (t.id === 'romance') location.assign('/templates/garden-romance');
-                              else if (t.id === 'heritage') location.assign('/templates/heritage');
-                              else setPreview(t.id);
-                            }}
-                            aria-label={'Preview ' + t.name}
-                          >
-                            {/* EXACT SCREENSHOT 1 INNER THUMBNAIL CONTENT */}
-                            <div className="template-paper">
-                              {t.id === 'rose-letter' && <span className="royal-card-label">OPEN · SCRATCH · DISCOVER</span>}
-                              {t.id === 'royal' && <span className="royal-card-label">INTERACTIVE 3D ENTRANCE</span>}
-                              <span className="micro">{t.id === 'heritage' ? 'WITH THE BLESSINGS OF OUR FAMILIES' : 'THE WEDDING OF'}</span>
-                              <h3>{t.id === 'heritage' ? 'Aarav' : 'Emma'}<i>&</i>{t.id === 'heritage' ? 'Meera' : 'Noah'}</h3>
-                              {t.id !== 'heritage' && t.id !== 'royal' && t.id !== 'rose-letter' && (
-                                <img src="/wedding.png" alt="Wedding portrait preview" loading="lazy" />
-                              )}
-                              <div className="micro">12 · 12 · 2027</div>
-                              <p>{t.id === 'heritage' ? 'UDAIPUR, INDIA' : 'TOGETHER IS A BEAUTIFUL PLACE TO BE'}</p>
-                            </div>
-                            <span className="preview-badge">Explore design <ArrowUpRight size={15} /></span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* CARD CAPTION */}
-                      <div className="card-caption">
-                        <div>
-                          <h3>{t.name}</h3>
-                          <p>{t.subtitle}</p>
-                        </div>
-                        <Link href={'/create?template=' + t.id} aria-label={'Customize ' + t.name}>
-                          <ArrowUpRight />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
+                  {/* Direct Link Button */}
+                  <span className="py-2.5 px-4 rounded-xl bg-white border border-[#D97A8F]/40 text-[#541D36] font-bold text-xs shadow flex items-center justify-center gap-1 group-hover:bg-[#541D36] group-hover:text-white transition-colors">
+                    Explore design <ArrowUpRight size={14} />
+                  </span>
                 </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-        </section>
+              </Link>
 
-        {/* HOW IT WORKS SECTION */}
-        <section className="how section" id="how">
-          <div>
-            <span className="eyebrow">LESS PLANNING. MORE CELEBRATING.</span>
-            <h2>From “this is the one”<br />to <em>“you’re invited.”</em></h2>
-            <p>Your names. Your moments. Your celebration.<br />We bring it all together.</p>
-            <a className="text-button" href="#collection">Let’s make it yours <ArrowRight size={18} /></a>
-          </div>
-          <div className="steps">
-            {[
-              ['01', 'Find your perfect match', 'Choose a design that captures the spirit of your celebration.'],
-              ['02', 'Tell your story', 'Add your photo, wedding events, venues, and a few words from the heart. Preview every detail as you go.'],
-              ['03', 'One link. Everyone you love.', 'Once payment is confirmed, your invitation goes live automatically. Share your link and let the excitement begin.']
-            ].map(([n, h, p]) => (
-              <div className="step" key={n}>
-                <span>{n}</span>
-                <div><h3>{h}</h3><p>{p}</p></div>
+              {/* Bottom Caption & Link */}
+              <div className="mt-4 text-center">
+                <Link 
+                  href="/templates/rose-letter"
+                  className="font-brand-heading text-2xl font-bold text-[#541D36] hover:text-[#B68A50] transition-colors flex items-center justify-center gap-1.5"
+                >
+                  The Rose Letter <ArrowUpRight size={16} />
+                </Link>
+                <p className="text-xs text-[#7A6B72] mt-0.5">Wax Seal & Scratch Card • Romantic</p>
               </div>
+            </div>
+
+            {/* CARD 2: CENTER HERO CARD (THE ROYAL COURTYARD - YELLOW / GOLDEN ROYAL FOLD) */}
+            <div className="flex flex-col items-center group md:-mt-6">
+              <Link 
+                href="/templates/royal-courtyard"
+                className="w-full max-w-[320px] h-[580px] bg-[#241C24] rounded-[42px] p-3 shadow-2xl border-4 border-[#B68A50] relative overflow-hidden transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col ring-4 ring-[#B68A50]/20"
+              >
+                {/* Speaker Notch */}
+                <div className="w-28 h-4 bg-[#241C24] rounded-b-xl mx-auto mb-2 z-20" />
+                
+                {/* Screen Content: Carved Sandstone Palace Entrance */}
+                <div className="flex-1 bg-[#FBF6EE] rounded-[28px] p-6 flex flex-col justify-between text-center relative border border-[#B68A50]/40 overflow-hidden shadow-inner">
+                  
+                  {/* Ornate Gold Border & Background */}
+                  <div className="absolute inset-2 border border-[#B68A50]/30 rounded-[20px] pointer-events-none" />
+                  
+                  <div className="pt-6 relative z-10 space-y-1">
+                    <span className="text-[9px] uppercase tracking-[0.25em] text-[#B68A50] font-bold block">
+                      INTERACTIVE 3D ENTRANCE
+                    </span>
+                    <span className="text-[10px] text-[#7A6B72] uppercase tracking-widest block pt-1">
+                      THE WEDDING OF
+                    </span>
+                    <h2 className="font-brand-heading text-3xl sm:text-4xl font-bold text-[#541D36] leading-tight pt-1">
+                      Emma
+                    </h2>
+                    <span className="font-brand-heading italic text-2xl text-[#B68A50] block leading-none">&</span>
+                    <h2 className="font-brand-heading text-3xl sm:text-4xl font-bold text-[#541D36] leading-tight">
+                      Noah
+                    </h2>
+                    <p className="text-[11px] font-mono font-bold text-[#B68A50] tracking-widest pt-2">
+                      12 · 12 · 2027
+                    </p>
+                  </div>
+
+                  <div className="relative z-10 py-2">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-white/80 border-2 border-[#B68A50] flex items-center justify-center text-3xl shadow-lg">
+                      🏰
+                    </div>
+                    <p className="text-[10px] tracking-wider text-[#7A6B72] uppercase font-bold mt-2">
+                      TOGETHER IS A BEAUTIFUL PLACE TO BE
+                    </p>
+                  </div>
+
+                  {/* ✅ DIRECT EXPLORE DESIGN BUTTON (सीधे /templates/royal-courtyard पर जाएगा) */}
+                  <div className="relative z-10">
+                    <span className="w-full py-3 px-4 rounded-xl bg-white border border-[#B68A50] text-[#541D36] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 group-hover:bg-[#541D36] group-hover:text-amber-200 transition-colors">
+                      Explore design <ArrowUpRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Bottom Caption & Link */}
+              <div className="mt-4 text-center">
+                <Link 
+                  href="/templates/royal-courtyard"
+                  className="font-brand-heading text-2xl sm:text-3xl font-bold text-[#541D36] hover:text-[#B68A50] transition-colors flex items-center justify-center gap-1.5"
+                >
+                  The Royal Courtyard <ArrowUpRight size={18} />
+                </Link>
+                <p className="text-xs text-[#7A6B72] mt-0.5">3D palace entrance • Cinematic</p>
+              </div>
+            </div>
+
+            {/* CARD 3: RIGHT CARD (The Editorial) */}
+            <div className="flex flex-col items-center group">
+              <Link 
+                href="/templates/editorial"
+                className="w-full max-w-[280px] h-[520px] bg-[#241C24] rounded-[36px] p-2.5 shadow-xl border-4 border-[#241C24] relative overflow-hidden transition-all duration-300 hover:-translate-y-2 cursor-pointer flex flex-col"
+              >
+                <div className="w-24 h-4 bg-[#241C24] rounded-b-xl mx-auto mb-2" />
+                
+                {/* Screen Content */}
+                <div className="flex-1 bg-[#EBF0EC] rounded-[24px] p-5 flex flex-col justify-between text-center relative border border-emerald-200">
+                  <div className="pt-6">
+                    <span className="text-[9px] uppercase tracking-widest text-[#4A6B53] font-bold block mb-1">
+                      Contemporary Editorial
+                    </span>
+                    <h3 className="font-brand-heading text-2xl font-bold text-[#241C24]">Maya & Liam</h3>
+                    <p className="text-[10px] text-[#7A6B72] tracking-wider mt-1">24 · 01 · 2027</p>
+                  </div>
+
+                  <div className="w-24 h-24 mx-auto rounded-full bg-white/70 border-2 border-[#4A6B53]/40 flex items-center justify-center text-4xl shadow-md">
+                    ✨
+                  </div>
+
+                  {/* Direct Link Button */}
+                  <span className="py-2.5 px-4 rounded-xl bg-white border border-[#4A6B53]/40 text-[#241C24] font-bold text-xs shadow flex items-center justify-center gap-1 group-hover:bg-[#241C24] group-hover:text-white transition-colors">
+                    Explore design <ArrowUpRight size={14} />
+                  </span>
+                </div>
+              </Link>
+
+              {/* Bottom Caption & Link */}
+              <div className="mt-4 text-center">
+                <Link 
+                  href="/templates/editorial"
+                  className="font-brand-heading text-2xl font-bold text-[#541D36] hover:text-[#B68A50] transition-colors flex items-center justify-center gap-1.5"
+                >
+                  The Editorial <ArrowUpRight size={16} />
+                </Link>
+                <p className="text-xs text-[#7A6B72] mt-0.5">Cinematic opening • Minimalist</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* 4. ALL TEMPLATES GRID (DIRECT ACCESS TO ALL 5 DESIGNS) */}
+        <div className="w-full max-w-5xl mt-16 pt-12 border-t border-[#B68A50]/20">
+          <div className="text-center mb-8">
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#B68A50]">
+              Full Catalog
+            </span>
+            <h2 className="font-brand-heading text-3xl sm:text-4xl font-bold text-[#541D36] mt-1">
+              Explore All Signature Invitations
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {TEMPLATES.map(t => (
+              <Link
+                key={t.id}
+                href={t.href}
+                className="p-5 rounded-2xl bg-white border border-[#B68A50]/30 shadow-sm hover:shadow-md hover:border-[#541D36] transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3.5">
+                  <span className="text-3xl p-2 rounded-xl bg-[#FFF9F2] border border-[#B68A50]/20">{t.motif}</span>
+                  <div>
+                    <h3 className="font-brand-heading text-xl font-bold text-[#541D36] group-hover:text-[#B68A50] transition-colors">
+                      {t.name}
+                    </h3>
+                    <p className="text-xs text-[#7A6B72]">{t.subtitle}</p>
+                  </div>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-[#FFF9F2] group-hover:bg-[#541D36] text-[#541D36] group-hover:text-white flex items-center justify-center transition-colors">
+                  <ArrowUpRight size={16} />
+                </div>
+              </Link>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* QUESTIONS SECTION */}
-        <section className="questions section" id="questions">
-          <div>
-            <span className="eyebrow">A FEW LITTLE DETAILS</span>
-            <h2>Before the <em>big day.</em></h2>
-          </div>
-          <div>
-            {[
-              ['What can I personalize?', 'Your names, wedding date, welcome message, couple photo, story, and event names, times and venues. Your details appear automatically in the design you choose.'],
-              ['Can I see my invitation before paying?', 'Yes. Personalize your invitation and review the full preview before checkout. Your draft stays private until payment is confirmed.'],
-              ['How will my guests open the invitation?', 'Guests open your invitation link in a browser on their phone, tablet or computer. There is nothing to download.'],
-              ['When does my invitation go live?', 'Your invitation is published automatically after the payment provider confirms successful payment. A pending or unsuccessful payment will not publish your invitation.']
-            ].map(([q, a]) => (
-              <details key={q}>
-                <summary>{q}<span>+</span></summary>
-                <p>{a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        {/* CLOSING BANNER */}
-        <section className="closing">
-          <span className="eyebrow">THE FIRST LOOK AT YOUR FOREVER</span>
-          <h2>Make their inbox<br /><em>a little more romantic.</em></h2>
-          <a className="button light" href="#collection">Find your invitation <ArrowUpRight size={18} /></a>
-          <p>Your story. One beautiful link.</p>
-        </section>
       </main>
 
-      {/* FOOTER */}
-      <footer>
-        <Brand />
-        <span>Thoughtfully made for your together.</span>
-        <span>© {new Date().getFullYear()} Wedlink</span>
+      {/* 5. FOOTER */}
+      <footer className="py-8 border-t border-[#B68A50]/20 text-center text-xs text-[#7A6B72] bg-[#FAF4ED]">
+        <span className="font-brand-heading text-xl font-bold text-[#541D36] block">Wedlink</span>
+        <p className="text-[10px] tracking-widest text-[#B68A50] uppercase mt-1">One Link • Endless Celebrations</p>
       </footer>
 
-      {/* PREVIEW DIALOG */}
-      <Dialog open={!!preview} onOpenChange={o => !o && setPreview(null)}>
-        <DialogContent className="preview-dialog">
-          <DialogTitle>{templates.find(t => t.id === preview)?.name} — live preview</DialogTitle>
-          <DialogDescription>Sample details. Personalize this design with your own story.</DialogDescription>
-          <div className="preview-scroll">
-            <Invitation data={{...example, template: preview || 'editorial'}} />
-          </div>
-          <Link className="button" href={'/create?template=' + preview}>
-            Make this design yours <ArrowUpRight size={18} />
-          </Link>
-        </DialogContent>
-      </Dialog>
-    </>
+    </div>
   );
 }
