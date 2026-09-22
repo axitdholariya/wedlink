@@ -1,17 +1,296 @@
 'use client';
-import {useEffect,useState,useRef} from 'react';
-import Link from 'next/link';
-import {ArrowLeft,ArrowRight,Check,ImagePlus,LockKeyhole,Plus,Trash2,Monitor,Smartphone} from 'lucide-react';
-import {Brand,example,Invitation,templates,type Invite} from '../shared';
-import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
-import {RadioGroup,RadioGroupItem} from '@/components/ui/radio-group';
-export default function Create(){const [data,setData]=useState<Invite>({...example,first:'',second:'',date:'',photo:undefined,story:'',events:[{name:'The wedding',date:'',time:'16:00',venue:'',address:''}]});const [step,setStep]=useState('story');const [file,setFile]=useState<File|null>(null);const [draft,setDraft]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [notice,setNotice]=useState('');const [config,setConfig]=useState({checkoutReady:false,price:''});const [wide,setWide]=useState(false);const formRef=useRef<HTMLFormElement>(null);const objectUrl=useRef('');
-useEffect(()=>{const p=new URLSearchParams(location.search);const t=p.get('template');if(templates.some(x=>x.id===t))setData(d=>({...d,template:t!}));fetch('/api/config').then(r=>r.json() as Promise<{checkoutReady:boolean;price:string}>).then(setConfig).catch(()=>{});const id=p.get('draft');if(id){setBusy(true);fetch('/api/drafts/'+encodeURIComponent(id)).then(async r=>{const d=await responseData(r);if(!r.ok)throw Error(d.error);if(d.status==='paid'){location.href='/invite/'+id;return}setData(d.data);setDraft(id);setNotice('Your private draft is restored. If you make changes, save them as a new draft before checkout.');}).catch(e=>setError(e.message)).finally(()=>setBusy(false))}return()=>{if(objectUrl.current)URL.revokeObjectURL(objectUrl.current)}},[]);
-function change(key:keyof Invite,value:any){setData(d=>({...d,[key]:value}));setDraft('');setNotice('');setError('')}
-function updateEvent(index:number,key:string,value:string){change('events',data.events.map((e,i)=>i===index?{...e,[key]:value}:e))}
-async function upload(f:File|undefined){if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>5*1024*1024){setError('Choose a JPG, PNG or WebP photo under 5 MB.');return}try{const bitmap=await createImageBitmap(f);const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);const ctx=canvas.getContext('2d');if(!ctx)throw Error('Photo processing unavailable.');ctx.fillStyle='#fff9f2';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Photo could not be processed.')),'image/jpeg',0.82));if(blob.size>900000)throw Error('Please choose a simpler or smaller photo.');const optimized=new File([blob],'couple.jpg',{type:'image/jpeg'});if(objectUrl.current)URL.revokeObjectURL(objectUrl.current);objectUrl.current=URL.createObjectURL(optimized);setFile(optimized);change('photo',objectUrl.current)}catch(e){setError(e instanceof Error?e.message:'This photo could not be opened. Try another JPG or PNG.')}}
-async function responseData(r:Response){if(!r.headers.get('content-type')?.includes('application/json'))throw Error(r.status===413?'Your photo is too large. Please choose a smaller photo.':'The service is temporarily unavailable. Please try again.');return await r.json() as {id:string;status:string;data:Invite;error:string;url:string}}
 
-async function save(){setError('');setNotice('');if(!data.first.trim()||!data.second.trim()||!data.date){setStep('story');setError('Add both names and your wedding date first.');return}if(data.events.some(e=>!e.name.trim()||!e.date||!e.time||!e.venue.trim())){setStep('events');setError('Add a name, date, time and venue for every event.');return}setBusy(true);try{const form=new FormData();form.set('data',JSON.stringify(data));if(file)form.set('photo',file);else if(data.photo?.startsWith('/api/photo/')){const photo=await fetch(data.photo);if(!photo.ok)throw Error('Your saved photo could not be loaded. Please upload it again.');form.set('photo',await photo.blob(),'couple.jpg')}const r=await fetch('/api/drafts',{method:'POST',body:form});const d=await responseData(r);if(!r.ok)throw Error(d.error);setDraft(d.id);history.replaceState(null,'','/create?draft='+d.id);setStep('review');setNotice('Your private draft is saved. Keep this page link to reopen it in this browser.')}catch(e){setError(e instanceof Error?e.message:'Unable to save. Please try again.')}finally{setBusy(false)}}
-async function checkout(){if(!draft)return;setBusy(true);setError('');try{const r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:draft})});const d=await responseData(r);if(!r.ok)throw Error(d.error);location.href=d.url}catch(e){setError(e instanceof Error?e.message:'Checkout unavailable.');setBusy(false)}}
-return <><header className="builder-nav"><Link href="/"><Brand/></Link><Link className="text-button" href="/#collection"><ArrowLeft size={16}/> Back to collection</Link><span className="private-label"><LockKeyhole size={14}/> Private until you publish</span></header><main className="builder"><div className="editor" id="invitation-details"><span className="eyebrow">MAKE IT MEANINGFUL. MAKE IT YOURS.</span><h1>Your forever,<br/><em>in the details.</em></h1><p className="editor-intro">A few little details. A beautifully personal invitation.</p><a className="mobile-preview-link text-button" href="#invitation-preview">See your invitation <Smartphone size={17}/></a><Tabs value={step} onValueChange={setStep}><TabsList className="editor-tabs"><TabsTrigger value="story">01 Your story</TabsTrigger><TabsTrigger value="events">02 The day</TabsTrigger><TabsTrigger value="review">03 Review</TabsTrigger></TabsList><form ref={formRef} onSubmit={e=>{e.preventDefault();save()}}><TabsContent value="story"><fieldset><legend>Your design</legend><RadioGroup value={data.template} onValueChange={v=>change('template',v)} className="design-options">{templates.map(t=><label key={t.id}><RadioGroupItem value={t.id}/>{t.name.replace('The ','')}</label>)}</RadioGroup></fieldset><div className="form-row"><label>Your name<input required maxLength={60} value={data.first} onChange={e=>change('first',e.target.value)} placeholder="e.g. Aarav" autoComplete="given-name"/></label><label>Your partner’s name<input required maxLength={60} value={data.second} onChange={e=>change('second',e.target.value)} placeholder="e.g. Meera"/></label></div>{(data.template==='rose-letter'||data.template==='heritage')&&<><label>Your family line <span className="optional">optional</span><input maxLength={250} value={data.firstFamily||''} onChange={e=>change('firstFamily',e.target.value)} placeholder="e.g. Together with the Sharma family"/></label><label>Your partner’s family line <span className="optional">optional</span><input maxLength={250} value={data.secondFamily||''} onChange={e=>change('secondFamily',e.target.value)} placeholder="e.g. Together with the Mehta family"/></label></>}<label>Wedding date<input required type="date" value={data.date} onInput={e=>{const value=e.currentTarget.value;setData(d=>({...d,date:value,events:d.events.map((x,i)=>i===0&&!x.date?{...x,date:value}:x)}));setDraft('');setNotice('');setError('')}}/></label>{(data.template==='rose-letter'||data.template==='royal'||data.template==='editorial'||data.template==='romance'||data.template==='heritage')&&<label>Wedding timezone<input value={data.timezone||'Asia/Kolkata'} onChange={e=>change('timezone',e.target.value)} placeholder="e.g. Asia/Kolkata, Europe/London"/><span className="field-help">Use a timezone such as Asia/Kolkata or America/New_York so the countdown is accurate for every guest.</span></label>}<label className="upload"><ImagePlus size={25}/><strong>{file?file.name:data.photo?'Change your photo':'A photo of the two of you'}</strong><span>Choose JPG, PNG or WebP · up to 5 MB</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>upload(e.target.files?.[0])}/></label>{data.photo&&<button className="text-button" type="button" onClick={()=>{change('photo',undefined);setFile(null)}}>Remove photo</button>}<label>Welcome message<textarea rows={3} maxLength={1000} value={data.message} onChange={e=>change('message',e.target.value)}/></label><label>Your story <span className="optional">optional</span><textarea rows={4} maxLength={4000} value={data.story} onChange={e=>change('story',e.target.value)} placeholder="How you met. Your favourite memory. The beginning of your forever."/></label><button className="button full" type="button" onClick={()=>{if(formRef.current?.reportValidity())setStep('events')}}>Next: your celebration <ArrowRight size={17}/></button></TabsContent><TabsContent value="events"><p className="field-help">Add the moments your guests should know about. Times are local to each venue.</p>{data.events.map((e,i)=><fieldset className="event-form" key={i}><legend>Event {i+1}</legend>{data.events.length>1&&<button className="remove" type="button" onClick={()=>change('events',data.events.filter((_,j)=>j!==i))} aria-label={'Remove event '+(i+1)}><Trash2 size={17}/></button>}<label>Event name<input required maxLength={100} value={e.name} onChange={x=>updateEvent(i,'name',x.target.value)} placeholder="Wedding, sangeet, reception…"/></label><div className="form-row"><label>Date<input required type="date" value={e.date} onInput={x=>updateEvent(i,'date',x.currentTarget.value)}/></label><label>Local time<input required type="time" value={e.time} onInput={x=>updateEvent(i,'time',x.currentTarget.value)}/></label></div><label>Venue<input required maxLength={200} value={e.venue} onChange={x=>updateEvent(i,'venue',x.target.value)} placeholder="Venue name"/></label><label>Full address<input maxLength={500} value={e.address} onChange={x=>updateEvent(i,'address',x.target.value)} placeholder="Street, city, region, country"/></label></fieldset>)}{data.events.length<8&&<button className="text-button" type="button" onClick={()=>change('events',[...data.events,{name:'',date:data.date,time:'18:00',venue:'',address:''}])}><Plus size={16}/> Add another event</button>}{(data.template==='rose-letter'||data.template==='editorial'||data.template==='romance'||data.template==='heritage')&&(['dressCode','accommodation','gifts'] as const).map((key,i)=><label key={key}>{['Dress code','Accommodation','Gifts'][i]} <span className="optional">optional</span><textarea rows={3} maxLength={1000} value={data[key]||''} onChange={e=>change(key,e.target.value)}/></label>)}<button className="button full" type="button" onClick={()=>{if(formRef.current?.reportValidity())setStep('review')}}>Review your invitation <ArrowRight size={17}/></button></TabsContent><TabsContent value="review"><div className="review-card"><span className="eyebrow">YOUR INVITATION</span><h2>{data.first||'Your name'} & {data.second||'Your partner'}</h2><p>{templates.find(t=>t.id===data.template)?.name} · {data.events.length} event{data.events.length!==1?'s':''}</p><ul><li><Check size={16}/> Personalized wedding website</li><li><Check size={16}/> Your photo, story & celebration details</li><li><Check size={16}/> Location links for your guests</li><li><Check size={16}/> Automatic publishing after confirmed payment</li></ul>{config.price&&<strong className="price">{config.price}</strong>}</div><p className="field-help">Check the full preview before saving. Published details and photos will be visible to anyone with your invitation link.</p><button className="button full" type="button" disabled={busy} onClick={save}>{busy?'Saving…':draft?'Save another private draft':'Save private draft'} <LockKeyhole size={16}/></button>{draft&&<div className="checkout-box">{config.checkoutReady?<button className="button full" type="button" disabled={busy} onClick={checkout}>Continue to payment <ArrowRight size={17}/></button>:<><strong>Checkout opens soon</strong><p>You can personalize and save your invitation now. Payment and publishing are not available yet.</p></>}</div>}</TabsContent></form></Tabs>{error&&<p className="form-error" role="alert">{error}</p>}{notice&&<p className="form-notice" role="status">{notice}</p>}<p className="privacy-note"><LockKeyhole size={13}/> Saved drafts can be reopened in this browser. Your preview is private.</p></div><aside className="live-preview" id="invitation-preview"><div className="preview-toolbar"><span>YOUR INVITATION, COMING TO LIFE</span><a className="mobile-edit-link" href="#invitation-details">Back to details</a><div><button aria-label="Narrow preview" aria-pressed={!wide} onClick={()=>setWide(false)}><Smartphone size={17}/></button><button aria-label="Wide preview" aria-pressed={wide} onClick={()=>setWide(true)}><Monitor size={17}/></button></div></div><div className={'preview-device '+(wide?'wide':'')}><Invitation data={data}/></div><p className="preview-hint">Live preview · Updates as you type</p></aside></main></>}
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Sparkles, Calendar, MapPin, Heart, Users, CheckCircle2, Eye } from 'lucide-react';
+
+const THEMES = [
+  { id: 'royal-courtyard', name: 'The Royal Courtyard', desc: '3D Palace Gate, Shehnai Music & Auspicious Ganesha' },
+  { id: 'rose-letter', name: 'The Rose Letter', desc: '3D Envelope Unboxing, Golden Wax Seal & Scratch Card' },
+  { id: 'heritage', name: 'Heritage Rajputana', desc: 'Royal Rajputana Elegance, Shlokas & Ornate Borders' },
+  { id: 'garden-romance', name: 'Garden Romance', desc: 'Botanical Floral Aesthetics, Pastel Shades & Timeline' },
+  { id: 'editorial', name: 'The Editorial', desc: 'Vogue-Style Typography, High-Fashion Layout & Portraits' },
+];
+
+export default function CreatePage() {
+  const [theme, setTheme] = useState('royal-courtyard');
+  const [formData, setFormData] = useState({
+    groomName: 'Aarav Sharma',
+    brideName: 'Meera Kapoor',
+    weddingDate: '2026-11-29',
+    weddingTime: '06:00 PM',
+    venueName: 'The Oberoi Udaivilas',
+    venueCity: 'Udaipur, Rajasthan',
+    mapsUrl: 'https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur',
+    tagline: 'With full hearts and joyous blessings, we invite you to celebrate our union.',
+    firstFamily: 'Blessings of Mr. & Mrs. Sharma',
+    secondFamily: 'Blessings of Mr. & Mrs. Kapoor',
+    dressCode: 'Royal Traditional Indian Elegance',
+    hotelInfo: 'Special room blocks booked at The Oberoi Udaivilas. Promo code: WEDLINK2026',
+  });
+
+  useEffect(() => {
+    // URL query check
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const t = params.get('template');
+      if (t) setTheme(t);
+
+      const saved = localStorage.getItem('wedlink_custom_invite');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setFormData(prev => ({ ...prev, ...parsed }));
+          if (parsed.theme) setTheme(parsed.theme);
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePreview = () => {
+    const payload = { ...formData, theme };
+    localStorage.setItem('wedlink_custom_invite', JSON.stringify(payload));
+    window.location.href = '/invite/demo';
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0A0D14] text-white font-sans selection:bg-[#D4AF37] selection:text-black pb-20">
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10">
+        <a href="/" className="flex items-center gap-2 text-xs font-medium text-slate-300 hover:text-white cursor-pointer">
+          <ArrowLeft size={16} /> Back to WedLink
+        </a>
+        <span className="font-serif tracking-widest text-[#D4AF37] text-sm uppercase font-semibold">
+          Invitation Builder
+        </span>
+        <button
+          type="button"
+          onClick={handlePreview}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black hover:opacity-90 shadow-lg shadow-[#D4AF37]/20 transition-all cursor-pointer"
+        >
+          <Eye size={14} /> Preview Live
+        </button>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-6 pt-10">
+        <div className="text-center mb-10">
+          <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold">Custom Wedding Microsite</span>
+          <h1 className="text-3xl sm:text-4xl font-serif text-white mt-2 mb-3">Personalize Your Invitation</h1>
+          <p className="text-slate-400 text-sm max-w-lg mx-auto">
+            Fill in your wedding details below. You can preview and experience your personalized 3D invitation immediately.
+          </p>
+        </div>
+
+        {/* 1. Theme Selection */}
+        <section className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md mb-8">
+          <div className="flex items-center gap-2.5 mb-6 text-[#D4AF37]">
+            <Sparkles size={18} />
+            <h2 className="text-lg font-serif font-semibold text-white">1. Select Luxury Theme</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {THEMES.map(t => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTheme(t.id)}
+                className={`p-4 rounded-2xl text-left border transition-all cursor-pointer ${
+                  theme === t.id
+                    ? 'border-[#D4AF37] bg-[#D4AF37]/10 shadow-md shadow-[#D4AF37]/10'
+                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="font-serif text-sm font-semibold text-white">{t.name}</span>
+                  {theme === t.id && <CheckCircle2 size={16} className="text-[#D4AF37]" />}
+                </div>
+                <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{t.desc}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 2. Couple Names */}
+        <section className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md mb-8">
+          <div className="flex items-center gap-2.5 mb-6 text-[#D4AF37]">
+            <Heart size={18} />
+            <h2 className="text-lg font-serif font-semibold text-white">2. Couple Details</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Groom&apos;s Full Name</label>
+              <input
+                type="text"
+                name="groomName"
+                value={formData.groomName}
+                onChange={handleChange}
+                placeholder="e.g. Aarav Sharma"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Bride&apos;s Full Name</label>
+              <input
+                type="text"
+                name="brideName"
+                value={formData.brideName}
+                onChange={handleChange}
+                placeholder="e.g. Meera Kapoor"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Welcome Tagline / Invocation</label>
+            <textarea
+              name="tagline"
+              value={formData.tagline}
+              onChange={handleChange}
+              rows={2}
+              className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+        </section>
+
+        {/* 3. Date & Venue */}
+        <section className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md mb-8">
+          <div className="flex items-center gap-2.5 mb-6 text-[#D4AF37]">
+            <Calendar size={18} />
+            <h2 className="text-lg font-serif font-semibold text-white">3. Wedding Date & Location</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Wedding Date</label>
+              <input
+                type="date"
+                name="weddingDate"
+                value={formData.weddingDate}
+                onChange={handleChange}
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Ceremony Time</label>
+              <input
+                type="text"
+                name="weddingTime"
+                value={formData.weddingTime}
+                onChange={handleChange}
+                placeholder="e.g. 06:00 PM Onwards"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Venue / Palace Name</label>
+              <input
+                type="text"
+                name="venueName"
+                value={formData.venueName}
+                onChange={handleChange}
+                placeholder="e.g. The Oberoi Udaivilas"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">City & State</label>
+              <input
+                type="text"
+                name="venueCity"
+                value={formData.venueCity}
+                onChange={handleChange}
+                placeholder="e.g. Udaipur, Rajasthan"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Google Maps Direction URL</label>
+            <input
+              type="url"
+              name="mapsUrl"
+              value={formData.mapsUrl}
+              onChange={handleChange}
+              placeholder="https://maps.google.com/..."
+              className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+        </section>
+
+        {/* 4. Family & Logistics */}
+        <section className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md mb-8">
+          <div className="flex items-center gap-2.5 mb-6 text-[#D4AF37]">
+            <Users size={18} />
+            <h2 className="text-lg font-serif font-semibold text-white">4. Family Blessings & Logistics</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Groom&apos;s Family</label>
+              <input
+                type="text"
+                name="firstFamily"
+                value={formData.firstFamily}
+                onChange={handleChange}
+                placeholder="Blessings of Sharma Family"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Bride&apos;s Family</label>
+              <input
+                type="text"
+                name="secondFamily"
+                value={formData.secondFamily}
+                onChange={handleChange}
+                placeholder="Blessings of Kapoor Family"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Dress Code</label>
+              <input
+                type="text"
+                name="dressCode"
+                value={formData.dressCode}
+                onChange={handleChange}
+                placeholder="Royal Traditional Indian Elegance"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Hotel / Travel Promo Code</label>
+              <input
+                type="text"
+                name="hotelInfo"
+                value={formData.hotelInfo}
+                onChange={handleChange}
+                placeholder="Promo Code: WEDLINK2026"
+                className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <div className="text-center pt-4">
+          <button
+            type="button"
+            onClick={handlePreview}
+            className="w-full sm:w-auto px-10 py-4 rounded-full font-serif text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-[#E5C378] via-[#D4AF37] to-[#C9A24F] text-black shadow-xl shadow-[#D4AF37]/25 hover:opacity-95 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+          >
+            ✨ Save Details & Preview My Live Invitation
+          </button>
+          <p className="text-xs text-slate-500 mt-3">
+            Changes are saved instantly in your browser. You can edit anytime.
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+}
