@@ -2,7 +2,9 @@ import React from 'react';
 import { example, type Invite } from '@/app/shared';
 import EditorialInvitation from '@/app/editorial-invitation';
 
-// 1. Static Export (Vinext / Vercel Build) ke liye strictly required
+// ⚡ Vinext Static Export ke liye yeh dono strictly required hain:
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return [
     { id: 'demo' },
@@ -29,7 +31,6 @@ const DEFAULT_EVENTS = [
   },
 ];
 
-// 2. Safe Synchronous Page Component
 export default function InvitePage({ params }: { params?: { id?: string } }) {
   const id = params?.id || 'demo';
 
@@ -45,7 +46,7 @@ export default function InvitePage({ params }: { params?: { id?: string } }) {
     }
   }
 
-  // 100% Complete & Crash-Proof Invitation Data
+  // 100% Complete & Safe Invitation Data
   const inviteData: Invite = {
     ...example,
     first,
@@ -69,6 +70,5 @@ export default function InvitePage({ params }: { params?: { id?: string } }) {
     timezone: 'Asia/Kolkata',
   };
 
-  // 3. Direct Render of Editorial 3D Invitation
   return <EditorialInvitation data={inviteData} />;
 }
