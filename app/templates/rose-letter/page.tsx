@@ -10,23 +10,26 @@ export const metadata = {
 export default function Page() {
   return (
     <div className="relative min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-white">
-      {/* 1. Global Scrollbar Remover (Lal Mark Wala Scrollbar Gayab) */}
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        .font-serif-luxury { font-family: 'Cormorant Garamond', Georgia, serif; }
+      {/* 1. Global Scrollbar Remover (Standard React - No styled-jsx error) */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+            .font-serif-luxury { font-family: 'Cormorant Garamond', Georgia, serif; }
 
-        /* Hide Scrollbar on All Browsers */
-        ::-webkit-scrollbar {
-          display: none !important;
-          width: 0px !important;
-          height: 0px !important;
-        }
-        * {
-          scrollbar-width: none !important;
-          -ms-overflow-style: none !important;
-        }
-      `}</style>
+            /* Hide Scrollbar on All Browsers */
+            ::-webkit-scrollbar {
+              display: none !important;
+              width: 0px !important;
+              height: 0px !important;
+            }
+            * {
+              scrollbar-width: none !important;
+              -ms-overflow-style: none !important;
+            }
+          `
+        }}
+      />
 
       {/* 2. Top Bar Matched With Wedlink Signature Ivory & Wine Theme */}
       <header 
@@ -52,7 +55,7 @@ export default function Page() {
         </a>
       </header>
 
-      {/* Main Template (No Scrollbar, Clean Display) */}
+      {/* Main Template */}
       <div className="pt-14 overflow-hidden">
         <RoseLetter
           data={{
