@@ -87,6 +87,7 @@ export default function Create() {
   const [notice, setNotice] = useState('');
   const [config, setConfig] = useState({ checkoutReady: false, price: '' });
   const [wide, setWide] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const objectUrls = useRef<string[]>([]);
 
@@ -150,7 +151,6 @@ export default function Create() {
     });
   }
 
-  // MULTI-PHOTO UPLOAD HANDLER FOR SLOTS
   async function uploadSlot(f: File | undefined, index: number) {
     if (!f) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type) || f.size > 5 * 1024 * 1024) {
@@ -276,19 +276,125 @@ export default function Create() {
     }
   }
 
-  // Calculate slots count based on galleryLayout
   const activeLayout = data.galleryLayout || '2';
   const slotCount = activeLayout === '1' ? 1 : activeLayout === '2' ? 2 : activeLayout === '4' ? 4 : 0;
 
   return (
     <>
-      <header className="builder-nav">
-        <Link href="/"><Brand /></Link>
-        <Link className="text-button" href="/#collection">
-          <ArrowLeft size={16} /> Back to collection
-        </Link>
-        <span className="private-label"><LockKeyhole size={14} /> Private until you publish</span>
+      {/* ========================================================= */}
+      {/* 100% CLICKABLE HEADER BAR WITH FORCED HIGH Z-INDEX        */}
+      {/* ========================================================= */}
+      <header
+        className="builder-nav"
+        style={{
+          position: 'relative',
+          zIndex: 9999,
+          pointerEvents: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        {/* 1. CLICKABLE LOGO */}
+        <a
+          href="/"
+          onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
+          style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
+          title="Go to Homepage"
+        >
+          <Brand />
+        </a>
+
+        {/* 2. CLICKABLE BACK TO COLLECTION */}
+        <a
+          href="/#collection"
+          className="text-button"
+          onClick={(e) => { e.preventDefault(); window.location.href = '/#collection'; }}
+          style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          title="Back to collection"
+        >
+          <ArrowLeft size={16} />
+          <span>Back to collection</span>
+        </a>
+
+        {/* 3. CLICKABLE PRIVATE UNTIL YOU PUBLISH (OPENS MODAL / JUMPS TO REVIEW) */}
+        <button
+          type="button"
+          className="private-label"
+          onClick={() => setShowPrivacyModal(true)}
+          style={{
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            border: '1px solid rgba(0,0,0,0.1)',
+            background: 'rgba(255,255,255,0.85)',
+            padding: '6px 14px',
+            borderRadius: '9999px',
+            fontWeight: 600,
+            fontSize: '12px'
+          }}
+          title="Click to view privacy status"
+        >
+          <LockKeyhole size={14} style={{ color: '#8C6228' }} />
+          <span>Private until you publish</span>
+        </button>
       </header>
+
+      {/* PRIVACY POPUP MODAL */}
+      {showPrivacyModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(4px)',
+            padding: '16px'
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '24px',
+              padding: '24px 32px',
+              maxWidth: '440px',
+              width: '100%',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#FFF3E0', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#B68A50' }}>
+              <LockKeyhole size={24} />
+            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1A1E26', marginBottom: '8px' }}>
+              Your Draft is 100% Private
+            </h3>
+            <p style={{ fontSize: '13px', color: '#666', lineHeight: '1.6', marginBottom: '20px' }}>
+              आपकी शादी की जानकारी और फ़ोटो पूरी तरह सुरक्षित हैं। जब तक आप <strong>"Publish"</strong> बटन दबाकर अपनी वेबसाइट लाइव नहीं करते, तब तक यह किसी भी बाहरी व्यक्ति या सर्च इंजन को दिखाई नहीं देगी।
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={() => setShowPrivacyModal(false)}
+                style={{ flex: 1, padding: '10px', borderRadius: '12px', background: '#F3F4F6', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowPrivacyModal(false); setStep('review'); }}
+                style={{ flex: 1, padding: '10px', borderRadius: '12px', background: '#541D36', color: '#FFF', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}
+              >
+                Go to Publish 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="builder">
         <div className="editor" id="invitation-details">
@@ -639,7 +745,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 5: GALLERY — WITH 1, 2, OR 4 DYNAMIC UPLOAD SLOTS */}
+              {/* TAB 5: GALLERY */}
               <TabsContent value="gallery">
                 <label className="checkbox-row flex items-center space-x-2 mb-4 cursor-pointer">
                   <input type="checkbox" checked={data.showGallery ?? true} onChange={e => change('showGallery', e.target.checked)} />
