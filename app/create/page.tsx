@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft, ArrowRight, Check, ImagePlus, LockKeyhole, Plus, Trash2,
-  Monitor, Smartphone, Sparkles, Heart, Camera, Info, HelpCircle
+  Monitor, Smartphone
 } from 'lucide-react';
 import { Brand, example, Invitation, templates, type Invite } from '../shared';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -57,7 +57,7 @@ export default function Create() {
     customHashtag: '',
     extraTags: '',
     showGallery: true,
-    galleryLayout: '4',
+    galleryLayout: '2',
     galleryPhotos: [],
     showInfo: true,
     activeInfoCards: ['dressCode', 'parking', 'hashtag', 'venue'],
@@ -80,7 +80,7 @@ export default function Create() {
   });
 
   const [step, setStep] = useState('essentials');
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<(File | null)[]>([null, null, null, null]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -88,7 +88,7 @@ export default function Create() {
   const [config, setConfig] = useState({ checkoutReady: false, price: '' });
   const [wide, setWide] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const objectUrl = useRef('');
+  const objectUrls = useRef<string[]>([]);
 
   useEffect(() => {
     const p = new URLSearchParams(location.search);
@@ -107,7 +107,7 @@ export default function Create() {
         setNotice('Your private draft is restored. If you make changes, save them as a new draft before checkout.');
       }).catch(e => setError(e.message)).finally(() => setBusy(false));
     }
-    return () => { if (objectUrl.current) URL.revokeObjectURL(objectUrl.current); };
+    return () => { objectUrls.current.forEach(u => URL.revokeObjectURL(u)); };
   }, []);
 
   function change(key: keyof Invite, value: any) {
@@ -150,7 +150,8 @@ export default function Create() {
     });
   }
 
-  async function upload(f: File | undefined) {
+  // MULTI-PHOTO UPLOAD HANDLER FOR SLOTS
+  async function uploadSlot(f: File | undefined, index: number) {
     if (!f) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type) || f.size > 5 * 1024 * 1024) {
       setError('Choose a JPG, PNG or WebP photo under 5 MB.');
@@ -172,14 +173,45 @@ export default function Create() {
         canvas.toBlob(b => (b ? resolve(b) : reject(Error('Photo could not be processed.'))), 'image/jpeg', 0.82)
       );
       if (blob.size > 900000) throw Error('Please choose a simpler or smaller photo.');
-      const optimized = new File([blob], 'couple.jpg', { type: 'image/jpeg' });
-      if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
-      objectUrl.current = URL.createObjectURL(optimized);
-      setFile(optimized);
-      change('photo', objectUrl.current);
+      const optimized = new File([blob], `photo_${index + 1}.jpg`, { type: 'image/jpeg' });
+      const newUrl = URL.createObjectURL(optimized);
+      objectUrls.current.push(newUrl);
+
+      setFiles(prev => {
+        const arr = [...prev];
+        arr[index] = optimized;
+        return arr;
+      });
+
+      const currentPhotos = [...(data.galleryPhotos || [])];
+      currentPhotos[index] = newUrl;
+      for (let i = 0; i < index; i++) {
+        if (!currentPhotos[i]) currentPhotos[i] = '';
+      }
+
+      setData(d => ({
+        ...d,
+        galleryPhotos: currentPhotos,
+        photo: currentPhotos.find(Boolean) || newUrl
+      }));
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'This photo could not be opened. Try another JPG or PNG.');
+      setError(e instanceof Error ? e.message : 'This photo could not be opened.');
     }
+  }
+
+  function removeSlot(index: number) {
+    const currentPhotos = [...(data.galleryPhotos || [])];
+    currentPhotos[index] = '';
+    setFiles(prev => {
+      const arr = [...prev];
+      arr[index] = null;
+      return arr;
+    });
+    setData(d => ({
+      ...d,
+      galleryPhotos: currentPhotos,
+      photo: currentPhotos.find(Boolean) || undefined
+    }));
   }
 
   async function responseData(r: Response) {
@@ -206,12 +238,11 @@ export default function Create() {
     try {
       const form = new FormData();
       form.set('data', JSON.stringify(data));
-      if (file) form.set('photo', file);
-      else if (data.photo?.startsWith('/api/photo/')) {
-        const photo = await fetch(data.photo);
-        if (!photo.ok) throw Error('Your saved photo could not be loaded.');
-        form.set('photo', await photo.blob(), 'couple.jpg');
-      }
+      files.forEach((fileItem, idx) => {
+        if (fileItem) form.append(`photo_${idx}`, fileItem);
+      });
+      if (files[0]) form.set('photo', files[0]);
+
       const r = await fetch('/api/drafts', { method: 'POST', body: form });
       const d = await responseData(r);
       if (!r.ok) throw Error(d.error);
@@ -245,6 +276,10 @@ export default function Create() {
     }
   }
 
+  // Calculate slots count based on galleryLayout
+  const activeLayout = data.galleryLayout || '2';
+  const slotCount = activeLayout === '1' ? 1 : activeLayout === '2' ? 2 : activeLayout === '4' ? 4 : 0;
+
   return (
     <>
       <header className="builder-nav">
@@ -277,7 +312,7 @@ export default function Create() {
 
             <form ref={formRef} onSubmit={e => { e.preventDefault(); save(); }}>
               
-              {/* TAB 1: ESSENTIALS (ShaadiPath Essentials) */}
+              {/* TAB 1: ESSENTIALS */}
               <TabsContent value="essentials">
                 <fieldset>
                   <legend>Your design</legend>
@@ -357,7 +392,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 2: INVITATION (ShaadiPath Invitation Card) */}
+              {/* TAB 2: INVITATION */}
               <TabsContent value="invitation">
                 <label className="checkbox-row flex items-center space-x-2 mb-4 cursor-pointer">
                   <input type="checkbox" checked={data.showInvitation ?? true} onChange={e => change('showInvitation', e.target.checked)} />
@@ -424,7 +459,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 3: EVENTS (ShaadiPath Celebration Events) */}
+              {/* TAB 3: EVENTS */}
               <TabsContent value="events">
                 <div className="mb-4">
                   <strong>Choose Events</strong>
@@ -507,7 +542,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 4: STORY (ShaadiPath Personality Tags & Our Story) */}
+              {/* TAB 4: STORY */}
               <TabsContent value="story">
                 <label className="checkbox-row flex items-center space-x-2 mb-4 cursor-pointer">
                   <input type="checkbox" checked={data.showStory ?? true} onChange={e => change('showStory', e.target.checked)} />
@@ -604,7 +639,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 5: GALLERY (ShaadiPath Photo Gallery) */}
+              {/* TAB 5: GALLERY — WITH 1, 2, OR 4 DYNAMIC UPLOAD SLOTS */}
               <TabsContent value="gallery">
                 <label className="checkbox-row flex items-center space-x-2 mb-4 cursor-pointer">
                   <input type="checkbox" checked={data.showGallery ?? true} onChange={e => change('showGallery', e.target.checked)} />
@@ -617,7 +652,7 @@ export default function Create() {
                 {data.showGallery !== false && (
                   <>
                     <strong className="text-xs uppercase tracking-wider text-neutral-600 block mb-2">Photo Layout</strong>
-                    <div className="grid grid-cols-4 gap-2 mb-5">
+                    <div className="grid grid-cols-4 gap-2 mb-6">
                       {[
                         { id: 'skip', label: '✕ Skip' },
                         { id: '1', label: '1 Photo' },
@@ -629,7 +664,7 @@ export default function Create() {
                           type="button"
                           onClick={() => change('galleryLayout', l.id)}
                           className={`p-3 border rounded-xl text-xs text-center font-bold transition ${
-                            (data.galleryLayout || '4') === l.id ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-sm' : 'border-neutral-200 bg-white text-neutral-700'
+                            activeLayout === l.id ? 'border-amber-600 bg-amber-50 text-amber-900 shadow-sm' : 'border-neutral-200 bg-white text-neutral-700'
                           }`}
                         >
                           {l.label}
@@ -637,19 +672,37 @@ export default function Create() {
                       ))}
                     </div>
 
-                    {data.galleryLayout !== 'skip' && (
-                      <div className="space-y-3">
-                        <label className="upload block p-6 border-2 border-dashed border-amber-300 rounded-2xl text-center bg-amber-50/40 cursor-pointer">
-                          <ImagePlus className="mx-auto text-amber-700" size={28} />
-                          <strong className="block mt-2 text-sm">{file ? file.name : data.photo ? 'Change main couple photo' : 'Click to upload main couple photo'}</strong>
-                          <span className="text-xs text-neutral-500">Choose JPG, PNG or WebP · up to 5 MB</span>
-                          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => upload(e.target.files?.[0])} />
-                        </label>
-                        {data.photo && (
-                          <button className="text-button text-xs text-red-600" type="button" onClick={() => { change('photo', undefined); setFile(null); }}>
-                            Remove photo
-                          </button>
-                        )}
+                    {slotCount > 0 && (
+                      <div className={`grid ${slotCount === 1 ? 'grid-cols-1' : slotCount === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2'} gap-3`}>
+                        {Array.from({ length: slotCount }).map((_, idx) => {
+                          const currentSrc = data.galleryPhotos?.[idx];
+                          return (
+                            <div key={idx} className="relative border-2 border-dashed border-amber-300 rounded-2xl p-4 bg-amber-50/30 flex flex-col items-center justify-center text-center min-h-[160px]">
+                              {currentSrc ? (
+                                <div className="w-full flex flex-col items-center">
+                                  <img src={currentSrc} alt={`Photo ${idx + 1}`} className="w-full h-32 object-cover rounded-xl shadow-sm mb-2" />
+                                  <div className="flex items-center justify-between w-full px-1">
+                                    <span className="text-[11px] font-bold text-neutral-700">Photo {idx + 1}</span>
+                                    <button
+                                      type="button"
+                                      className="text-red-600 text-xs font-medium hover:underline flex items-center space-x-1"
+                                      onClick={() => removeSlot(idx)}
+                                    >
+                                      <Trash2 size={12} /> <span>Remove</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <label className="cursor-pointer w-full h-full flex flex-col items-center justify-center py-4">
+                                  <ImagePlus className="text-amber-700 mb-2" size={24} />
+                                  <strong className="text-xs text-neutral-800">CLICK TO UPLOAD PHOTO {idx + 1}</strong>
+                                  <span className="text-[10px] text-neutral-500 mt-1">JPG, PNG or WebP · Up to 5 MB</span>
+                                  <input type="file" className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => uploadSlot(e.target.files?.[0], idx)} />
+                                </label>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </>
@@ -660,7 +713,7 @@ export default function Create() {
                 </button>
               </TabsContent>
 
-              {/* TAB 6: INFO (ShaadiPath Things to Know) */}
+              {/* TAB 6: INFO */}
               <TabsContent value="info">
                 <label className="checkbox-row flex items-center space-x-2 mb-4 cursor-pointer">
                   <input type="checkbox" checked={data.showInfo ?? true} onChange={e => change('showInfo', e.target.checked)} />
