@@ -10,7 +10,7 @@ export const metadata = {
 export default function Page() {
   return (
     <div className="relative min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-white">
-      {/* 1. Global Scrollbar Remover (Standard React - No styled-jsx error) */}
+      {/* 1. Global Scrollbar Remover (Standard React) */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -47,11 +47,26 @@ export default function Page() {
           The Rose Letter · Sample Invitation
         </span>
 
+        {/* Fixed Button with Visible White Text & Icon */}
         <a 
           href="/create?template=rose-letter"
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-[#341822] hover:bg-[#230f16] text-white font-semibold text-xs tracking-wide transition-all shadow-sm cursor-pointer"
+          style={{ 
+            backgroundColor: '#341822', 
+            color: '#ffffff', 
+            padding: '7px 16px', 
+            borderRadius: '6px', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            fontSize: '12px', 
+            fontWeight: 600, 
+            textDecoration: 'none',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}
+          className="cursor-pointer transition-all hover:opacity-90"
         >
-          Personalize <ArrowUpRight size={14} />
+          <span style={{ color: '#ffffff' }}>Personalize</span>
+          <ArrowUpRight size={14} color="#ffffff" style={{ color: '#ffffff' }} />
         </a>
       </header>
 
