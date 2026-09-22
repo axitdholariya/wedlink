@@ -1,426 +1,287 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, ArrowUpRight, Heart, Calendar, MapPin, Users, Camera, Upload, 
-  Trash2, CheckCircle2, Sparkles, Music, MessageSquare, Info, Sliders, Eye, 
-  RefreshCw, Check, Clock, ShieldCheck, X, ChevronRight, HelpCircle
-} from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 
-// Available Templates for Switching
-const TEMPLATES_LIST = [
-  { id: 'royal-courtyard', name: 'The Royal Courtyard', tag: '3D Palace Doors & Shehnai' },
-  { id: 'rose-letter', name: 'The Rose Letter', tag: 'Wax Seal & Scratch Card' },
-  { id: 'heritage', name: 'Heritage Rajputana', tag: 'Traditional Royal & Shlokas' },
-  { id: 'garden-romance', name: 'Garden Romance', tag: 'Botanical Floral Aesthetics' },
-  { id: 'editorial', name: 'The Editorial', tag: 'Vogue Modern Magazine' },
-];
-
-const EVENT_CHIPS = [
-  { id: 'mehendi', name: 'Mehendi', emoji: '🌿' },
-  { id: 'haldi', name: 'Haldi', emoji: '🌼' },
-  { id: 'sagan', name: 'Sagan', emoji: '🥥' },
-  { id: 'cocktail', name: 'Cocktail', emoji: '🥂' },
-  { id: 'sangeet', name: 'Sangeet', emoji: '🎵' },
-  { id: 'tilak', name: 'Tilak', emoji: '🔴' },
-  { id: 'engagement', name: 'Engagement', emoji: '💍' },
-  { id: 'baraat', name: 'Baraat', emoji: '🐎' },
-  { id: 'shaadi', name: 'Shaadi', emoji: '🌸' },
-  { id: 'pheras', name: 'Pheras', emoji: '🔥' },
-  { id: 'reception', name: 'Reception', emoji: '👑' },
-  { id: 'vidaai', name: 'Vidaai', emoji: '🕊️' },
-];
-
-export default function ShaadiPathBuilder() {
-  const [activeTab, setActiveTab] = useState<'ESSENTIALS' | 'INVITATION' | 'EVENTS' | 'STORY' | 'GALLERY' | 'INFO' | 'RSVP' | 'MUSIC'>('ESSENTIALS');
-  const [template, setTemplate] = useState('royal-courtyard');
-  const [templateModalOpen, setTemplateModalOpen] = useState(false);
-  const [publishModalOpen, setPublishModalOpen] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('Saved just now');
-
-  // Master Unified State for Form & Live Preview
-  const [data, setData] = useState({
-    // Essentials
-    brideName: 'Priya',
-    groomName: 'Arjun',
-    orderBrideFirst: true,
-    weddingDate: '2026-11-29',
-    venueName: 'The Oberoi Udaivilas',
-    venueCity: 'Udaipur',
-    whatsappNumber: '+91 9876543210',
-    hashtag: '#PriyaWedsArjun',
-    showCountdown: true,
-
-    // Invitation
-    showInvitation: true,
-    blessing: 'With the blessings of the divine and the love of our families',
-    brideFather: 'Mr. Suresh Sharma',
-    brideMother: 'Mrs. Anita Sharma',
-    groomFather: 'Mr. Ramesh Kapoor',
-    groomMother: 'Mrs. Sunita Kapoor',
-    orderParentsBrideFirst: true,
-    includeGrandparents: false,
-
-    // Events
-    selectedEvents: ['haldi', 'sangeet', 'shaadi', 'reception'],
-    eventsList: [
-      { id: 'haldi', name: 'Haldi Ceremony', date: '27 Nov 2026', time: '10:00 AM', venue: 'Poolside Lawn', dress: 'Sunshine Yellow' },
-      { id: 'sangeet', name: 'Sangeet Gala', date: '28 Nov 2026', time: '07:30 PM', venue: 'Grand Amphitheatre', dress: 'Indo-Western Glamour' },
-      { id: 'shaadi', name: 'Sacred Vedic Pheras', date: '29 Nov 2026', time: '06:00 PM', venue: 'Lake Promenade Mandap', dress: 'Royal Traditional' },
-      { id: 'reception', name: 'Grand Royal Feast', date: '29 Nov 2026', time: '08:30 PM', venue: 'Palace Ballroom', dress: 'Black Tie Elegance' },
-    ],
-
-    // Story / Quiz
-    showStory: true,
-    storyMode: 'QUIZ', // 'QUIZ' or 'TEXT'
-    q1: 'Through family / arranged',
-    q2: 'Wanderers — travel is our love language',
-    q3: 'Chai and long conversations',
-    q4: 'Best friends who fell in love',
-    writtenStory: 'From our first conversation over ginger chai to traveling across Rajasthan, we knew we found a forever partner in each other.',
-
-    // Gallery
-    showGallery: true,
-    galleryLayout: 4,
-    galleryPhotos: [
-      'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=600',
-    ],
-
-    // Info
-    showInfo: true,
-    dressCode: 'Ethnic Indian attire — sarees, lehengas & sherwanis with warm pastels.',
-    parking: 'Complimentary valet parking available at palace gates.',
-    stayInfo: 'Special room blocks booked at The Oberoi Udaivilas. Use Code: WEDLINK2026',
-    mapsUrl: 'https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur',
-
-    // RSVP
-    rsvpType: 'WHATSAPP', // 'WHATSAPP' or 'FORM'
-    rsvpHeading: 'Will you join us?',
-    rsvpSubtext: "We've saved a seat for you — at our table, in our hearts, and under the Udaipur sky.",
-    rsvpButtonText: "Yes, I'll be there",
-
-    // Music
-    enableMusic: true,
-    songName: 'Royal Shehnai & Sitar Melody',
-  });
-
-  // Load from local storage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('wedlink_shaadipath_builder');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          setData(prev => ({ ...prev, ...parsed }));
-          if (parsed.template) setTemplate(parsed.template);
-        } catch (e) {}
-      }
-    }
-  }, []);
-
-  // Auto-save to local storage on any edit
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('wedlink_shaadipath_builder', JSON.stringify({ ...data, template }));
-      setSaveStatus('Saved just now');
-    }
-  }, [data, template]);
-
-  const handleTextChange = (field: string, val: any) => {
-    setData(prev => ({ ...prev, [field]: val }));
-    setSaveStatus('Saving...');
-  };
-
-  const toggleEventChip = (chipId: string) => {
-    setData(prev => {
-      const exists = prev.selectedEvents.includes(chipId);
-      const updated = exists 
-        ? prev.selectedEvents.filter(id => id !== chipId)
-        : [...prev.selectedEvents, chipId];
-      return { ...prev, selectedEvents: updated };
-    });
-  };
-
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setData(prev => {
-          const photos = [...prev.galleryPhotos];
-          photos[index] = reader.result as string;
-          return { ...prev, galleryPhotos: photos };
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+export default function HomePage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState<boolean>(false);
 
   return (
-    <div className="min-h-screen bg-[#FFF9F2] text-[#241C24] flex flex-col font-['Manrope',sans-serif] selection:bg-[#541D36] selection:text-[#FFF9F2]">
+    <div className="min-h-screen bg-[#FAF6EE] text-[#1A1E26] font-sans flex flex-col relative overflow-x-hidden">
       
-      {/* Google Fonts: Cormorant Garamond & Manrope */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap');
-        
-        .font-brand-heading {
-          font-family: 'Cormorant Garamond', Georgia, serif;
-        }
-        .font-brand-body {
-          font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .scrollbar-none::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-none {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+      {/* 1. TOP HEADER */}
+      <header className="h-16 px-6 sm:px-12 flex items-center justify-between border-b border-neutral-200 bg-[#FAF6EE]/90 backdrop-blur-md sticky top-0 z-30">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="text-xl font-bold tracking-wider text-[#1A1E26]">WEDLINK</span>
+        </Link>
 
-      {/* 1. TOP HEADER (BRAND KIT WINE & OFFICIAL LOGO) */}
-      <header className="h-16 bg-[#541D36] text-[#FFF9F2] px-6 flex items-center justify-between z-30 shrink-0 shadow-md border-b border-[#B68A50]/20">
         <div className="flex items-center gap-4">
-          <a href="/" className="flex items-center gap-2 group">
-            {/* Official Ribbon 'W' Logo */}
-            <svg className="w-8 h-8 text-[#FFF9F2] drop-shadow-sm group-hover:scale-105 transition-transform" viewBox="0 0 100 85" fill="currentColor">
-              <path d="M12 25 C18 10, 32 10, 38 30 L45 55 C48 65, 52 65, 55 55 L62 30 C68 10, 82 10, 88 25 C94 40, 85 62, 70 75 C60 84, 52 84, 48 78 C44 72, 45 62, 48 50 C42 62, 35 75, 26 75 C14 75, 6 50, 12 25 Z" opacity="0.95" />
-            </svg>
-            <div className="flex flex-col">
-              <span className="font-brand-heading text-2xl font-bold tracking-wide leading-none text-[#FFF9F2]">
-                Wedlink
-              </span>
-              <span className="text-[9px] tracking-widest text-[#E8C9CD] font-medium uppercase font-brand-body mt-0.5">
-                Your story. One beautiful link.
-              </span>
-            </div>
-          </a>
-
-          <div className="h-4 w-px bg-white/20 hidden sm:block ml-2" />
-
-          <span className="text-[11px] text-[#E8C9CD] flex items-center gap-1.5 font-medium font-brand-body">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
-            {saveStatus}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs font-semibold font-brand-body">
-          <button 
-            type="button" 
-            onClick={() => alert('Draft automatically saved to this device!')}
-            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-[#FFF9F2] border border-white/20 transition-all uppercase tracking-wider text-[11px]"
+          <button
+            type="button"
+            onClick={() => setIsCollectionModalOpen(true)}
+            className="text-xs font-semibold uppercase tracking-wider text-neutral-600 hover:text-neutral-900"
           >
-            Save Draft
+            Templates
           </button>
-          <a 
-            href={`/templates/${template}`}
-            target="_blank"
-            rel="noreferrer"
-            className="px-4 py-2 rounded-lg bg-[#B68A50] hover:bg-[#c99a5e] text-[#541D36] font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-[11px] shadow-sm"
+          <Link
+            href="/create"
+            className="px-4 py-2 rounded-full bg-[#1A1E26] text-white text-xs font-semibold uppercase tracking-wider hover:bg-neutral-800 transition-all"
           >
-            Preview <ArrowUpRight size={14} />
-          </a>
+            Create
+          </Link>
         </div>
       </header>
 
-      {/* 2. MAIN SPLIT-VIEW BODY */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden pb-16">
+      {/* 2. MAIN STOREFRONT */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col items-center">
         
-        {/* LEFT COLUMN: BUILDER FORMS & TABS (48% Width) */}
-        <div className="w-full lg:w-[48%] bg-white border-r border-[#B68A50]/20 flex flex-col overflow-y-auto">
-          
-          {/* Active Template Bar with CHANGE button */}
-          <div className="p-4 bg-[#FFF9F2] border-b border-[#B68A50]/20 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#7A6B72]">Template</span>
-              <span className="text-xs font-bold text-[#541D36] uppercase tracking-wider">
-                {TEMPLATES_LIST.find(t => t.id === template)?.name}
-              </span>
-            </div>
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="font-serif italic text-4xl sm:text-6xl text-[#3b1219]">
+            ... your kind of love.
+          </h1>
+
+          {/* Filter Pills */}
+          <div className="flex justify-center gap-2 mt-5">
             <button
               type="button"
-              onClick={() => setTemplateModalOpen(true)}
-              className="px-3.5 py-1 rounded text-[11px] font-bold tracking-wider uppercase border border-[#541D36] text-[#541D36] hover:bg-[#541D36] hover:text-[#FFF9F2] transition-all cursor-pointer"
+              onClick={() => setSelectedCategory('Romantic')}
+              className={`px-5 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                selectedCategory === 'Romantic'
+                  ? 'bg-white border-neutral-900 text-neutral-900 shadow-sm'
+                  : 'border-neutral-300 text-neutral-500 hover:border-neutral-400'
+              }`}
             >
-              Change
+              Romantic
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory('Indian')}
+              className={`px-5 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                selectedCategory === 'Indian'
+                  ? 'bg-white border-neutral-900 text-neutral-900 shadow-sm'
+                  : 'border-neutral-300 text-neutral-500 hover:border-neutral-400'
+              }`}
+            >
+              Indian
             </button>
           </div>
+        </div>
 
-          {/* 8 Sub-Navigation Tabs */}
-          <div className="bg-[#FAF4ED] border-b border-[#B68A50]/20 px-4 pt-3">
-            <div className="flex flex-wrap gap-2 text-[11px] font-bold tracking-widest uppercase border-b border-[#B68A50]/15 pb-2">
-              {(['ESSENTIALS', 'INVITATION', 'EVENTS', 'STORY', 'GALLERY'] as const).map(tab => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-1 px-2.5 transition-all cursor-pointer ${
-                    activeTab === tab 
-                      ? 'text-[#541D36] border-b-2 border-[#541D36] font-black' 
-                      : 'text-[#7A6B72] hover:text-[#241C24]'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-4 text-[11px] font-bold tracking-widest uppercase py-2">
-              {(['INFO', 'RSVP', 'MUSIC'] as const).map(tab => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-1 px-2.5 transition-all cursor-pointer ${
-                    activeTab === tab 
-                      ? 'text-[#541D36] border-b-2 border-[#541D36] font-black' 
-                      : 'text-[#7A6B72] hover:text-[#241C24]'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* TAB CONTENTS */}
-          <div className="p-6 sm:p-8 space-y-6">
-
-            {/* TAB 1: ESSENTIALS */}
-            {activeTab === 'ESSENTIALS' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-brand-heading italic text-2xl text-[#541D36] flex items-center gap-2">
-                    <Heart size={20} className="text-[#B68A50]" /> The Couple
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Bride&apos;s Name</label>
-                    <input 
-                      type="text" 
-                      value={data.brideName} 
-                      onChange={e => handleTextChange('brideName', e.target.value)}
-                      placeholder="e.g. Priya"
-                      className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                    />
+        {/* 3-PHONE CAROUSEL */}
+        <div className="w-full flex justify-center items-center py-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-center max-w-5xl w-full">
+            
+            {/* 1. LEFT PHONE: THE ROSE LETTER */}
+            <div className="flex flex-col items-center opacity-85 hover:opacity-100 transition-opacity">
+              <div 
+                onClick={() => setIsCollectionModalOpen(true)}
+                className="w-[260px] h-[480px] bg-[#1A1E26] rounded-[36px] p-2.5 shadow-xl border-4 border-[#1A1E26] cursor-pointer flex flex-col relative overflow-hidden"
+              >
+                <div className="w-20 h-3.5 bg-[#1A1E26] rounded-b-xl mx-auto mb-2" />
+                <div className="flex-1 bg-[#E8C2C8] rounded-[24px] p-4 flex flex-col justify-between border border-pink-300 text-center relative overflow-hidden">
+                  <div className="pt-4">
+                    <span className="text-[8px] uppercase tracking-widest text-[#541D36] font-bold block">
+                      3D WAX SEAL
+                    </span>
+                    <h3 className="font-serif text-xl font-bold text-[#541D36] mt-1">Veer & Zara</h3>
                   </div>
-
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Groom&apos;s Name</label>
-                    <input 
-                      type="text" 
-                      value={data.groomName} 
-                      onChange={e => handleTextChange('groomName', e.target.value)}
-                      placeholder="e.g. Arjun"
-                      className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                    />
+                  <div className="w-20 h-20 mx-auto rounded-full bg-white/40 border border-white/60 flex items-center justify-center text-3xl shadow">
+                    💌
                   </div>
-
-                  <div className="flex items-center justify-between p-3.5 bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg">
-                    <div>
-                      <span className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72]">Name Display Order</span>
-                      <span className="text-sm font-bold text-[#241C24]">
-                        {data.orderBrideFirst ? "Bride & Groom (Priya & Arjun)" : "Groom & Bride (Arjun & Priya)"}
-                      </span>
-                    </div>
-                    <button 
-                      type="button" 
-                      onClick={() => handleTextChange('orderBrideFirst', !data.orderBrideFirst)}
-                      className="px-3.5 py-1 text-xs font-bold uppercase tracking-wider border border-[#541D36] text-[#541D36] rounded-md hover:bg-[#541D36] hover:text-[#FFF9F2] transition-all"
-                    >
-                      Switch
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Wedding Date</label>
-                      <input 
-                        type="date" 
-                        value={data.weddingDate} 
-                        onChange={e => handleTextChange('weddingDate', e.target.value)}
-                        className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Venue / City</label>
-                      <input 
-                        type="text" 
-                        value={data.venueName} 
-                        onChange={e => handleTextChange('venueName', e.target.value)}
-                        placeholder="e.g. Umaid Bhawan Palace"
-                        className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">WhatsApp Number</label>
-                    <input 
-                      type="text" 
-                      value={data.whatsappNumber} 
-                      onChange={e => handleTextChange('whatsappNumber', e.target.value)}
-                      placeholder="+91 9876543210"
-                      className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Wedding Hashtag</label>
-                    <input 
-                      type="text" 
-                      value={data.hashtag} 
-                      onChange={e => handleTextChange('hashtag', e.target.value)}
-                      placeholder="#PriyaWedsArjun"
-                      className="w-full bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#541D36]"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-3.5 bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg">
-                    <div>
-                      <span className="block text-sm font-bold text-[#241C24]">Show Countdown Timer</span>
-                      <span className="text-xs text-[#7A6B72]">Display the days/hours countdown on your hero section</span>
-                    </div>
-                    <input 
-                      type="checkbox" 
-                      checked={data.showCountdown} 
-                      onChange={e => handleTextChange('showCountdown', e.target.checked)}
-                      className="w-5 h-5 accent-[#541D36]"
-                    />
+                  <div className="py-2 bg-white/80 rounded-lg text-[10px] font-bold text-[#541D36]">
+                    Explore design ↗
                   </div>
                 </div>
               </div>
-            )}
+              <div className="mt-3 text-center">
+                <h4 className="font-serif text-lg font-bold text-neutral-800">The Rose Letter</h4>
+                <p className="text-[11px] text-neutral-500">Wax seal unboxing</p>
+              </div>
+            </div>
 
-            {/* TAB 2: INVITATION */}
-            {activeTab === 'INVITATION' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-brand-heading italic text-2xl text-[#541D36] flex items-center gap-2">
-                    <Sparkles size={20} className="text-[#B68A50]" /> Invitation Card
-                  </h3>
-                </div>
+            {/* 2. CENTER PHONE: THE ROYAL COURTYARD (EMMA & NOAH) */}
+            <div className="flex flex-col items-center">
+              <div className="w-[300px] sm:w-[320px] h-[550px] sm:h-[580px] bg-[#1A1E26] rounded-[42px] p-3 shadow-2xl border-4 border-amber-600/60 flex flex-col relative overflow-hidden ring-4 ring-amber-500/10">
+                <div className="w-28 h-4 bg-[#1A1E26] rounded-b-xl mx-auto mb-2 z-20" />
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3.5 bg-[#FFF9F2] border border-[#B68A50]/30 rounded-lg">
-                    <div>
-                      <span className="block text-sm font-bold text-[#241C24]">Show Invitation Section</span>
-                      <span className="text-xs text-[#7A6B72]">Hide the formal family card from your website</span>
+                {/* Inner Screen: Royal Carved Sandstone Entrance */}
+                <div className="flex-1 bg-[#9A7B4F] rounded-[28px] p-3 flex flex-col justify-between text-center relative overflow-hidden border border-amber-300/40">
+                  
+                  {/* Inner Ivory Card with Gold Border */}
+                  <div className="flex-1 bg-[#FFF9F2] rounded-[20px] p-5 flex flex-col justify-between text-center relative z-10 border border-amber-500/30 shadow-xl">
+                    <div className="space-y-1 pt-2">
+                      <span className="text-[9px] uppercase tracking-[0.2em] text-amber-700 font-bold block">
+                        INTERACTIVE 3D ENTRANCE
+                      </span>
+                      <span className="text-[9px] text-neutral-500 uppercase tracking-widest block pt-2">
+                        THE WEDDING OF
+                      </span>
+                      <h2 className="font-serif text-3xl font-bold text-neutral-900 leading-tight pt-1">
+                        Emma
+                      </h2>
+                      <span className="font-serif italic text-2xl text-amber-700 block leading-none">&</span>
+                      <h2 className="font-serif text-3xl font-bold text-neutral-900 leading-tight">
+                        Noah
+                      </h2>
+                      <p className="text-[11px] font-mono font-bold text-neutral-600 tracking-widest pt-2">
+                        12 · 12 · 2027
+                      </p>
                     </div>
-                    <input 
-                      type="checkbox" 
-                      checked={data.showInvitation} 
-                      onChange={e => handleTextChange('showInvitation', e.target.checked)}
-                      className="w-5 h-5 accent-[#541D36]"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider font-bold text-[#7A6B72] mb-1">Opening Blessing / Shloka</label>
-                    <textarea 
-                      rows={2}
-                      va
+                    <p className="text-[9px] tracking-wider text-neutral-500 uppercase font-semibold px-2 leading-relaxed">
+                      TOGETHER IS A BEAUTIFUL PLACE TO BE
+                    </p>
+
+                    <Link
+                      href="/templates/royal-courtyard"
+                      className="w-full py-2.5 px-4 bg-white border border-neutral-300 text-neutral-900 hover:bg-neutral-900 hover:text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      Explore design ↗
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Caption with Circle Arrow */}
+              <div className="mt-4 flex items-center gap-3">
+                <Link
+                  href="/templates/royal-courtyard"
+                  className="w-8 h-8 rounded-full border border-neutral-400 flex items-center justify-center text-neutral-700 hover:bg-neutral-900 hover:text-white transition-colors"
+                >
+                  <ArrowUpRight size={14} />
+                </Link>
+                <div className="text-left">
+                  <Link
+                    href="/templates/royal-courtyard"
+                    className="font-serif text-xl font-bold text-neutral-900 hover:underline block leading-tight"
+                  >
+                    The Royal Courtyard
+                  </Link>
+                  <span className="text-xs text-neutral-500">3D palace entrance • Cinematic</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. RIGHT PHONE: THE EDITORIAL */}
+            <div className="flex flex-col items-center opacity-85 hover:opacity-100 transition-opacity">
+              <div 
+                onClick={() => setIsCollectionModalOpen(true)}
+                className="w-[260px] h-[480px] bg-[#1A1E26] rounded-[36px] p-2.5 shadow-xl border-4 border-[#1A1E26] cursor-pointer flex flex-col relative overflow-hidden"
+              >
+                <div className="w-20 h-3.5 bg-[#1A1E26] rounded-b-xl mx-auto mb-2" />
+                <div className="flex-1 bg-[#2C3830] rounded-[24px] p-4 flex flex-col justify-between border border-emerald-800 text-center relative overflow-hidden text-white">
+                  <div className="pt-4">
+                    <span className="text-[8px] uppercase tracking-widest text-amber-300 font-bold block">
+                      MODERN EDITORIAL
+                    </span>
+                    <h3 className="font-serif text-xl font-bold text-white mt-1">Maya & Liam</h3>
+                  </div>
+                  <div className="w-20 h-20 mx-auto rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-3xl shadow">
+                    ✨
+                  </div>
+                  <div className="py-2 bg-white/20 rounded-lg text-[10px] font-bold text-white">
+                    Explore design ↗
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 text-center">
+                <h4 className="font-serif text-lg font-bold text-neutral-800">The Editorial</h4>
+                <p className="text-[11px] text-neutral-500">Cinematic opening</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+
+      {/* 3. WEDLINK COLLECTION MODAL */}
+      {isCollectionModalOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0B0E14]/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#141824] border border-white/10 rounded-[28px] max-w-lg w-full p-8 text-center text-white shadow-2xl relative">
+            
+            <button 
+              type="button" 
+              onClick={() => setIsCollectionModalOpen(false)}
+              className="absolute top-5 right-5 text-neutral-400 hover:text-white text-lg"
+            >
+              ✕
+            </button>
+
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#D4AF37] font-bold block mb-2">
+              WEDLINK COLLECTION
+            </span>
+            <h2 className="font-serif text-3xl font-bold text-white mb-2">
+              Explore Wedding Invitations
+            </h2>
+            <p className="text-xs text-neutral-400 mb-6 max-w-sm mx-auto leading-relaxed">
+              Select any interactive luxury wedding invitation template below to experience live 3D unboxing, music and animations.
+            </p>
+
+            {/* 4 Template Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left mb-6">
+              
+              <Link
+                href="/templates/royal-courtyard"
+                onClick={() => setIsCollectionModalOpen(false)}
+                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
+              >
+                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">The Royal Courtyard</h3>
+                <p className="text-[11px] text-neutral-400 mt-0.5">3D Palace Gates & Music</p>
+              </Link>
+
+              <Link
+                href="/templates/rose-letter"
+                onClick={() => setIsCollectionModalOpen(false)}
+                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
+              >
+                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">The Rose Letter</h3>
+                <p className="text-[11px] text-neutral-400 mt-0.5">Wax Seal & Scratch Card</p>
+              </Link>
+
+              <Link
+                href="/templates/heritage"
+                onClick={() => setIsCollectionModalOpen(false)}
+                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
+              >
+                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">Heritage Rajputana</h3>
+                <p className="text-[11px] text-neutral-400 mt-0.5">Traditional Royal Elegance</p>
+              </Link>
+
+              <Link
+                href="/templates/garden-romance"
+                onClick={() => setIsCollectionModalOpen(false)}
+                className="p-4 rounded-xl bg-[#1C2230] border border-white/5 hover:border-[#D4AF37] hover:bg-[#232B3D] transition-all group block cursor-pointer"
+              >
+                <h3 className="text-sm font-bold text-[#D4AF37] group-hover:underline">Garden Romance</h3>
+                <p className="text-[11px] text-neutral-400 mt-0.5">Floral Botanical Aesthetics</p>
+              </Link>
+
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsCollectionModalOpen(false)}
+              className="text-xs text-neutral-400 hover:text-white transition-colors"
+            >
+              ← Back to Homepage
+            </button>
+
+            <div className="mt-6 pt-4 border-t border-white/5 text-[10px] text-neutral-500">
+              WedLink • One Link • Endless Celebrations
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. FOOTER */}
+      <footer className="py-8 border-t border-neutral-200 text-center text-xs text-neutral-400">
+        <p>WedLink • One Link • Endless Celebrations</p>
+      </footer>
+
+    </div>
+  );
+}
