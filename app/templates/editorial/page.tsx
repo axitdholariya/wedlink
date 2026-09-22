@@ -1,6 +1,58 @@
 import Link from 'next/link';
-import {ArrowLeft,ArrowUpRight} from 'lucide-react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { example } from '@/app/shared';
 import EditorialInvitation from '@/app/editorial-invitation';
-import {example} from '@/app/shared';
-export const metadata={title:'The Editorial — Template 03 | Wedlink',description:'A cinematic, photo-led wedding invitation with a live countdown. Explore the complete sample and make it yours.'};
-export default function Page(){return <><header className="ed-demo-bar"><Link href="/#collection"><ArrowLeft size={15}/> Wedlink</Link><span>TEMPLATE 03 · THE EDITORIAL · SAMPLE</span><Link href="/create?template=editorial">Make it yours <ArrowUpRight size={15}/></Link></header><EditorialInvitation data={{...example,template:'editorial',timezone:'Asia/Kolkata',story:'It started with a conversation neither of us wanted to end. A few coffees became long walks. Long walks became little adventures. And somewhere between the everyday moments, we found our favourite place: together. Now we are choosing each other, for all the chapters still to come.',dressCode:'Evening elegance. Wear something that makes you feel wonderful.',accommodation:'Our families will be happy to help with nearby hotel recommendations.',gifts:'Your company is our favourite gift. Come with your love and your dancing shoes.'}}/></>}
+
+export const metadata = {
+  title: 'The Editorial — Modern Magazine Style Wedding Invitation | Wedlink',
+  description: 'Vogue-inspired clean typography, bold monochrome portraits, and high-fashion wedding itinerary.'
+};
+
+export default function Page() {
+  return (
+    <div className="relative min-h-screen bg-[#0A0D14]">
+      {/* Clickable Luxury Top Bar */}
+      <header 
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, pointerEvents: 'auto' }}
+        className="flex items-center justify-between px-4 py-2.5 bg-[#0A0D14]/90 backdrop-blur-md border-b border-white/10 text-white text-xs font-sans shadow-lg"
+      >
+        <Link 
+          href="/" 
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#D4AF37] font-medium transition-all"
+        >
+          <ArrowLeft size={14} /> Back to Wedlink
+        </Link>
+        <span className="hidden sm:inline font-serif tracking-widest text-[#D4AF37] text-[11px] uppercase">
+          The Editorial · Sample Invitation
+        </span>
+        <Link 
+          href="/create?template=editorial"
+          className="flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#E5C378] to-[#C9A24F] text-black font-semibold uppercase tracking-wider text-[11px] hover:opacity-90 transition-opacity"
+        >
+          Personalize <ArrowUpRight size={14} />
+        </Link>
+      </header>
+
+      {/* Main Template with padding for top bar */}
+      <div className="pt-12">
+        <EditorialInvitation
+          data={{
+            ...example,
+            template: 'editorial',
+            status: 'active',
+            isPaid: true,
+            paid: true,
+            isDraft: false,
+            published: true,
+            firstFamily: 'The Sharma Family',
+            secondFamily: 'The Mehta Family',
+            timezone: 'Asia/Kolkata',
+            dressCode: 'Black Tie Elegance & Contemporary Glamour',
+            accommodation: 'The Taj Mahal Palace, Mumbai',
+            gifts: 'No boxed gifts please. Your blessings are everything.'
+          }}
+        />
+      </div>
+    </div>
+  );
+}
