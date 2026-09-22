@@ -14,6 +14,7 @@ import {
   Calendar,
   MapPin,
   Sparkles,
+  Link2,
 } from 'lucide-react';
 import { example, type Invite } from '@/app/shared';
 
@@ -46,6 +47,7 @@ interface WeddingEvent {
   time: string;
   venue: string;
   address: string;
+  mapUrl?: string;
 }
 
 // Preset Indian Ceremonies with smart default timings
@@ -82,7 +84,7 @@ export default function CreatePage() {
   const [firstFamily, setFirstFamily] = useState('Together with the Sharma family');
   const [secondFamily, setSecondFamily] = useState('Together with the Kapoor family');
 
-  // Events State
+  // Events State (with Google Maps link support)
   const [events, setEvents] = useState<WeddingEvent[]>([
     {
       name: 'Sangeet & Cocktail Night',
@@ -90,6 +92,7 @@ export default function CreatePage() {
       time: '07:30 PM',
       venue: 'Poolside Lawn, The Oberoi Udaivilas',
       address: 'Haridas Ji Ki Magri, Udaipur, Rajasthan',
+      mapUrl: 'https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur',
     },
     {
       name: 'The Royal Wedding & Phere',
@@ -97,6 +100,7 @@ export default function CreatePage() {
       time: '05:30 PM',
       venue: 'The Grand Courtyard, The Oberoi Udaivilas',
       address: 'Haridas Ji Ki Magri, Udaipur, Rajasthan',
+      mapUrl: 'https://maps.google.com/?q=The+Oberoi+Udaivilas+Udaipur',
     },
   ]);
 
@@ -150,6 +154,7 @@ export default function CreatePage() {
         time: preset.defaultTime,
         venue: events[0]?.venue || 'Venue Name',
         address: events[0]?.address || 'City, State',
+        mapUrl: events[0]?.mapUrl || '',
       },
     ]);
   };
@@ -384,10 +389,10 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* TAB 3: EVENTS (WITH PRESET CEREMONY OPTIONS) */}
+          {/* TAB 3: EVENTS (WITH PRESET CEREMONIES + GOOGLE MAPS LINK) */}
           {activeTab === 'events' && (
             <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
-              {/* TOP: QUICK PRESET OPTIONS */}
+              {/* TOP: QUICK PRESET CEREMONY BUTTONS */}
               <div className="rounded-xl border border-[#E8DFD5] bg-[#FAF7F2] p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#341822]">
@@ -399,7 +404,6 @@ export default function CreatePage() {
                   Select common functions below to quickly add them to your itinerary:
                 </p>
 
-                {/* Preset Chips */}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {PRESET_EVENTS.map((preset) => (
                     <button
@@ -431,6 +435,7 @@ export default function CreatePage() {
                         time: '07:00 PM',
                         venue: events[0]?.venue || 'Venue Name',
                         address: events[0]?.address || 'City, State',
+                        mapUrl: '',
                       },
                     ])
                   }
@@ -507,7 +512,7 @@ export default function CreatePage() {
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#7A6B65]">Venue / Place</label>
+                    <label className="text-[11px] font-semibold text-[#7A6B65]">Venue / Resort Name</label>
                     <input
                       type="text"
                       placeholder="Hotel / Resort Name"
@@ -534,6 +539,33 @@ export default function CreatePage() {
                       }}
                       className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none"
                     />
+                  </div>
+
+                  {/* 📍 GOOGLE MAPS LINK INPUT */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#7A6B65]">
+                        Google Maps Link (Location Pin)
+                      </label>
+                      <span className="text-[10px] text-[#A89A90]">Optional</span>
+                    </div>
+                    <div className="relative mt-1">
+                      <input
+                        type="url"
+                        placeholder="https://maps.app.goo.gl/... or paste Google Maps URL"
+                        value={ev.mapUrl || ''}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[i].mapUrl = e.target.value;
+                          setEvents(updated);
+                        }}
+                        className="w-full rounded-lg border border-[#E8DFD5] pl-8 pr-3 py-2 text-sm outline-none focus:border-[#341822]"
+                      />
+                      <MapPin
+                        size={15}
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8A7B75]"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
