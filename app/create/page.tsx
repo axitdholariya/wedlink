@@ -48,9 +48,20 @@ interface WeddingEvent {
   address: string;
 }
 
+// Preset Indian Ceremonies with smart default timings
+const PRESET_EVENTS = [
+  { name: 'Haldi & Kumkum Ceremony', defaultTime: '10:00 AM', emoji: '🌼' },
+  { name: 'Mehndi & High Tea', defaultTime: '04:00 PM', emoji: '🌿' },
+  { name: 'Sangeet & Cocktail Night', defaultTime: '07:30 PM', emoji: '💃' },
+  { name: 'Mandva / Mameru Ritual', defaultTime: '09:30 AM', emoji: '🪔' },
+  { name: 'Baraat & Grand Welcome', defaultTime: '04:30 PM', emoji: '🥁' },
+  { name: 'The Royal Wedding & Phere', defaultTime: '06:15 PM', emoji: '💍' },
+  { name: 'Grand Reception Gala', defaultTime: '08:00 PM', emoji: '🥂' },
+];
+
 export default function CreatePage() {
   const [activeTab, setActiveTab] = useState<Tab>('essentials');
-  const [template, setTemplate] = useState<TemplateKey>('garden-romance');
+  const [template, setTemplate] = useState<TemplateKey>('editorial');
 
   // Basic Info State
   const [brideName, setBrideName] = useState('Priya');
@@ -74,9 +85,9 @@ export default function CreatePage() {
   // Events State
   const [events, setEvents] = useState<WeddingEvent[]>([
     {
-      name: 'Haldi & Mehndi Ceremony',
+      name: 'Sangeet & Cocktail Night',
       date: '2026-11-27',
-      time: '10:00 AM',
+      time: '07:30 PM',
       venue: 'Poolside Lawn, The Oberoi Udaivilas',
       address: 'Haridas Ji Ki Magri, Udaipur, Rajasthan',
     },
@@ -129,6 +140,20 @@ export default function CreatePage() {
     setPhotos(updated);
   };
 
+  // Quick Add Preset Event
+  const addPresetEvent = (preset: (typeof PRESET_EVENTS)[0]) => {
+    setEvents([
+      ...events,
+      {
+        name: preset.name,
+        date: date,
+        time: preset.defaultTime,
+        venue: events[0]?.venue || 'Venue Name',
+        address: events[0]?.address || 'City, State',
+      },
+    ]);
+  };
+
   // Prepare active photos array according to layout
   const validUploadedPhotos = photos.filter(Boolean);
   const activePhotos =
@@ -174,7 +199,7 @@ export default function CreatePage() {
       case 'heritage':
         return <HeritageInvitation data={inviteData} />;
       default:
-        return <GardenRomance data={inviteData} />;
+        return <EditorialInvitation data={inviteData} />;
     }
   };
 
@@ -359,12 +384,42 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* TAB 3: EVENTS */}
+          {/* TAB 3: EVENTS (WITH PRESET CEREMONY OPTIONS) */}
           {activeTab === 'events' && (
             <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
-              <div className="flex items-center justify-between">
+              {/* TOP: QUICK PRESET OPTIONS */}
+              <div className="rounded-xl border border-[#E8DFD5] bg-[#FAF7F2] p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#341822]">
+                    ⚡ Quick Add Ceremonies
+                  </span>
+                  <span className="text-[11px] text-[#7A6B65]">Click to add instantly</span>
+                </div>
+                <p className="mt-1 text-xs text-[#7A6B65]">
+                  Select common functions below to quickly add them to your itinerary:
+                </p>
+
+                {/* Preset Chips */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {PRESET_EVENTS.map((preset) => (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => addPresetEvent(preset)}
+                      className="flex items-center gap-1.5 rounded-full border border-[#D9CFC4] bg-white px-3.5 py-1.5 text-xs font-medium text-[#341822] shadow-2xs transition-all hover:border-[#341822] hover:bg-[#F3EDE2] active:scale-95"
+                    >
+                      <span>{preset.emoji}</span>
+                      <span>{preset.name}</span>
+                      <Plus size={13} className="text-[#8A7B75]" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION HEADER */}
+              <div className="flex items-center justify-between pt-2">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-[#8A7B75]">
-                  Celebration Schedule
+                  Celebration Schedule ({events.length} Events)
                 </h2>
                 <button
                   onClick={() =>
@@ -374,86 +429,112 @@ export default function CreatePage() {
                         name: 'New Celebration',
                         date: date,
                         time: '07:00 PM',
-                        venue: 'Venue Name',
-                        address: 'City, State',
+                        venue: events[0]?.venue || 'Venue Name',
+                        address: events[0]?.address || 'City, State',
                       },
                     ])
                   }
                   className="flex items-center gap-1 text-xs font-semibold text-[#341822] hover:underline"
                 >
-                  <Plus size={14} /> Add Event
+                  <Plus size={14} /> Custom Event
                 </button>
               </div>
 
+              {/* EVENTS CARDS LIST */}
               {events.map((ev, i) => (
-                <div key={i} className="rounded-xl border border-[#E8DFD5] p-4 space-y-3">
+                <div
+                  key={i}
+                  className="rounded-xl border border-[#E8DFD5] bg-white p-4.5 space-y-3.5 shadow-2xs"
+                >
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-[#8A7B75]">Event 0{i + 1}</span>
+                    <span className="text-xs font-bold tracking-wider text-[#8A7B75] uppercase">
+                      Event 0{i + 1}
+                    </span>
                     {events.length > 1 && (
                       <button
                         onClick={() => setEvents(events.filter((_, idx) => idx !== i))}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                        title="Delete Event"
                       >
                         <Trash2 size={15} />
                       </button>
                     )}
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Event Name"
-                    value={ev.name}
-                    onChange={(e) => {
-                      const updated = [...events];
-                      updated[i].name = e.target.value;
-                      setEvents(updated);
-                    }}
-                    className="w-full rounded-lg border border-[#E8DFD5] p-2 text-sm"
-                  />
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="date"
-                      value={ev.date}
-                      onChange={(e) => {
-                        const updated = [...events];
-                        updated[i].date = e.target.value;
-                        setEvents(updated);
-                      }}
-                      className="rounded-lg border border-[#E8DFD5] p-2 text-sm"
-                    />
+
+                  <div>
+                    <label className="text-[11px] font-semibold text-[#7A6B65]">Ceremony Name</label>
                     <input
                       type="text"
-                      placeholder="Time (e.g. 10:00 AM)"
-                      value={ev.time}
+                      placeholder="e.g. Sangeet & Cocktails"
+                      value={ev.name}
                       onChange={(e) => {
                         const updated = [...events];
-                        updated[i].time = e.target.value;
+                        updated[i].name = e.target.value;
                         setEvents(updated);
                       }}
-                      className="rounded-lg border border-[#E8DFD5] p-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none focus:border-[#341822]"
                     />
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Venue"
-                    value={ev.venue}
-                    onChange={(e) => {
-                      const updated = [...events];
-                      updated[i].venue = e.target.value;
-                      setEvents(updated);
-                    }}
-                    className="w-full rounded-lg border border-[#E8DFD5] p-2 text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Address"
-                    value={ev.address}
-                    onChange={(e) => {
-                      const updated = [...events];
-                      updated[i].address = e.target.value;
-                      setEvents(updated);
-                    }}
-                    className="w-full rounded-lg border border-[#E8DFD5] p-2 text-sm"
-                  />
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#7A6B65]">Date</label>
+                      <input
+                        type="date"
+                        value={ev.date}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[i].date = e.target.value;
+                          setEvents(updated);
+                        }}
+                        className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#7A6B65]">Time</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 10:00 AM / 07:00 PM"
+                        value={ev.time}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[i].time = e.target.value;
+                          setEvents(updated);
+                        }}
+                        className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-semibold text-[#7A6B65]">Venue / Place</label>
+                    <input
+                      type="text"
+                      placeholder="Hotel / Resort Name"
+                      value={ev.venue}
+                      onChange={(e) => {
+                        const updated = [...events];
+                        updated[i].venue = e.target.value;
+                        setEvents(updated);
+                      }}
+                      className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-semibold text-[#7A6B65]">Address & City</label>
+                    <input
+                      type="text"
+                      placeholder="Full street address and city"
+                      value={ev.address}
+                      onChange={(e) => {
+                        const updated = [...events];
+                        updated[i].address = e.target.value;
+                        setEvents(updated);
+                      }}
+                      className="mt-1 w-full rounded-lg border border-[#E8DFD5] p-2 text-sm outline-none"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -494,7 +575,7 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* TAB 5: GALLERY (MULTIPLE PHOTOS) */}
+          {/* TAB 5: GALLERY */}
           {activeTab === 'gallery' && (
             <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 shadow-xs">
               <div className="flex items-center justify-between">
