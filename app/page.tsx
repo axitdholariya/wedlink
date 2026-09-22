@@ -1,404 +1,375 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Sparkles, ArrowRight, Play, Heart, MapPin, Music, 
-  Smartphone, CheckCircle2, Eye, ShieldCheck, Clock, Share2
-} from 'lucide-react';
+import { ArrowUpRight, ArrowRight, Heart, Sparkles, Check, ChevronDown } from 'lucide-react';
 
-const CATEGORIES = ['ALL', 'ROYAL PALACE', 'ROMANTIC BLUSH', 'HERITAGE VINTAGE', 'MODERN EDITORIAL'];
+const CATEGORIES = ['HINDU', 'MUSLIM', 'SIKH', 'CHRISTIAN', 'DESTINATION', 'FUSION'];
 
-const SHOWCASE_TEMPLATES = [
+const MOBILE_TEMPLATES = [
   {
     id: 'royal-courtyard',
-    category: 'ROYAL PALACE',
-    title: 'The Royal Courtyard',
-    couple: 'Aarav & Meera',
-    date: 'Nov 29, 2026',
-    venue: 'The Oberoi Udaivilas, Udaipur',
-    badge: 'Flagship 3D',
+    name: 'The Royal Courtyard',
+    couple: 'Priya & Arjun',
+    date: '259d 09h 44m',
     link: '/templates/royal-courtyard',
-    bgGradient: 'from-[#0d1322] via-[#1a233a] to-[#0A0D14]',
-    phoneBorder: 'border-[#D4AF37]/50 shadow-[0_0_30px_rgba(212,175,55,0.2)]',
-    accentColor: '#D4AF37',
-    tagline: '3D Palace Doors & Shehnai',
-    artType: 'palace',
+    tag: '3D Palace Doors',
+    bg: 'from-[#fadbc8] via-[#f7c8b2] to-[#f4b69d]',
+    accent: '#8d4b32',
+    style: 'palace'
   },
   {
     id: 'rose-letter',
-    category: 'ROMANTIC BLUSH',
-    title: 'The Rose Letter',
-    couple: 'Veer & Zara',
-    date: 'Dec 14, 2026',
-    venue: 'The Taj Mahal Palace, Mumbai',
-    badge: 'Wax Seal & Scratch',
+    name: 'The Rose Letter',
+    couple: 'Priya & Arjun',
+    date: '259d 09h 45m',
     link: '/templates/rose-letter',
-    bgGradient: 'from-[#2a131b] via-[#3d1825] to-[#1c0c12]',
-    phoneBorder: 'border-[#f6a5b8]/40 shadow-[0_0_30px_rgba(246,165,184,0.2)]',
-    accentColor: '#f6a5b8',
-    tagline: '3D Envelope Unboxing',
-    artType: 'envelope',
+    tag: 'Wax Seal & Scratch',
+    bg: 'from-[#1a2942] via-[#243b5e] to-[#121c2e]',
+    accent: '#f0c674',
+    style: 'night-palace'
   },
   {
     id: 'heritage',
-    category: 'HERITAGE VINTAGE',
-    title: 'Heritage Rajputana',
-    couple: 'Devraj & Radhika',
-    date: 'Jan 18, 2027',
-    venue: 'Umaid Bhawan Palace, Jodhpur',
-    badge: 'Traditional Royal',
+    name: 'Heritage Rajputana',
+    couple: 'Priya & Arjun',
+    date: '259d 09h 44m',
     link: '/templates/heritage',
-    bgGradient: 'from-[#330c14] via-[#48111d] to-[#1e070c]',
-    phoneBorder: 'border-[#E5C378]/50 shadow-[0_0_30px_rgba(229,195,120,0.2)]',
-    accentColor: '#E5C378',
-    tagline: 'Sacred Shlokas & Jharokha',
-    artType: 'jharokha',
+    tag: 'Royal Jharokha',
+    bg: 'from-[#fcf8f2] via-[#f7ede1] to-[#eedbc5]',
+    accent: '#9a6b38',
+    style: 'arch'
   },
   {
     id: 'garden-romance',
-    category: 'ROMANTIC BLUSH',
-    title: 'Garden Romance',
-    couple: 'Kabir & Ananya',
-    date: 'Feb 22, 2027',
-    venue: 'Rambagh Palace, Jaipur',
-    badge: 'Botanical Floral',
+    name: 'Garden Romance',
+    couple: 'Priya & Arjun',
+    date: '259d 09h 44m',
     link: '/templates/garden-romance',
-    bgGradient: 'from-[#12231e] via-[#1a352d] to-[#0b1714]',
-    phoneBorder: 'border-[#89d3b2]/40 shadow-[0_0_30px_rgba(137,211,178,0.2)]',
-    accentColor: '#89d3b2',
-    tagline: 'Sage Green Floral Vibe',
-    artType: 'garden',
+    tag: 'Floral Jharokha',
+    bg: 'from-[#f9ded1] via-[#f5c7b3] to-[#e8a58c]',
+    accent: '#a84c2e',
+    style: 'jharokha'
   },
   {
     id: 'editorial',
-    category: 'MODERN EDITORIAL',
-    title: 'The Editorial',
-    couple: 'Rohan & Tara',
-    date: 'Mar 08, 2027',
-    venue: 'Alila Fort, Bishangarh',
-    badge: 'Vogue Magazine',
+    name: 'The Editorial',
+    couple: 'Priya & Arjun',
+    date: '259d 09h 44m',
     link: '/templates/editorial',
-    bgGradient: 'from-[#141417] via-[#222228] to-[#0A0A0C]',
-    phoneBorder: 'border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.15)]',
-    accentColor: '#ffffff',
-    tagline: 'High Fashion Monochrome',
-    artType: 'editorial',
+    tag: 'Vogue Modern',
+    bg: 'from-[#232526] via-[#414345] to-[#1a1a1a]',
+    accent: '#ffffff',
+    style: 'editorial'
   }
 ];
 
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-
-  const filteredTemplates = selectedCategory === 'ALL'
-    ? SHOWCASE_TEMPLATES
-    : SHOWCASE_TEMPLATES.filter(t => t.category === selectedCategory);
+  const [activeCategory, setActiveCategory] = useState('HINDU');
 
   return (
     <div 
-      className="min-h-screen bg-[#0A0D14] text-white selection:bg-[#D4AF37] selection:text-black relative overflow-x-hidden"
+      className="min-h-screen bg-[#FAF7F2] text-[#2D141E] selection:bg-[#341822] selection:text-white"
       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
     >
       {/* Google Fonts */}
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        .font-great-vibes { font-family: 'Great Vibes', cursive; }
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        .font-serif-luxury { font-family: 'Cormorant Garamond', Georgia, serif; }
       `}</style>
 
-      {/* Top Floating Brand Bar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-12 py-4 bg-[#0A0D14]/90 backdrop-blur-xl border-b border-[#D4AF37]/20 shadow-xl">
+      {/* 1. ORIGINAL HEADER */}
+      <header className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-16 py-5 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-[#E8DFD5]">
         <a href="/" className="flex items-center gap-2 cursor-pointer">
-          <span className="font-cinzel text-xl font-bold tracking-[0.2em] text-white">
-            WED<span className="text-[#D4AF37]">LINK</span>
+          <span className="font-serif-luxury text-2xl font-bold tracking-tight text-[#2D141E] flex items-center gap-2">
+            <span className="text-xl font-sans font-black">W</span> Wedlink
           </span>
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-widest text-[#94A3B8]">
-          <a href="#templates" className="hover:text-[#D4AF37] transition-colors">Templates</a>
-          <a href="#features" className="hover:text-[#D4AF37] transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-[#D4AF37] transition-colors">Pricing</a>
+
+        <nav className="hidden md:flex items-center gap-10 text-[13px] font-medium text-[#6A5E62]">
+          <a href="#collection" className="hover:text-[#2D141E] transition-colors">The collection</a>
+          <a href="#how-it-works" className="hover:text-[#2D141E] transition-colors">How it works</a>
+          <a href="#questions" className="hover:text-[#2D141E] transition-colors">Questions</a>
         </nav>
+
         <a
           href="/create"
-          className="px-6 py-2.5 rounded-full font-cinzel text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/25 hover:opacity-90 transition-all cursor-pointer"
-          style={{ background: 'linear-gradient(135deg, #E5C378 0%, #D4AF37 50%, #A87A24 100%)' }}
+          className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-xs font-semibold tracking-wide text-white bg-[#341822] hover:bg-[#230f16] transition-all cursor-pointer shadow-sm"
         >
-          Create Invite ✨
+          Create your invitation <ArrowUpRight size={14} />
         </a>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-20 px-6 text-center max-w-5xl mx-auto z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#260A10]/60 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium uppercase tracking-[0.2em] mb-6 backdrop-blur-md">
-          <Sparkles size={13} /> The New Era of Indian Wedding Invites
-        </div>
-        <h1 className="font-cinzel text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.15]">
-          Your Wedding, <br />
-          <span className="font-great-vibes text-5xl sm:text-7xl md:text-8xl text-[#FBF0B9] font-normal block my-2">
-            In A Single Calming Link
-          </span>
-        </h1>
-        <p className="text-[#94A3B8] text-sm sm:text-base max-w-2xl mx-auto mt-6 mb-10 leading-relaxed">
-          Stop sending 50MB PDFs and confusing WhatsApp locations. Delight your guests with an interactive 3D mobile microsite featuring sliding palace gates, wax seal unboxing, shehnai music & 1-tap Google Maps.
-        </p>
+      {/* 2. ORIGINAL HERO SECTION */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-16 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Left Text */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="text-xs font-semibold tracking-[0.2em] text-[#8C7A70] uppercase">
+            — For the beginning of forever
+          </div>
+          <h1 className="font-serif-luxury text-5xl sm:text-7xl lg:text-[76px] font-normal tracking-tight text-[#2D141E] leading-[1.08]">
+            Your love story. <br />
+            <span className="italic block mt-1">Beautifully linked.</span>
+          </h1>
+          <p className="text-[#6A5E62] text-base sm:text-lg max-w-xl font-normal leading-relaxed pt-2">
+            A wedding website that feels like you. Thoughtfully designed, effortlessly personalized, and ready to share with everyone you love.
+          </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <a
-            href="/create"
-            className="w-full sm:w-auto px-10 py-4 rounded-full font-cinzel text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-black shadow-2xl shadow-[#D4AF37]/30 hover:opacity-95 transition-all transform hover:-translate-y-0.5 cursor-pointer"
-            style={{ background: 'linear-gradient(135deg, #E5C378 0%, #D4AF37 50%, #A87A24 100%)' }}
-          >
-            Personalize Your Invite ↗
-          </a>
-          <a
-            href="#templates"
-            className="w-full sm:w-auto px-8 py-4 rounded-full font-cinzel text-xs sm:text-sm font-bold uppercase tracking-wider text-white border border-[#D4AF37]/40 hover:bg-white/5 transition-all cursor-pointer"
-          >
-            Explore 3D Collection ↓
-          </a>
+          <div className="flex flex-wrap items-center gap-4 pt-4">
+            <a
+              href="/create"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-sm font-semibold tracking-wide text-white bg-[#341822] hover:bg-[#230f16] transition-all shadow-md cursor-pointer"
+            >
+              Find your invitation <ArrowUpRight size={15} />
+            </a>
+            <a
+              href="#collection"
+              className="inline-flex items-center gap-1.5 px-6 py-3.5 text-sm font-semibold text-[#2D141E] hover:text-[#522535] transition-colors cursor-pointer"
+            >
+              Take a little peek →
+            </a>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6 pt-6 text-xs text-[#7A6E72] font-medium">
+            <span className="flex items-center gap-1.5">
+              <Check size={14} className="text-[#341822]" /> Make it yours in minutes
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Check size={14} className="text-[#341822]" /> One link for every guest
+            </span>
+          </div>
+        </div>
+
+        {/* Right Hero Arch Card (Exact Aarav & Meera Design) */}
+        <div className="lg:col-span-5 flex justify-center lg:justify-end relative">
+          {/* Background Arch */}
+          <div className="w-[330px] sm:w-[380px] h-[520px] bg-[#EAE2D8] rounded-t-[190px] rounded-b-2xl absolute -top-4 right-0 lg:right-4 z-0" />
+
+          {/* Floating Card */}
+          <div className="relative z-10 w-[300px] sm:w-[340px] bg-white rounded-t-[170px] rounded-b-xl shadow-2xl p-6 text-center border border-white/60">
+            <span className="text-[9px] uppercase tracking-[0.25em] text-[#9A8A80] font-semibold block pt-6 mb-1">
+              Your next chapter starts here
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#9A8A80] font-semibold block mb-3">
+              Together with our families
+            </span>
+
+            <h3 className="font-serif-luxury text-3xl font-normal text-[#2D141E] mb-1">
+              Aarav & Meera
+            </h3>
+            <span className="text-[9px] uppercase tracking-[0.25em] text-[#9A8A80] font-semibold block mb-4">
+              Are getting married
+            </span>
+
+            {/* Photo Frame */}
+            <div className="relative w-full h-52 rounded-xl overflow-hidden mb-5 shadow-inner">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800"
+                alt="Aarav and Meera"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="text-[10px] uppercase tracking-[0.25em] text-[#9A8A80] font-bold">
+              December
+            </div>
+            <div className="font-serif-luxury text-3xl font-bold text-[#2D141E] my-0.5">
+              12
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.25em] text-[#9A8A80] font-bold mb-4">
+              Udaipur, India
+            </div>
+
+            {/* Floating Mini Pill */}
+            <div className="absolute -bottom-4 right-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-lg border border-[#E8DFD5] text-left">
+              <p className="text-[10px] font-semibold text-[#2D141E] flex items-center gap-1">
+                <Heart size={10} className="text-[#8D3A4B] fill-[#8D3A4B]" /> A little more you.
+              </p>
+              <p className="text-[9px] text-[#7A6E72]">A lot more meaningful.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* MOBILE SHOWCASE SECTION (PHOTO REFERENCE FORMAT) */}
-      <section id="templates" className="py-20 px-6 relative z-10 border-t border-white/5 bg-[#07090E]">
+      {/* 3. MOBILE FORMAT SHOWCASE SECTION (EXACT REFERENCE IMAGE) */}
+      <section id="collection" className="py-20 px-6 sm:px-16 border-t border-[#E8DFD5] bg-[#F7F3EC]">
         <div className="max-w-7xl mx-auto">
-          {/* Section Heading */}
-          <div className="text-center mb-12">
-            <span className="font-cinzel text-xs uppercase tracking-[0.3em] text-[#D4AF37] font-semibold block mb-2">
-              Luxury Mobile Microsites
-            </span>
-            <h2 className="font-cinzel text-3xl sm:text-5xl font-bold text-white tracking-wide">
-              Explore The 3D Collection
-            </h2>
-            <p className="text-[#94A3B8] text-xs sm:text-sm max-w-lg mx-auto mt-3">
-              Designed specifically for mobile screens. Tap any phone mockup below to experience the live 3D unboxing and animations.
-            </p>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-8">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-5 py-2 rounded-full font-cinzel text-[10px] sm:text-xs tracking-wider uppercase font-semibold transition-all cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/25'
-                      : 'bg-white/5 text-[#94A3B8] hover:text-white border border-white/10 hover:border-white/20'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Realistic iPhone Showcase Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center pt-4">
-            {filteredTemplates.map(template => (
-              <div 
-                key={template.id}
-                className="flex flex-col items-center group"
+          {/* Top Filter Buttons */}
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mb-14">
+            {CATEGORIES.map(category => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`px-6 py-2 rounded-sm text-xs tracking-[0.18em] uppercase font-semibold transition-all cursor-pointer ${
+                  activeCategory === category
+                    ? 'bg-[#341822] text-white shadow-sm'
+                    : 'bg-transparent text-[#7A6E72] hover:text-[#2D141E] border border-[#DDD4C9]'
+                }`}
               >
-                {/* iPhone Device Frame */}
-                <div 
-                  className={`relative w-[275px] h-[570px] bg-[#141822] rounded-[48px] p-3 border-[4px] shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-500 transform group-hover:-translate-y-3 ${template.phoneBorder}`}
-                >
-                  {/* Speaker & Dynamic Island Pill */}
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-black rounded-full z-40 flex items-center justify-end pr-2">
-                    <div className="w-2.5 h-2.5 bg-[#1f2430] rounded-full border border-white/20" />
-                  </div>
-
-                  {/* Inner Screen Display */}
-                  <div className={`relative w-full h-full rounded-[38px] overflow-hidden bg-gradient-to-b ${template.bgGradient} flex flex-col justify-between p-5 border border-white/10`}>
-                    
-                    {/* Top Status & Badge */}
-                    <div className="pt-5 text-center">
-                      <span 
-                        className="inline-block px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border backdrop-blur-md"
-                        style={{ color: template.accentColor, borderColor: `${template.accentColor}40`, backgroundColor: `${template.accentColor}15` }}
-                      >
-                        {template.badge}
-                      </span>
-                      <p className="font-great-vibes text-sm text-[#FBF0B9] mt-2">Invited to celebrate</p>
-                      <h3 className="font-cinzel text-lg font-bold text-white tracking-wider mt-0.5">
-                        {template.couple}
-                      </h3>
-                      <p className="text-[10px] text-slate-400 tracking-widest uppercase font-semibold">
-                        {template.date}
-                      </p>
-                    </div>
-
-                    {/* Center Artwork / Visual Hook */}
-                    <div className="my-auto py-4 text-center flex flex-col items-center justify-center">
-                      {template.artType === 'palace' && (
-                        <div className="relative w-36 h-36 rounded-full bg-gradient-to-b from-[#D4AF37]/20 to-transparent p-3 flex flex-col items-center justify-center border border-[#D4AF37]/30 shadow-inner">
-                          <div className="w-16 h-12 border-2 border-[#D4AF37] rounded-t-full flex items-center justify-center mb-1">
-                            <Sparkles size={16} className="text-[#D4AF37]" />
-                          </div>
-                          <span className="font-cinzel text-[10px] uppercase font-bold text-[#D4AF37] tracking-widest">
-                            Royal Gates
-                          </span>
-                          <span className="text-[8px] text-slate-300">Tap to Slide Open</span>
-                        </div>
-                      )}
-
-                      {template.artType === 'envelope' && (
-                        <div className="relative w-36 h-32 bg-[#FAF6EE]/10 rounded-2xl border border-[#f6a5b8]/30 flex flex-col items-center justify-center p-3">
-                          <div className="w-12 h-12 rounded-full bg-[#c2415c] border-2 border-[#D4AF37] flex items-center justify-center shadow-lg mb-1">
-                            <span className="font-serif text-xs font-bold text-[#FBF0B9]">V•Z</span>
-                          </div>
-                          <span className="font-cinzel text-[10px] uppercase font-bold text-[#f6a5b8] tracking-wider">
-                            Wax Seal Flap
-                          </span>
-                          <span className="text-[8px] text-slate-300">Touch to Unbox</span>
-                        </div>
-                      )}
-
-                      {template.artType === 'jharokha' && (
-                        <div className="relative w-36 h-36 rounded-t-full bg-[#260A10] border-2 border-[#E5C378]/40 p-3 flex flex-col items-center justify-center shadow-lg">
-                          <span className="font-serif text-[11px] text-[#E5C378] mb-1">|| श्री गणेशाय नमः ||</span>
-                          <Heart size={16} className="text-[#E5C378] my-1" />
-                          <span className="font-cinzel text-[9px] uppercase font-bold text-white tracking-widest">
-                            Vedic Phere
-                          </span>
-                        </div>
-                      )}
-
-                      {template.artType === 'garden' && (
-                        <div className="relative w-36 h-36 rounded-full bg-[#89d3b2]/10 border border-[#89d3b2]/30 flex flex-col items-center justify-center p-3">
-                          <div className="w-10 h-10 rounded-full border border-[#89d3b2] flex items-center justify-center mb-1 text-[#89d3b2]">
-                            🌿
-                          </div>
-                          <span className="font-cinzel text-[10px] uppercase font-bold text-[#89d3b2] tracking-widest">
-                            Love Story
-                          </span>
-                          <span className="text-[8px] text-slate-300">Botanical Timeline</span>
-                        </div>
-                      )}
-
-                      {template.artType === 'editorial' && (
-                        <div className="relative w-36 h-36 bg-black/60 border border-white/20 p-4 flex flex-col items-center justify-center text-center">
-                          <span className="font-cinzel text-xs font-black tracking-[0.3em] text-white mb-1">VOGUE</span>
-                          <div className="w-12 h-px bg-[#D4AF37] my-1" />
-                          <span className="font-cinzel text-[9px] uppercase tracking-widest text-slate-300">THE UNION</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Bottom Venue & Floating Pill */}
-                    <div className="pb-3 text-center">
-                      <p className="text-[10px] text-slate-300 font-medium truncate mb-2">
-                        {template.venue}
-                      </p>
-                      <div className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full bg-black/60 border border-white/15 text-[10px] text-[#D4AF37]">
-                        <Music size={11} /> 
-                        <span className="font-sans font-semibold text-[9px] uppercase tracking-wider">{template.tagline}</span>
-                      </div>
-                    </div>
-
-                    {/* Hover Overlay Button */}
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6 z-30">
-                      <span className="font-cinzel text-xs font-bold text-[#D4AF37] tracking-widest uppercase">
-                        {template.title}
-                      </span>
-                      <a
-                        href={template.link}
-                        className="w-full py-3 rounded-full font-cinzel text-xs font-bold uppercase tracking-wider text-black text-center shadow-lg transition-transform transform hover:scale-105 cursor-pointer"
-                        style={{ background: 'linear-gradient(135deg, #E5C378 0%, #D4AF37 50%, #A87A24 100%)' }}
-                      >
-                        Experience 3D ↗
-                      </a>
-                      <a
-                        href={`/create?template=${template.id}`}
-                        className="w-full py-2.5 rounded-full font-cinzel text-xs font-semibold uppercase tracking-wider text-white border border-[#D4AF37]/50 text-center hover:bg-white/10 transition-colors cursor-pointer"
-                      >
-                        Personalize ✨
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Outer Caption below Phone */}
-                <div className="text-center mt-4">
-                  <h4 className="font-cinzel text-sm font-bold text-white tracking-wide">
-                    {template.title}
-                  </h4>
-                  <a
-                    href={template.link}
-                    className="inline-flex items-center gap-1 text-xs text-[#D4AF37] hover:underline font-semibold mt-1 cursor-pointer"
-                  >
-                    Open Live Demo <ArrowRight size={12} />
-                  </a>
-                </div>
-              </div>
+                {category}
+              </button>
             ))}
           </div>
 
-          {/* Browse All Button */}
-          <div className="text-center mt-16">
+          {/* 4-5 Mobile Phone Mockups in a Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
+            {MOBILE_TEMPLATES.slice(0, 4).map(tpl => (
+              <a
+                key={tpl.id}
+                href={tpl.link}
+                className="group flex flex-col items-center cursor-pointer transition-transform duration-300 hover:-translate-y-2"
+              >
+                {/* iPhone Outer Frame */}
+                <div className="relative w-[265px] h-[545px] bg-[#1C1D21] rounded-[48px] p-2.5 shadow-[0_15px_45px_rgba(0,0,0,0.15)] border-[3.5px] border-[#31333B] transition-shadow group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+                  {/* Dynamic Island / Notch */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-black rounded-full z-30 flex items-center justify-end pr-2">
+                    <div className="w-2.5 h-2.5 bg-[#252830] rounded-full border border-white/20" />
+                  </div>
+
+                  {/* Inner Screen Display */}
+                  <div className={`relative w-full h-full rounded-[38px] overflow-hidden bg-gradient-to-b ${tpl.bg} flex flex-col justify-between p-5 pt-8 text-center border border-black/10`}>
+                    
+                    {/* Top Couple Name */}
+                    <div>
+                      <h4 className="font-serif-luxury text-2xl font-normal text-[#2D141E] tracking-tight leading-tight">
+                        {tpl.couple.split('&')[0]}
+                      </h4>
+                      <p className="font-serif-luxury text-sm italic text-[#6A5E62] -my-0.5">weds</p>
+                      <h4 className="font-serif-luxury text-2xl font-normal text-[#2D141E] tracking-tight leading-tight">
+                        {tpl.couple.split('&')}
+                      </h4>
+                      <p className="text-[10px] text-[#7A6E72] tracking-widest mt-1 uppercase font-semibold">
+                        {tpl.date}
+                      </p>
+                    </div>
+
+                    {/* Center Artwork Illustration */}
+                    <div className="my-auto flex flex-col items-center justify-center">
+                      {tpl.style === 'palace' && (
+                        <div className="w-32 h-32 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 p-3 flex flex-col items-center justify-center shadow-sm">
+                          <div className="w-16 h-12 border-2 border-[#8d4b32] rounded-t-full flex items-center justify-center mb-1">
+                            <Sparkles size={16} className="text-[#8d4b32]" />
+                          </div>
+                          <span className="font-serif-luxury text-sm font-bold text-[#8d4b32]">Palace Gates</span>
+                          <span className="text-[9px] text-[#7A6E72]">Tap to Slide Open</span>
+                        </div>
+                      )}
+
+                      {tpl.style === 'night-palace' && (
+                        <div className="w-32 h-32 rounded-2xl bg-black/40 backdrop-blur-sm border border-white/20 p-3 flex flex-col items-center justify-center shadow-lg text-white">
+                          <div className="w-8 h-8 rounded-full bg-[#f0c674] mb-2 shadow-md flex items-center justify-center text-black font-bold text-xs">
+                            🌕
+                          </div>
+                          <span className="font-serif-luxury text-sm font-bold text-[#f0c674]">Royal Night</span>
+                          <span className="text-[9px] text-slate-300">Wax Seal Unboxing</span>
+                        </div>
+                      )}
+
+                      {tpl.style === 'arch' && (
+                        <div className="w-32 h-36 rounded-t-full bg-white/60 border border-[#9a6b38]/40 p-3 flex flex-col items-center justify-center shadow-sm">
+                          <span className="font-serif-luxury text-xs text-[#9a6b38] mb-1">|| श्री गणेश ||</span>
+                          <div className="w-10 h-10 border-t-2 border-[#9a6b38] rounded-t-full my-1 flex items-center justify-center">
+                            <Heart size={14} className="text-[#9a6b38]" />
+                          </div>
+                          <span className="font-serif-luxury text-xs font-bold text-[#2D141E]">Vedic Phere</span>
+                        </div>
+                      )}
+
+                      {tpl.style === 'jharokha' && (
+                        <div className="w-32 h-36 rounded-t-full bg-[#e8a58c]/30 border-2 border-[#a84c2e]/40 p-3 flex flex-col items-center justify-center shadow-sm">
+                          <span className="font-serif-luxury text-xs font-bold text-[#a84c2e] mb-1">Jharokha Vows</span>
+                          <p className="text-[16px]">🌸 🌺</p>
+                          <span className="text-[9px] text-[#7A6E72] mt-1">Floral Mandap</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bottom Pill & Hover Button */}
+                    <div className="space-y-2">
+                      <div className="inline-block px-3 py-1 rounded-full bg-white/70 backdrop-blur-sm border border-black/5 text-[10px] font-semibold text-[#2D141E]">
+                        {tpl.name}
+                      </div>
+                      <div className="w-full py-2 rounded-full bg-[#341822] text-white text-[11px] font-semibold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity">
+                        View 3D Demo ↗
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subtitle Below Phone */}
+                <span className="mt-3 font-serif-luxury text-sm font-semibold text-[#2D141E]">
+                  {tpl.name}
+                </span>
+              </a>
+            ))}
+          </div>
+
+          {/* Brown "BROWSE ALL" Button (Exact like Reference Image) */}
+          <div className="text-center mt-14">
             <a
               href="/create"
-              className="inline-flex items-center gap-2 px-10 py-4 rounded-full font-cinzel text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-white border border-[#D4AF37]/60 bg-[#260A10]/50 hover:bg-[#260A10] hover:border-[#D4AF37] shadow-xl shadow-[#D4AF37]/10 transition-all cursor-pointer"
+              className="inline-block px-10 py-3.5 rounded-sm font-sans text-xs uppercase tracking-[0.25em] font-bold text-white bg-[#732912] hover:bg-[#5e200c] shadow-md transition-all cursor-pointer"
             >
-              Browse All Templates & Personalize ↗
+              BROWSE ALL
             </a>
           </div>
         </div>
       </section>
 
-      {/* Why Wedlink Features */}
-      <section id="features" className="py-20 px-6 max-w-6xl mx-auto relative z-10">
+      {/* 4. HOW IT WORKS SECTION */}
+      <section id="how-it-works" className="py-20 px-6 sm:px-16 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <span className="font-cinzel text-xs uppercase tracking-[0.3em] text-[#D4AF37] font-semibold block mb-2">
-            The Digital Calm
+          <span className="text-xs uppercase tracking-[0.2em] text-[#8C7A70] font-semibold block mb-2">
+            Effortless In 3 Steps
           </span>
-          <h2 className="font-cinzel text-3xl sm:text-5xl font-bold text-white">
-            Why Indian Couples Choose WedLink
+          <h2 className="font-serif-luxury text-4xl sm:text-5xl font-normal text-[#2D141E]">
+            How WedLink Works
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 rounded-3xl bg-[#260A10]/40 border border-[#D4AF37]/20 backdrop-blur-xl">
-            <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
-              <Sparkles size={22} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-8 rounded-2xl bg-white border border-[#E8DFD5] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-[#FAF7F2] border border-[#E8DFD5] flex items-center justify-center text-sm font-bold text-[#341822] mb-5">
+              1
             </div>
-            <h3 className="font-cinzel text-lg font-bold text-white mb-2">3D Unboxing Experiences</h3>
-            <p className="text-[#94A3B8] text-xs leading-relaxed">
-              No flat text messages or heavy PDFs. Guests interactively open carved sandstone palace gates or break golden wax seals.
+            <h3 className="font-serif-luxury text-2xl text-[#2D141E] mb-2">Select Your 3D Theme</h3>
+            <p className="text-sm text-[#6A5E62] leading-relaxed">
+              Choose from royal palace gates, blush romance wax seals, or high-fashion editorial magazine formats.
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-[#260A10]/40 border border-[#D4AF37]/20 backdrop-blur-xl">
-            <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
-              <MapPin size={22} />
+          <div className="p-8 rounded-2xl bg-white border border-[#E8DFD5] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-[#FAF7F2] border border-[#E8DFD5] flex items-center justify-center text-sm font-bold text-[#341822] mb-5">
+              2
             </div>
-            <h3 className="font-cinzel text-lg font-bold text-white mb-2">1-Tap Maps & Calendar</h3>
-            <p className="text-[#94A3B8] text-xs leading-relaxed">
-              Eliminate &apos;venue address kya hai?&apos; calls. Guests tap once to start GPS navigation in Google Maps or add events to Google Calendar.
+            <h3 className="font-serif-luxury text-2xl text-[#2D141E] mb-2">Personalize Details</h3>
+            <p className="text-sm text-[#6A5E62] leading-relaxed">
+              Add your love story, itinerary (Haldi, Sangeet, Pheras), Google Maps directions, and dress codes.
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-[#260A10]/40 border border-[#D4AF37]/20 backdrop-blur-xl">
-            <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
-              <Clock size={22} />
+          <div className="p-8 rounded-2xl bg-white border border-[#E8DFD5] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-[#FAF7F2] border border-[#E8DFD5] flex items-center justify-center text-sm font-bold text-[#341822] mb-5">
+              3
             </div>
-            <h3 className="font-cinzel text-lg font-bold text-white mb-2">Live Countdown & Music</h3>
-            <p className="text-[#94A3B8] text-xs leading-relaxed">
-              Build celebration excitement with ticking real-time 4-box countdown timers and authentic soothing shehnai & sitar melodies.
+            <h3 className="font-serif-luxury text-2xl text-[#2D141E] mb-2">Share One Calm Link</h3>
+            <p className="text-sm text-[#6A5E62] leading-relaxed">
+              Send your interactive link on WhatsApp. Collect real-time RSVPs and guest blessings effortlessly.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/10 text-center text-xs text-[#94A3B8] bg-black/40">
-        <div className="font-cinzel text-base font-bold text-white tracking-[0.2em] mb-2">
-          WED<span className="text-[#D4AF37]">LINK</span>
+      {/* 5. FOOTER */}
+      <footer id="questions" className="py-12 px-6 border-t border-[#E8DFD5] text-center text-xs text-[#7A6E72] bg-[#FAF7F2]">
+        <div className="font-serif-luxury text-xl font-bold text-[#2D141E] mb-2">
+          Wedlink
         </div>
         <p className="mb-4">One Link • Endless Celebrations</p>
-        <p className="text-[11px] text-slate-600">
-          © {new Date().getFullYear()} WedLink. All rights reserved. Made with love for unforgettable celebrations.
+        <p className="text-[11px] text-[#9A8A80]">
+          © {new Date().getFullYear()} WedLink. All rights reserved.
         </p>
       </footer>
     </div>
