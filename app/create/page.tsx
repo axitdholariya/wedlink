@@ -254,19 +254,16 @@ export default function CreatePage() {
   const handlePublishProcess = async () => {
     setIsProcessing(true);
 
-    // Create unique slug for invitation URL
     const cleanFirst = (firstName || 'couple').toLowerCase().replace(/[^a-z0-9]/g, '');
     const cleanSecond = (secondName || 'wedding').toLowerCase().replace(/[^a-z0-9]/g, '');
     const slug = `${cleanFirst}-${cleanSecond}`;
     setGeneratedSlug(slug);
 
-    // Seed / Save Data locally so /invite/[id] can read it immediately
     if (typeof window !== 'undefined') {
       localStorage.setItem(`wedlink_${slug}`, JSON.stringify(inviteData));
       localStorage.setItem('wedlink_last_invite', JSON.stringify({ slug, ...inviteData }));
     }
 
-    // Call backend API if present
     try {
       await fetch('/api/invitations', {
         method: 'POST',
@@ -274,11 +271,9 @@ export default function CreatePage() {
         body: JSON.stringify({ slug, template, ...inviteData }),
       });
     } catch (err) {
-      // Graceful fallback to client-side storage
       console.log('Saved locally to client storage.');
     }
 
-    // If Free Promo (Price = 0), skip payment gateway
     if (finalPrice === 0) {
       setTimeout(() => {
         setIsProcessing(false);
@@ -287,7 +282,6 @@ export default function CreatePage() {
       return;
     }
 
-    // If Paid: Trigger Razorpay Checkout if loaded, or simulate demo payment
     if (typeof (window as any).Razorpay !== 'undefined') {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_demo',
@@ -309,7 +303,6 @@ export default function CreatePage() {
       rzp.open();
       setIsProcessing(false);
     } else {
-      // Demo Success Flow
       setTimeout(() => {
         setIsProcessing(false);
         setPublishStep('success');
@@ -317,13 +310,11 @@ export default function CreatePage() {
     }
   };
 
-  // Live URL Helper
   const liveUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}/invite/${generatedSlug || 'wedding'}`
       : `https://wedlink.co/invite/${generatedSlug || 'wedding'}`;
 
-  // WhatsApp Share Text
   const whatsappShareText = encodeURIComponent(
     `💍 With joyful hearts, ${firstName} & ${secondName} invite you to celebrate our wedding!\n\nTap the link below to open our interactive 3D wedding invitation:\n🔗 ${liveUrl}\n\nWe can't wait to celebrate with you!`
   );
@@ -398,7 +389,7 @@ export default function CreatePage() {
             background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
             boxShadow: '0 4px 16px rgba(201, 162, 79, 0.3)',
           }}
-          className="group flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all hover:opacity-95 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+          className="group flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all hover:opacity-95 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer font-sans"
         >
           <span>Publish (₹1,499)</span>
           <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -565,7 +556,7 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* TAB 3: EVENTS (WITH QUICK CEREMONY BUTTONS + MAPS LINK) */}
+          {/* TAB 3: EVENTS */}
           {activeTab === 'events' && (
             <div className="space-y-6 rounded-2xl border border-[#E8DFD5] bg-white p-6 sm:p-7 shadow-xs">
               <div className="rounded-xl border border-[#E8DFD5] bg-[#FAF7F2] p-4.5">
@@ -716,7 +707,6 @@ export default function CreatePage() {
                     />
                   </div>
 
-                  {/* 📍 GOOGLE MAPS LINK INPUT */}
                   <div>
                     <div className="flex items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#7A6B65]">
@@ -805,7 +795,6 @@ export default function CreatePage() {
                 </label>
               </div>
 
-              {/* Layout Toggle Buttons */}
               <div className="flex gap-2">
                 {[
                   { id: 'skip', label: '✕ Skip' },
@@ -828,7 +817,6 @@ export default function CreatePage() {
                 ))}
               </div>
 
-              {/* Upload Slots */}
               {photoLayout !== 'skip' && (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 pt-2">
                   {Array.from({ length: 4 }).map((_, idx) => {
@@ -943,7 +931,7 @@ export default function CreatePage() {
                     background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
                     boxShadow: '0 4px 18px rgba(201, 162, 79, 0.35)',
                   }}
-                  className="rounded-full px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-md hover:opacity-95 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="rounded-full px-8 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-white shadow-md hover:opacity-95 hover:scale-105 active:scale-95 cursor-pointer font-sans"
                 >
                   🚀 Publish Your WedLink (₹1,499 / $39)
                 </button>
@@ -981,12 +969,8 @@ export default function CreatePage() {
         {/* RIGHT COLUMN: STICKY LIVE MOBILE PREVIEW */}
         <div className="lg:col-span-5 xl:col-span-5">
           <div className="sticky top-20 flex flex-col items-center">
-            {/* Phone Frame */}
             <div className="relative h-[780px] w-full max-w-[390px] overflow-hidden rounded-[44px] border-[10px] border-[#1C1816] bg-black shadow-2xl ring-1 ring-black/5">
-              {/* Camera Dynamic Island */}
               <div className="absolute top-3 left-1/2 z-50 h-5 w-28 -translate-x-1/2 rounded-full bg-black" />
-
-              {/* Scrollable Live Invitation Screen */}
               <div className="h-full w-full overflow-y-auto bg-white" style={{ scrollbarWidth: 'none' }}>
                 {renderTemplate()}
               </div>
@@ -999,11 +983,10 @@ export default function CreatePage() {
         </div>
       </main>
 
-      {/* 🚀 COMPREHENSIVE PAYMENT & PUBLISH MODAL (WITH PROMO CODE & WHATSAPP SHARING) */}
+      {/* 🚀 COMPREHENSIVE PAYMENT & PUBLISH MODAL */}
       {isPublishOpen && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/65 p-4 backdrop-blur-xs">
           <div className="relative w-full max-w-lg rounded-3xl border border-[#E8DFD5] bg-[#FAF7F2] p-6 sm:p-8 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            {/* Close button */}
             <button
               type="button"
               onClick={() => setIsPublishOpen(false)}
@@ -1062,7 +1045,7 @@ export default function CreatePage() {
                       <div className="flex items-center justify-between rounded-xl bg-[#F4F9F4] border border-[#CDE5D1] px-3 py-2 text-xs text-[#1E7E34]">
                         <div className="flex items-center gap-1.5">
                           <Tag size={13} />
-                          <span className="font-bold">{appliedPromo.code}</span>
+                          <span className="font-bold font-sans">{appliedPromo.code}</span>
                           <span>({appliedPromo.label})</span>
                         </div>
                         <button
@@ -1081,14 +1064,14 @@ export default function CreatePage() {
                             placeholder="Enter Code (e.g. WEDVIP)"
                             value={promoInput}
                             onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
-                            className="w-full rounded-xl border border-[#E8DFD5] pl-8 pr-3 py-2 text-xs uppercase outline-none focus:border-[#C9A24F]"
+                            className="w-full rounded-xl border border-[#E8DFD5] pl-8 pr-3 py-2 text-xs uppercase outline-none focus:border-[#C9A24F] font-sans"
                           />
                           <Tag size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8A7B75]" />
                         </div>
                         <button
                           type="button"
                           onClick={applyPromoCode}
-                          className="rounded-xl border border-[#341822] bg-[#341822] px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-90 cursor-pointer"
+                          className="rounded-xl border border-[#341822] bg-[#341822] px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-90 cursor-pointer font-sans"
                         >
                           Apply
                         </button>
@@ -1102,17 +1085,25 @@ export default function CreatePage() {
                     )}
                   </div>
 
-                  {/* Price Breakdown */}
-                  <div className="mt-4 flex items-baseline justify-between border-t border-[#F0EAE1] pt-3">
-                    <span className="text-xs font-semibold text-[#8A7B75]">Total Payable:</span>
-                    <div className="text-right">
+                  {/* 💰 CLEAN MODERN SANS-SERIF PRICE BREAKDOWN */}
+                  <div className="mt-4 flex items-center justify-between border-t border-[#F0EAE1] pt-3.5">
+                    <span className="text-xs font-semibold text-[#8A7B75] uppercase tracking-wider">
+                      Total Payable:
+                    </span>
+                    <div className="text-right flex items-baseline gap-1.5">
                       {appliedPromo && (
-                        <span className="mr-2 text-xs text-[#8A7B75] line-through">₹1,499</span>
+                        <span className="text-sm text-[#8A7B75] line-through font-sans">
+                          ₹1,499
+                        </span>
                       )}
-                      <span className="font-serif text-2xl font-bold text-[#341822]">
-                        {finalPrice === 0 ? 'FREE' : `₹${finalPrice}`}
+                      <span className="font-sans text-3xl font-extrabold tracking-tight text-[#2D141E]">
+                        {finalPrice === 0 ? 'FREE' : `₹${finalPrice.toLocaleString('en-IN')}`}
                       </span>
-                      {finalPrice > 0 && <span className="ml-1 text-xs text-[#8A7B75]">($39)</span>}
+                      {finalPrice > 0 && (
+                        <span className="text-xs font-medium text-[#8A7B75] font-sans">
+                          ($39)
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1127,13 +1118,13 @@ export default function CreatePage() {
                       background: 'linear-gradient(135deg, #D4AF37 0%, #C9A24F 50%, #A87A24 100%)',
                       boxShadow: '0 4px 18px rgba(201, 162, 79, 0.35)',
                     }}
-                    className="w-full rounded-2xl py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-white shadow-lg transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer disabled:opacity-50"
+                    className="w-full rounded-2xl py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-white shadow-lg transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer disabled:opacity-50 font-sans"
                   >
                     {isProcessing
                       ? 'Publishing your invitation…'
                       : finalPrice === 0
                       ? 'Claim Free & Publish Link 🚀'
-                      : `Pay ₹${finalPrice} & Get Live Link 🚀`}
+                      : `Pay ₹${finalPrice.toLocaleString('en-IN')} & Get Live Link 🚀`}
                   </button>
 
                   <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#7A6B65]">
@@ -1164,13 +1155,13 @@ export default function CreatePage() {
                     Your Official Link
                   </span>
                   <div className="mt-1.5 flex items-center justify-between gap-2 rounded-xl bg-[#FAF7F2] p-2.5">
-                    <span className="truncate text-xs font-semibold text-[#341822]">
+                    <span className="truncate text-xs font-semibold text-[#341822] font-sans">
                       {liveUrl}
                     </span>
                     <button
                       type="button"
                       onClick={copyToClipboard}
-                      className="flex items-center gap-1 rounded-lg bg-[#341822] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 cursor-pointer shrink-0"
+                      className="flex items-center gap-1 rounded-lg bg-[#341822] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 cursor-pointer shrink-0 font-sans"
                     >
                       <Copy size={13} />
                       <span>{copied ? 'Copied!' : 'Copy'}</span>
@@ -1180,36 +1171,33 @@ export default function CreatePage() {
 
                 {/* Share Actions */}
                 <div className="mt-5 space-y-2.5">
-                  {/* WhatsApp Share Button */}
                   <a
                     href={`https://api.whatsapp.com/send?text=${whatsappShareText}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3 text-xs sm:text-sm font-bold text-white shadow-md transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3 text-xs sm:text-sm font-bold text-white shadow-md transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] cursor-pointer font-sans"
                   >
                     <MessageCircle size={18} />
                     <span>Share on WhatsApp</span>
                   </a>
 
-                  {/* Gmail / Email Share Button */}
                   <a
                     href={`mailto:?subject=${encodeURIComponent(
                       `Wedding Invitation: ${firstName} &${secondName}`
                     )}&body=${encodeURIComponent(
                       `Dear Family & Friends,\n\nWe invite you to celebrate our wedding!\nExperience our 3D invitation here: ${liveUrl}\n\nWarm regards,\n${firstName} &${secondName}`
                     )}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#D9CFC4] bg-white py-3 text-xs sm:text-sm font-semibold text-[#2D141E] shadow-2xs hover:bg-[#F3EDE2] transition-all cursor-pointer"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#D9CFC4] bg-white py-3 text-xs sm:text-sm font-semibold text-[#2D141E] shadow-2xs hover:bg-[#F3EDE2] transition-all cursor-pointer font-sans"
                   >
                     <Mail size={16} className="text-[#C9A24F]" />
                     <span>Send via Email / Gmail</span>
                   </a>
 
-                  {/* Open Live Site */}
                   <a
                     href={`/invite/${generatedSlug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex w-full items-center justify-center gap-1.5 pt-2 text-xs font-bold text-[#C9A24F] hover:underline cursor-pointer"
+                    className="flex w-full items-center justify-center gap-1.5 pt-2 text-xs font-bold text-[#C9A24F] hover:underline cursor-pointer font-sans"
                   >
                     <span>View Live Invitation</span>
                     <ExternalLink size={13} />
