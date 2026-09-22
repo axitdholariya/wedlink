@@ -1,6 +1,6 @@
 import * as schema from './schema';
 
-// Vercel / Node.js safe fallback taaki build crash na ho
+// Vercel / Node.js safe fallback
 let db: any = {
   select: () => ({
     from: () => ({
@@ -13,7 +13,7 @@ let db: any = {
   }),
 };
 
-// Agar Cloudflare environment ho tabhi load karein
+// Cloudflare environment check
 try {
   // @ts-ignore
   if (typeof globalThis !== 'undefined' && (globalThis as any).DB) {
