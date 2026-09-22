@@ -1,4 +1,4 @@
-mport { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { example } from '@/app/shared';
 import RoyalCourtyard from '@/app/royal-courtyard';
 
